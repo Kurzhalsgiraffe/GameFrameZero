@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>ZeichenApp</title>
+</head>
+<body>
+    <div id="pen-tools" class="pen-tools">
+        <div id="drawing-colors" class="drawing-colors">
+            <div class="color-circle" data-color="white" onclick="selectColor(this)"></div>
+            <div class="color-circle" data-color="yellow" onclick="selectColor(this)"></div>
+            <div class="color-circle" data-color="orange" onclick="selectColor(this)"></div>
+            <div class="color-circle" data-color="red" onclick="selectColor(this)"></div>
+            <div class="color-circle" data-color="purple" onclick="selectColor(this)"></div>
+            <div class="color-circle" data-color="blue" onclick="selectColor(this)"></div>
+            <div class="color-circle" data-color="green" onclick="selectColor(this)"></div>
+            <div class="color-circle active" data-color="black" onclick="selectColor(this)"></div>
+        </div>
+        <div id="favContainer"> <label for="favcolor">Farbe wählen:</label>
+            <input type="color" name="favcolor" id="favcolor" value="#000000" onchange="favColor(this)">
+        </div>
+        <i class="fa fa-refresh"><strong>Löschen</strong></i>
+    </div>
+    <div class="board">
+        <canvas width="800px" height="590"></canvas>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
