@@ -4,7 +4,6 @@ body {
 
 canvas {
     background: white;
-    border: 1px dashed;
     margin: auto;
 }
 
@@ -79,6 +78,11 @@ p {
 
 .color-circle:nth-child(8) {
     background-color: black;
+}
+
+.color-circle:nth-child(9) {
+    margin-left: 20px;
+    background-color: white;
 }
 
 .active {

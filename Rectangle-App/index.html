@@ -17,6 +17,7 @@
             <div class="color-circle" data-color="blue" onclick="selectColor(this)"></div>
             <div class="color-circle" data-color="green" onclick="selectColor(this)"></div>
             <div class="color-circle active" data-color="black" onclick="selectColor(this)"></div>
+            <div class="color-circle" id="lastcolor" data-color="black" onclick="selectColor(this)"></div>
         </div>
         <div id="favContainer"> <label for="favcolor">Farbe wählen:</label>
             <input type="color" name="favcolor" id="favcolor" value="#000000" onchange="favColor(this)">
@@ -24,7 +25,7 @@
         <i class="fa fa-refresh"><strong>Löschen</strong></i>
     </div>
     <div class="board">
-        <canvas width="800px" height="590"></canvas>
+        <canvas width="800px" height="800"></canvas>
     </div>
 
     <script src="script.js"></script>
