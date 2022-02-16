@@ -13,16 +13,31 @@ c = canvas.getContext("2d");
 c.fillStyle = "#000000";
 c.strokeStyle = c.fillStyle;
 
+colorpicker = document.querySelector("#colorpicker-btn");
+colorpicker.addEventListener("click", function() {
+    setDrawMode(!drawMode);
+});
+
 document.querySelector("#delete-btn").addEventListener("click", function() {
     c.clearRect(0,0,canvas.width,canvas.height);
     drawGrid();
     initializeColorArray();
 });
 
-colorpicker = document.querySelector("#colorpicker-btn");
-colorpicker.addEventListener("click", function() {
-    changeDrawMode();
-});
+// Sende colorArray an den Server
+document.querySelector("#save-btn").addEventListener("click", async () => await save());
+async function save() {
+    var response = await fetch("/save", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(colorArray)
+    });
+    if (response.status != 200) {
+        console.log("failed to send colorArray to server")
+    }
+}
 
 canvas.addEventListener("mousedown", (event)=>{
     isMouseDown = true;
@@ -81,13 +96,13 @@ function updateCell(x,y) {
         }
         else {
             setPickedColor(colorArray[tileNumber]);
-            changeDrawMode();
         }
     }
 }
 
 //fillstyle auf Farbe setzen und Anzeige in der Farbauswahl auf Farbe ändern
 function setPickedColor(color) {
+    setDrawMode(true);
     removeActiveCircleColor();
     c.fillStyle = color;
     document.getElementById("favcolor").setAttribute("value", color);
@@ -95,15 +110,13 @@ function setPickedColor(color) {
 }
 
 //wechsle den drawMode zwischen Color Picker und drawMode
-function changeDrawMode() {
+function setDrawMode(d) {
+    drawMode = d;
     if (drawMode) {
-        drawMode = false;
-        colorpicker.setAttribute("style","background-color: #ff0000")
-
-    } 
-    else {
-        drawMode = true;
         colorpicker.setAttribute("style","background-color: #add8e6")
+    }
+    else {
+        colorpicker.setAttribute("style","background-color: #ff0000")
     }
 }
 
@@ -120,16 +133,16 @@ function standardColor(elem) {
     elem.classList.add("active");
 }
 
+//Wähle eine spezielle Farbe
+function favColor(elem) {
+    setPickedColor(elem.value);
+}
+
 //Entferne "active" Klassenattribut aus allen Farbkreisen
 function removeActiveCircleColor() { 
     colorCirlce.forEach((circle) => {
         circle.classList.remove("active");
     });
-}
-
-//Wähle eine spezielle Farbe
-function favColor(elem) {
-    setPickedColor(elem.value);
 }
 
 document.addEventListener("DOMContentLoaded", function() {

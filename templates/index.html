@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     <title>ZeichenApp</title>
 </head>
 <body>
@@ -21,15 +21,18 @@
         <div id="favContainer"> <label for="favcolor">Farbe wählen:</label>
             <input type="color" name="favcolor" id="favcolor" value="#000000" onchange="favColor(this)">
         </div>
-        <i id="colorpicker-btn"><strong>Pipette</strong></i>
+        <i class="" id="colorpicker-btn"><strong>Pipette</strong></i>
         <i id="delete-btn"><strong>Löschen</strong></i>
        
     </div>
     <div class="board">
         <canvas width="800px" height="800"></canvas>
     </div>
-
-    <script src="script.js"></script>
+    <div class="footer">
+        <i class="" id="save-btn"><strong>Speichern</strong></i>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>
 </html>
