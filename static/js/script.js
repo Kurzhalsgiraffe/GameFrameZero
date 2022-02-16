@@ -88,7 +88,14 @@ function drawGrid() {
 function updateCell(x,y) {
     x_start = x-x%50;
     y_start = y-y%50;
-    tileNumber = 16*(y_start/50)+(x_start/50);
+
+    // Berechne Tile-Koordinaten so, dass LED-Streifen als Schlangenlinie zur Matrix verkabelt werden kann
+    if ((y_start/50)%2 == 0) {
+        tileNumber = 16*(y_start/50)+(x_start/50);
+    } else {
+        tileNumber = 16*(y_start/50)+(15-(x_start/50));
+    }
+
     if (isMouseDown) {
         if(drawMode) {
             draw(x_start, y_start);
