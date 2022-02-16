@@ -1,4 +1,5 @@
 import led
+import socket
 from flask import Flask, request, redirect, url_for, render_template
 
 app = Flask(__name__)
@@ -15,4 +16,4 @@ def save():
 
 if __name__ == "__main__":
     led.init()
-    app.run()
+    app.run(host=socket.gethostname())

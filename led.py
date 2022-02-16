@@ -40,3 +40,4 @@ def init():
     global strip
     strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL) # Create NeoPixel object with appropriate configuration.
     strip.begin() # Intialize the library (must be called once before other functions).
+    setAllPixels(Color(255,255,255))

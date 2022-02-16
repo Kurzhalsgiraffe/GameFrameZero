@@ -7,4 +7,6 @@ RUN pip3 install rpi-ws281x
 
 COPY . .
 
+EXPOSE 5000
+
 CMD [ "python", "./server.py" ]
