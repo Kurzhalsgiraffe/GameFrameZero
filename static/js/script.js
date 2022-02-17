@@ -1,5 +1,3 @@
-//https://www.youtube.com/watch?v=jkg7T7jlIzU
-
 const colorCirlce = document.querySelectorAll(".color-circle")
 
 const gridColor = 'rgba(0, 0, 0, 1.0)';
