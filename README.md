@@ -15,3 +15,20 @@ Die Inspiration für dieses Projekt kam von https://www.youtube.com/watch?v=jkg7
 
 Die Idee war es, eine einfache WebApp für das Zeichnen der Pixelbilder zu bauen, und die Pixelwerte an einen
 Flask Server zu übermitteln, der auf dem RPI0 läuft. Später sollen Animationen und Live-Zeichnungen möglich sein.
+
+## Installation
+
+
+
+````
+git clone https://github.com/Kurzhalsgiraffe/LED-Matrix
+````
+````
+cd LED-Matrix
+````
+````
+docker build -t neopixel .
+````
+````
+docker run -d --privileged neopixel
+````
