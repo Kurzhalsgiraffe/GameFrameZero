@@ -2,9 +2,14 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+p {
+    text-align: center;
+}
+
 canvas {
-    background: #ffffff;
+    background: #000000;
     margin: auto;
+    border: 1px solid #000000;
 }
 
 .pen-tools {
@@ -14,10 +19,6 @@ canvas {
     width: 40%;
     margin: auto;
     padding-bottom: 10px;
-}
-
-p {
-    text-align: center;
 }
 
 i {
@@ -34,6 +35,14 @@ i {
 
 #delete-btn {
     background-color: #add8e6;
+}
+
+#save-btn {
+    background-color: lightgreen;
+}
+
+#apply-btn {
+    background-color: lightgreen;
 }
 
 .board {
@@ -87,12 +96,6 @@ i {
     background-color: #000000;
 }
 
-#pickedcolor {
-    height: 25px;
-    width: 25px;
-    background-color: #000000;
-}
-
 .footer {
     display: flex;
     justify-content: space-around;
@@ -100,10 +103,6 @@ i {
     width: 20%;
     margin: auto;
     padding: 20px;
-}
-
-#save-btn {
-    background-color: lightgreen;
 }
 
 .active {

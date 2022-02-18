@@ -1,31 +1,41 @@
 const colorCirlce = document.querySelectorAll(".color-circle")
 
-const gridColor = 'rgba(0, 0, 0, 1.0)';
+const gridColor = 'rgba(255, 255, 255, 1.0)';
 var isMouseDown;
 var drawMode = true;
 var colorArray = [];
 
+var colorpicker_btn = document.querySelector("#colorpicker-btn");
+var delete_btn = document.querySelector("#delete-btn")
+var apply_btn = document.querySelector("#apply-btn")
+var save_btn = document.querySelector("#save-btn")
 var canvas = document.querySelector("canvas");
-c = canvas.getContext("2d");
 
-c.fillStyle = "#000000";
+c = canvas.getContext("2d");
+c.fillStyle = "#ffffff"; // Weiß
 c.strokeStyle = c.fillStyle;
 
-colorpicker = document.querySelector("#colorpicker-btn");
-colorpicker.addEventListener("click", function() {
+//Pipettenwerkzeug
+colorpicker_btn.addEventListener("click", function() {
     setDrawMode(!drawMode);
 });
 
-document.querySelector("#delete-btn").addEventListener("click", function() {
+//Setze alle Pixel auf Default Wert
+delete_btn.addEventListener("click", function() {
     c.clearRect(0,0,canvas.width,canvas.height);
     drawGrid();
     initializeColorArray();
 });
 
+//Speichere aktuelles Frame als Bild und Array
+save_btn.addEventListener("click", function() {
+    
+});
+
 // Sende colorArray an den Server
-document.querySelector("#save-btn").addEventListener("click", async () => await save());
-async function save() {
-    var response = await fetch("/save", {
+apply_btn.addEventListener("click", async () => await apply());
+async function apply() {
+    var response = await fetch("/apply", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -118,17 +128,17 @@ function setPickedColor(color) {
 function setDrawMode(d) {
     drawMode = d;
     if (drawMode) {
-        colorpicker.setAttribute("style","background-color: #add8e6")
+        colorpicker_btn.setAttribute("style","background-color: #add8e6")
     }
     else {
-        colorpicker.setAttribute("style","background-color: #ff0000")
+        colorpicker_btn.setAttribute("style","background-color: #ff0000")
     }
 }
 
 //Fülle das colorArray komplett mit weiß
 function initializeColorArray() {
     for (var i=0; i<256;i++) {
-        colorArray[i] = "#ffffff";
+        colorArray[i] = "#000000"; //Schwarz
     }
 }
 
