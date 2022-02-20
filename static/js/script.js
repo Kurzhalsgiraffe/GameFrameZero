@@ -28,14 +28,13 @@ delete_btn.addEventListener("click", function() {
 });
 
 //Speichere aktuelles Frame als Bild und Array
-save_btn.addEventListener("click", function() {
-    
-});
+save_btn.addEventListener("click", async () => await sendDataToServer("save"));
 
 // Sende colorArray an den Server
-apply_btn.addEventListener("click", async () => await apply());
-async function apply() {
-    var response = await fetch("/apply", {
+apply_btn.addEventListener("click", async () => await sendDataToServer("apply"));
+
+async function sendDataToServer(route) {
+    var response = await fetch("/"+route, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -98,12 +97,11 @@ function updateCell(x,y) {
     y_start = y-y%50;
 
     // Berechne Tile-Koordinaten so, dass LED-Streifen als Schlangenlinie zur Matrix verkabelt werden kann
-    if ((y_start/50)%2 == 0) {
+    if ((y_start/50)%2 == 1) {
         tileNumber = 16*(y_start/50)+(x_start/50);
     } else {
         tileNumber = 16*(y_start/50)+(15-(x_start/50));
     }
-    tileNumber = 255-tileNumber;
 
     if (isMouseDown) {
         if(drawMode) {
