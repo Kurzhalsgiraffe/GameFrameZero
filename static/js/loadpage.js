@@ -3,20 +3,25 @@ const colorCirlce = document.querySelectorAll(".color-circle")
 const gridColor = 'rgba(255, 255, 255, 1.0)';
 var colorArray = [];
 
-var testload_btn = document.querySelector("#testload-btn");
 var delete_btn = document.querySelector("#delete-btn")
 var apply_btn = document.querySelector("#apply-btn")
+var first_frame_btn = document.querySelector("#first-frame-btn")
+var prev_frame_btn = document.querySelector("#prev-frame-btn")
+var next_frame_btn = document.querySelector("#next-frame-btn")
+var last_frame_btn = document.querySelector("#last-frame-btn")
 var canvas = document.querySelector("canvas");
 
 c = canvas.getContext("2d");
 c.fillStyle = "#ffffff"; // Weiß
 c.strokeStyle = c.fillStyle;
 
-testload_btn.addEventListener("click", async () => await loadColorArrayFromServer());
+first_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer("first"));
+prev_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer("prev"));
+next_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer("next"));
+last_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer("last"));
 
-async function loadColorArrayFromServer() {
-    id = 0
-    var response = await fetch("/load/"+id, {
+async function loadColorArrayFromServer(pos) {
+    var response = await fetch("/load/"+pos, {
         method: "GET"
     });
     if (response.status != 200) {
@@ -88,4 +93,5 @@ function drawColorArrayToCanvas() {
 
 document.addEventListener("DOMContentLoaded", function() {
     drawGrid();
+    loadColorArrayFromServer("first")
 });
