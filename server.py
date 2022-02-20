@@ -1,5 +1,6 @@
 #import led
 import socket
+import json
 from flask import Flask, request, redirect, url_for, render_template
 
 FRAME_SIZE = 768
@@ -9,6 +10,10 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/bilder")
+def bilder():
+    return render_template("bilder.html")
 
 @app.route("/apply", methods=["POST"]) #POST Request to /apply
 def apply():
@@ -32,12 +37,10 @@ def load(id):
             file.seek(int(id)*FRAME_SIZE,0)
             b = file.read(FRAME_SIZE)
             if len(b) == FRAME_SIZE:
-                return str(binaryToColorArray(b))
+                return json.dumps(binaryToColorArray(b))
         return {},400
     except:
         return {},400
-
-    
 
 def colorArrayToBinary(colorArray):
     b = bytearray()

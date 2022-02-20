@@ -21,10 +21,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mx-auto mb-2">
                     <li class="nav-item mx-lg-2">
-                    <a class="nav-link text-white active" href="#">ZEICHNEN</a>
+                    <a class="nav-link text-white" href="/">ZEICHNEN</a>
                     </li>
                     <li class="nav-item mx-lg-2">
-                        <a class="nav-link text-white" href="bilder">BILDER</a>
+                        <a class="nav-link text-white active" href="#">BILDER</a>
                     </li>
                     <li class="nav-item mx-lg-2">
                         <a class="nav-link text-white" href="#">ANIMATIONEN</a>
@@ -45,44 +45,16 @@
                 <div class="d-flex flex-column align-items-center  px-3 pt-2 text-white min-vh-100">
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center">
                         <li class="my-3">
-                            <span class="fs-6 fw-bold">FARBEN</span>
-                        </li>
-                        <li class="nav-link px-0 align-middle d-sm-inline">
-                            <div class="drawing-colors">
-                                <div class="color-circle bg-white active" data-color="#ffffff" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-yellow" data-color="#ffff00" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-orange" data-color="#ffa500" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-red" data-color="#ff0000" onclick="standardColor(this)"></div>
-                                
-                            </div>
-                            <div class="drawing-colors">
-                                <div class="color-circle bg-purple" data-color="#800080" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-blue" data-color="#0000ff" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-green" data-color="#008000" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-black" data-color="#000000" onclick="standardColor(this)"></div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="nav-link mb-4 align-middle">
-                                <div id="favContainer"> <label for="favcolor"></label>
-                                    <input type="color" name="favcolor" id="favcolor" value="#ffffff" onchange="favColor(this)">
-                                </div>
-                            </div>
-                        </li>
-                        <li class="my-3">
                             <span class="fs-6 fw-bold">OPTIONEN</span>
-                        </li>
-                        <li>
-                            <button class="button my-2" id="colorpicker-btn"><strong>PIPETTE</strong></button>
                         </li>
                         <li>
                             <button class="button my-2" id="delete-btn"><strong>LÖSCHEN</strong></button>
                         </li>
                         <li>
-                            <button class="button my-2" id="save-btn"><strong>SPEICHERN</strong></button>
+                            <button class="button my-2" id="apply-btn"><strong>ANWENDEN</strong></button>
                         </li>
                         <li>
-                            <button class="button my-2" id="apply-btn"><strong>ANWENDEN</strong></button>
+                            <button class="button my-2" id="testload-btn"><strong>TESTLOAD</strong></button>
                         </li>
                     </ul>
                     <hr>
@@ -101,7 +73,7 @@
     </div>
 
     
-    <script src="{{ url_for('static', filename='js/mainpage.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/loadpage.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
 </body>

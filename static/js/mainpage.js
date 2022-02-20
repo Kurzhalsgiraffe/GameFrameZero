@@ -6,7 +6,6 @@ var drawMode = true;
 var colorArray = [];
 
 var colorpicker_btn = document.querySelector("#colorpicker-btn");
-var testload_btn = document.querySelector("#testload-btn");
 var delete_btn = document.querySelector("#delete-btn")
 var apply_btn = document.querySelector("#apply-btn")
 var save_btn = document.querySelector("#save-btn")
@@ -15,19 +14,6 @@ var canvas = document.querySelector("canvas");
 c = canvas.getContext("2d");
 c.fillStyle = "#ffffff"; // Weiß
 c.strokeStyle = c.fillStyle;
-
-testload_btn.addEventListener("click", async () => await loadColorArray());
-
-async function loadColorArray() {
-    id = 0
-    var response = await fetch("/load/"+id, {
-        method: "GET"
-    });
-    if (response.status != 200) {
-        console.log("failed to load colorArray from server")
-    }
-    console.log(await response.text())
-}
 
 //Pipettenwerkzeug
 colorpicker_btn.addEventListener("click", function() {
