@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import time
+
+from numpy import binary_repr
 from rpi_ws281x import PixelStrip, Color
 
 # LED strip configuration:
@@ -24,17 +26,14 @@ def setAllPixels(color):
     strip.show()
 
 # Update current Frame by (index,Color()) tuples
-def updateFrame(color):
-    for index, c in enumerate(color):
-        colorvalue = stringToRGBColor(c)
+def updateFrame(binaryColors):
+    for index in range(0,768,3):
+        r = binaryColors[index]
+        g = binaryColors[index+1]
+        b = binaryColors[index+2]
+        colorvalue = Color(r,g,b)
         strip.setPixelColor(index, colorvalue)
     strip.show()
-
-def stringToRGBColor(color):
-    r = int(color[1:3], 16)
-    g = int(color[3:5], 16)
-    b = int(color[5:7], 16)
-    return Color(r,g,b)
 
 def init():
     global strip

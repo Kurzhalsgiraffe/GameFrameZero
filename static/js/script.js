@@ -6,6 +6,7 @@ var drawMode = true;
 var colorArray = [];
 
 var colorpicker_btn = document.querySelector("#colorpicker-btn");
+var testload_btn = document.querySelector("#testload-btn");
 var delete_btn = document.querySelector("#delete-btn")
 var apply_btn = document.querySelector("#apply-btn")
 var save_btn = document.querySelector("#save-btn")
@@ -14,6 +15,19 @@ var canvas = document.querySelector("canvas");
 c = canvas.getContext("2d");
 c.fillStyle = "#ffffff"; // Weiß
 c.strokeStyle = c.fillStyle;
+
+testload_btn.addEventListener("click", async () => await loadColorArray());
+
+async function loadColorArray() {
+    id = 0
+    var response = await fetch("/load/"+id, {
+        method: "GET"
+    });
+    if (response.status != 200) {
+        console.log("failed to load colorArray from server")
+    }
+    console.log(await response.text())
+}
 
 //Pipettenwerkzeug
 colorpicker_btn.addEventListener("click", function() {
@@ -28,13 +42,13 @@ delete_btn.addEventListener("click", function() {
 });
 
 //Speichere aktuelles Frame als Bild und Array
-save_btn.addEventListener("click", async () => await sendDataToServer("save"));
+save_btn.addEventListener("click", async () => await sendColorArrayToServer("/save"));
 
 // Sende colorArray an den Server
-apply_btn.addEventListener("click", async () => await sendDataToServer("apply"));
+apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
 
-async function sendDataToServer(route) {
-    var response = await fetch("/"+route, {
+async function sendColorArrayToServer(route) {
+    var response = await fetch(route, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
