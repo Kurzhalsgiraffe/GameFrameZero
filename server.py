@@ -1,4 +1,4 @@
-#import led
+import led
 import socket
 from flask import Flask, request, redirect, url_for, render_template
 
@@ -11,10 +11,9 @@ def index():
 @app.route("/apply", methods=["POST"]) #POST Requests only
 def save():
     color = request.json
-#    led.updateFrame(color)
-    print(color)
+    led.updateFrame(color)
     return {}
 
 if __name__ == "__main__":
-#    led.init()
+    led.init()
     app.run(debug = True, host=socket.gethostname())

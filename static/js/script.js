@@ -103,6 +103,7 @@ function updateCell(x,y) {
     } else {
         tileNumber = 16*(y_start/50)+(15-(x_start/50));
     }
+    tileNumber = 255-tileNumber;
 
     if (isMouseDown) {
         if(drawMode) {
