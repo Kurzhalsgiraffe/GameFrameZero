@@ -127,7 +127,7 @@ function setPickedColor(color) {
 function setDrawMode(d) {
     drawMode = d;
     if (drawMode) {
-        colorpicker_btn.setAttribute("style","background-color: transparent")
+        colorpicker_btn.setAttribute("style","background-color: #212529")
     }
     else {
         colorpicker_btn.setAttribute("style","background-color: #32cd32")

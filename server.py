@@ -40,7 +40,6 @@ def load(pos):
         if pos == "first":
             frameID = 0
         elif pos == "prev":
-            print("prev")
             frameID = (frameID-1)%frameCount
         elif pos == "next":
             frameID = (frameID+1)%frameCount
