@@ -35,18 +35,18 @@ def save():
 @app.route("/load/<pos>")
 def load(pos):
     global frameID
-    frameCount = os.path.getsize("savedFrames")//768
-    if pos == "first":
-        frameID = 0
-    elif pos == "prev":
-        print("prev")
-        frameID = (frameID-1)%frameCount
-    elif pos == "next":
-        frameID = (frameID+1)%frameCount
-    elif pos == "last":
-        frameID = frameCount-1
-
     try:
+        frameCount = os.path.getsize("savedFrames")//768
+        if pos == "first":
+            frameID = 0
+        elif pos == "prev":
+            print("prev")
+            frameID = (frameID-1)%frameCount
+        elif pos == "next":
+            frameID = (frameID+1)%frameCount
+        elif pos == "last":
+            frameID = frameCount-1
+
         with open('savedFrames', 'rb') as file:
             file.seek(frameID*FRAME_SIZE,0)
             b = file.read(FRAME_SIZE)
@@ -72,4 +72,4 @@ def binaryToColorArray(binary):
 
 if __name__ == "__main__":
     led.init()
-    app.run(debug=True, host=socket.gethostname())
+    app.run(host=socket.gethostname())

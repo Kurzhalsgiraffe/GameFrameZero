@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-
 import time
-
-from numpy import binary_repr
 from rpi_ws281x import PixelStrip, Color
 
 # LED strip configuration:
