@@ -1,48 +1,46 @@
-const colorCirlce = document.querySelectorAll(".color-circle")
-
 const gridColor = 'rgba(255, 255, 255, 1.0)';
 var colorArray = [];
 
 var delete_btn = document.querySelector("#delete-btn")
+var edit_btn = document.querySelector("#edit-btn")
 var apply_btn = document.querySelector("#apply-btn")
 var first_frame_btn = document.querySelector("#first-frame-btn")
 var prev_frame_btn = document.querySelector("#prev-frame-btn")
 var next_frame_btn = document.querySelector("#next-frame-btn")
 var last_frame_btn = document.querySelector("#last-frame-btn")
+var frameNumber = document.getElementById("framenumber")
 var canvas = document.querySelector("canvas");
 
 c = canvas.getContext("2d");
-c.fillStyle = "#ffffff"; // Weiß
+c.fillStyle = "#ffffff";
 c.strokeStyle = c.fillStyle;
 
+delete_btn.addEventListener("click", async () => await deleteColorArrayFromServer());
+edit_btn.addEventListener("click", async () => await editSavedColorArray());
+apply_btn.addEventListener("click", async () => await sendColorArrayToServer());
 first_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer("first"));
 prev_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer("prev"));
 next_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer("next"));
 last_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer("last"));
 
-async function loadColorArrayFromServer(pos) {
-    var response = await fetch("/load/"+pos, {
-        method: "GET"
+// delete current frame from server
+async function deleteColorArrayFromServer() {
+    var response = await fetch("/delete", {
+        method: "DELETE"
     });
     if (response.status != 200) {
-        console.log("failed to load colorArray from server")
+        console.log("failed to delete colorArray from server")
     }
-    colorArray = JSON.parse(await response.text())
-    drawColorArrayToCanvas();
+    window.location.reload();
 }
 
-//Lösche aktuelles Frame aus der Datenbank
-delete_btn.addEventListener("click", function() {
-    c.clearRect(0,0,canvas.width,canvas.height);
-    drawGrid();
-    console.log("Serverseitiges Löschen wurde noch nicht implementiert")
-});
+async function editSavedColorArray() {
+    console.log("Noch nicht fertig");
+}
 
-// Sende colorArray an den Server
-apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
-
-async function sendColorArrayToServer(route) {
-    var response = await fetch(route, {
+// send colorArray to server
+async function sendColorArrayToServer() {
+    var response = await fetch("/apply", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -54,7 +52,25 @@ async function sendColorArrayToServer(route) {
     }
 }
 
-//Färbe eine Kachel
+// load colorArray from server relativ to the currently loaded Frame
+async function loadColorArrayFromServer(pos) {
+    var response = await fetch("/load/"+pos, {
+        method: "GET"
+    });
+    if (response.status != 200) {
+        console.log("failed to load colorArray from server")
+    }
+    res = await response.json()
+    if (Object.keys(res).length === 0 && res.constructor === Object) {
+        frameNumber.textContent="KEIN BILD";
+    } else {
+        colorArray = res.colorArray
+        frameNumber.textContent="BILD "+res.frameID;
+        drawColorArrayToCanvas();
+    }
+}
+
+// draw a single pixel
 function draw(x_start, y_start) {
     c.strokeStyle = c.fillStyle;
     c.beginPath();
@@ -63,7 +79,7 @@ function draw(x_start, y_start) {
     c.stroke();
 }
 
-//Zeichne ein komplette Grid ein
+// draw the whole grid
 function drawGrid() {
     c.strokeStyle = gridColor;
     for (var i=0; i<800;i+=50) {
@@ -75,7 +91,7 @@ function drawGrid() {
     }
 }
 
-//Im drawMode: Kachel färben und Farbe zum array hinzufügen. Im pickMode: Farbe aus array lesen und setzen
+// draw the loaded colorArray to the canvas
 function drawColorArrayToCanvas() {
     for (var i=0; i<256; i++) {
         c.fillStyle = colorArray[i];

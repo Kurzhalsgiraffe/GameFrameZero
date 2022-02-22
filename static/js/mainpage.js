@@ -5,33 +5,33 @@ var isMouseDown;
 var drawMode = true;
 var colorArray = [];
 
+var favcolor_field = document.getElementById("favcolor");
 var colorpicker_btn = document.querySelector("#colorpicker-btn");
-var delete_btn = document.querySelector("#delete-btn")
-var apply_btn = document.querySelector("#apply-btn")
-var save_btn = document.querySelector("#save-btn")
+var delete_btn = document.querySelector("#delete-btn");
+var apply_btn = document.querySelector("#apply-btn");
+var save_btn = document.querySelector("#save-btn");
 var canvas = document.querySelector("canvas");
 
 c = canvas.getContext("2d");
-c.fillStyle = "#ffffff"; // Weiß
+c.fillStyle = "#ffffff";
 c.strokeStyle = c.fillStyle;
 
-//Pipettenwerkzeug
 colorpicker_btn.addEventListener("click", function() {
     setDrawMode(!drawMode);
 });
 
-//Setze alle Pixel auf Default Wert
+// set every pixel to black and initialize clean colorArray
 delete_btn.addEventListener("click", function() {
     c.clearRect(0,0,canvas.width,canvas.height);
     drawGrid();
     initializeColorArray();
 });
 
-//Speichere aktuelles Frame als Bild und Array
-save_btn.addEventListener("click", async () => await sendColorArrayToServer("/save"));
-
-// Sende colorArray an den Server
+// send colorArray to /apply route
 apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
+
+// send colorArray to /save route
+save_btn.addEventListener("click", async () => await sendColorArrayToServer("/save"));
 
 async function sendColorArrayToServer(route) {
     var response = await fetch(route, {
@@ -42,7 +42,7 @@ async function sendColorArrayToServer(route) {
         body: JSON.stringify(colorArray)
     });
     if (response.status != 200) {
-        console.log("failed to send colorArray to server")
+        console.log("failed to send colorArray to server");
     }
 }
 
@@ -60,10 +60,10 @@ canvas.addEventListener("mouseleave", ()=>{
 });
 
 canvas.addEventListener("mousemove",(event)=>{
-    updateCell(event.offsetX, event.offsetY)
+    updateCell(event.offsetX, event.offsetY);
 });
 
-//Färbe eine Kachel, und aktualisiere das Grid
+// draw a single pixel and update the grid around it
 function draw(x_start, y_start) {
     c.strokeStyle = c.fillStyle;
     c.beginPath();
@@ -74,7 +74,7 @@ function draw(x_start, y_start) {
     updateGrid(x_start,y_start);
 }
 
-//Aktualisiere das Grid um eine Kachel herum
+// update the grid around a single pixel
 function updateGrid(x,y) {
         c.strokeStyle = gridColor;
         c.beginPath();
@@ -82,7 +82,7 @@ function updateGrid(x,y) {
         c.stroke();
 }
 
-//Zeichne ein komplette Grid ein
+// draw the whole grid
 function drawGrid() {
     for (var i=0; i<800;i+=50) {
         for (var j=0; j<800;j+=50) {
@@ -91,12 +91,12 @@ function drawGrid() {
     }
 }
 
-//Im drawMode: Kachel färben und Farbe zum array hinzufügen. Im pickMode: Farbe aus array lesen und setzen
 function updateCell(x,y) {
+    // compute coordinates of top left pixel for the 50x50 area
     x_start = x-x%50;
     y_start = y-y%50;
 
-    // Berechne Tile-Koordinaten so, dass LED-Streifen als Schlangenlinie zur Matrix verkabelt werden kann
+    // compute the tileNumber from coordinates
     if ((y_start/50)%2 == 1) {
         tileNumber = 16*(y_start/50)+(x_start/50);
     } else {
@@ -114,45 +114,45 @@ function updateCell(x,y) {
     }
 }
 
-//fillstyle auf Farbe setzen und Anzeige in der Farbauswahl auf Farbe ändern
-function setPickedColor(color) {
-    setDrawMode(true);
-    removeActiveCircleColor();
-    c.fillStyle = color;
-    document.getElementById("favcolor").setAttribute("value", color);
-    document.getElementById("favcolor").value = color;
-}
-
-//wechsle den drawMode zwischen Color Picker und drawMode
+// switch the drawMode and update colorpicker-btn's background-color
 function setDrawMode(d) {
     drawMode = d;
     if (drawMode) {
-        colorpicker_btn.setAttribute("style","background-color: #212529")
+        colorpicker_btn.setAttribute("style","background-color: #212529");
     }
     else {
-        colorpicker_btn.setAttribute("style","background-color: #32cd32")
+        colorpicker_btn.setAttribute("style","background-color: #32cd32");
     }
 }
 
-//Fülle das colorArray komplett mit weiß
+// fill the colorArray with black
 function initializeColorArray() {
     for (var i=0; i<256;i++) {
-        colorArray[i] = "#000000"; //Schwarz
+        colorArray[i] = "#000000";
     }
 }
 
-//Wähle eine der standart Farben aus
+// set color to one of the 8 standard colors
 function standardColor(elem) {
     setPickedColor(elem.getAttribute("data-color"));
     elem.classList.add("active");
 }
 
-//Wähle eine spezielle Farbe
+// select any other color
 function favColor(elem) {
     setPickedColor(elem.value);
 }
 
-//Entferne "active" Klassenattribut aus allen Farbkreisen
+// change fillstyle to color and update frontend components
+function setPickedColor(color) {
+    setDrawMode(true);
+    removeActiveCircleColor();
+    c.fillStyle = color;
+    favcolor_field.setAttribute("value", color);
+    favcolor_field.value = color;
+}
+
+// remove active class from every circle
 function removeActiveCircleColor() { 
     colorCirlce.forEach((circle) => {
         circle.classList.remove("active");
