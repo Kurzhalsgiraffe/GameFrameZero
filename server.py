@@ -1,4 +1,4 @@
-#import led
+import led
 import socket
 import os
 from flask import Flask, request, jsonify, url_for, render_template
@@ -6,7 +6,6 @@ from flask import Flask, request, jsonify, url_for, render_template
 COUNT_SIZE = 2
 INDEX_SIZE = 2
 FRAME_SIZE = 768
-loadedFrameID = 1
 
 app = Flask(__name__)
 
@@ -16,13 +15,13 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route("/bilder")
-def bilder():
-    return render_template("bilder.html")
+@app.route("/images")
+def images():
+    return render_template("images.html")
 
-@app.route("/load/<pos>")
-def load(pos):
-    updateLoadedFrameID(pos)
+@app.route("/load/<id>/<pos>")
+def load(id, pos):
+    loadedFrameID = updateLoadedFrameID(id, pos)
     try:
         i = 2
         with open('savedFrames', 'rb') as file:
@@ -50,7 +49,7 @@ def load(pos):
 def apply():
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
-#    led.updateFrame(b)
+    led.updateFrame(b)
     return {}
 
 @app.route("/save", methods=["POST"])
@@ -73,8 +72,9 @@ def save():
 
 ## ----- DELETE ----- ##
 
-@app.route("/delete", methods=["DELETE"])
-def delete():
+@app.route("/delete/<id>", methods=["DELETE"])
+def delete(id):
+    loadedFrameID = int(id)
     i = 2
     with open('savedFrames', 'r+b') as file:
         while True:
@@ -136,17 +136,19 @@ def getEmptySpaceIndex():
             i+=(INDEX_SIZE+FRAME_SIZE)
         return None
 
-def updateLoadedFrameID(pos):
+def updateLoadedFrameID(id, pos):
     frameCount = getFrameCount()
-    global loadedFrameID
+    loadedFrameID = int(id)
+    if frameCount < loadedFrameID:
+        loadedFrameID = 1
     if pos == "first":
         loadedFrameID = 1
     elif pos == "prev":
-        loadedFrameID -= 1
+        loadedFrameID = loadedFrameID - 1
         if loadedFrameID == 0:
             loadedFrameID = frameCount if frameCount > 0 else 1
     elif pos == "next":
-        loadedFrameID += 1
+        loadedFrameID = loadedFrameID + 1
         if loadedFrameID > frameCount:
             loadedFrameID = 1
     elif pos == "last":
@@ -155,8 +157,8 @@ def updateLoadedFrameID(pos):
 
 
 if __name__ == "__main__":
-#    led.init()
+    led.init()
     if not os.path.exists("savedFrames"):
         with open('savedFrames', 'wb') as file:
             file.write(bytes(COUNT_SIZE))
-    app.run(debug=True, host=socket.gethostname())
+    app.run(host=socket.gethostname())

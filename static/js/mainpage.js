@@ -159,7 +159,47 @@ function removeActiveCircleColor() {
     });
 }
 
+
+// load colorArray from server relativ to the currently loaded Frame
+async function loadColorArrayFromServer(id) {
+    var response = await fetch("/load/"+id+"/same", {
+        method: "GET"
+    });
+    if (response.status != 200) {
+        console.log("failed to load colorArray from server")
+    }
+    res = await response.json()
+    if (Object.keys(res).length === 0 && res.constructor === Object) {
+        initializeColorArray();
+    } else {
+        colorArray = res.colorArray
+    }
+    drawColorArrayToCanvas();
+}
+
+// draw the loaded colorArray to the canvas
+function drawColorArrayToCanvas() {
+    for (var i=0; i<256; i++) {
+        c.fillStyle = colorArray[i];
+
+        y = Math.floor(i/16);
+        if (y%2==0) {
+            x = 15-i%16;
+        } else {
+            x = i%16;
+        }
+        draw(50*x,50*y);
+    }
+    drawGrid();
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     drawGrid();
     initializeColorArray();
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if(urlParams.has('id')) {
+        const loadedIDToEdit = urlParams.get('id');
+        loadColorArrayFromServer(loadedIDToEdit);
+    }
 });
