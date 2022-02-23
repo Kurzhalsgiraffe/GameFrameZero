@@ -1,12 +1,7 @@
 var apply_btn = document.querySelector("#apply-btn");
-var save_btn = document.querySelector("#save-btn");
 
 // send colorArray to /apply route
 apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
-
-// send colorArray to /save route
-save_btn.addEventListener("click", async () => await sendColorArrayToServer("/save"));
-
 
 async function sendColorArrayToServer(route) {
     var response = await fetch(route, {

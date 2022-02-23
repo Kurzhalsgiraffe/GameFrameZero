@@ -23,22 +23,13 @@ def images():
 def load(id, pos):
     loadedFrameID = updateLoadedFrameID(id, pos)
     try:
-        i = 2
-        with open('savedFrames', 'rb') as file:
-            while True:
-                file.seek(i,0)
-                binaryIndex = file.read(INDEX_SIZE)
-                if binaryIndex == b'':
-                    break
-                if int.from_bytes(binaryIndex, "big") == loadedFrameID:
-                    b = file.read(FRAME_SIZE)
-                    if len(b) == FRAME_SIZE:
-                        d = {
-                            "colorArray": binaryToColorArray(b),
-                            "frameID": loadedFrameID
-                        }
-                        return jsonify(d)
-                i+=(INDEX_SIZE+FRAME_SIZE)
+        b = loadBinaryFromFile(loadedFrameID)
+        if len(b) == FRAME_SIZE:
+            d = {
+                "colorArray": binaryToColorArray(b),
+                "frameID": loadedFrameID
+            }
+            return jsonify(d)
         return {}
     except:
         return {},400
@@ -135,6 +126,20 @@ def getEmptySpaceIndex():
                 return i
             i+=(INDEX_SIZE+FRAME_SIZE)
         return None
+
+def loadBinaryFromFile(loadedFrameID):
+    i = 2
+    with open('savedFrames', 'rb') as file:
+        while True:
+            file.seek(i,0)
+            binaryIndex = file.read(INDEX_SIZE)
+            if binaryIndex == b'':
+                break
+            if int.from_bytes(binaryIndex, "big") == loadedFrameID:
+                b = file.read(FRAME_SIZE)
+                return b
+            i+=(INDEX_SIZE+FRAME_SIZE)
+    return None
 
 def updateLoadedFrameID(id, pos):
     frameCount = getFrameCount()

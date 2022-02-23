@@ -5,6 +5,7 @@ var isMouseDown;
 var drawMode = true;
 var colorArray = [];
 
+var save_btn = document.querySelector("#save-btn");
 var favcolor_field = document.getElementById("favcolor");
 var colorpicker_btn = document.querySelector("#colorpicker-btn");
 var delete_btn = document.querySelector("#delete-btn");
@@ -13,6 +14,9 @@ var canvas = document.querySelector("canvas");
 c = canvas.getContext("2d");
 c.fillStyle = "#ffffff";
 c.strokeStyle = c.fillStyle;
+
+// send colorArray to /save route
+save_btn.addEventListener("click", async () => await sendColorArrayToServer("/save"));
 
 colorpicker_btn.addEventListener("click", function() {
     setDrawMode(!drawMode);
