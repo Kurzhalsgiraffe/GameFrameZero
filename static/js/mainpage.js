@@ -8,8 +8,6 @@ var colorArray = [];
 var favcolor_field = document.getElementById("favcolor");
 var colorpicker_btn = document.querySelector("#colorpicker-btn");
 var delete_btn = document.querySelector("#delete-btn");
-var apply_btn = document.querySelector("#apply-btn");
-var save_btn = document.querySelector("#save-btn");
 var canvas = document.querySelector("canvas");
 
 c = canvas.getContext("2d");
@@ -26,25 +24,6 @@ delete_btn.addEventListener("click", function() {
     drawGrid();
     initializeColorArray();
 });
-
-// send colorArray to /apply route
-apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
-
-// send colorArray to /save route
-save_btn.addEventListener("click", async () => await sendColorArrayToServer("/save"));
-
-async function sendColorArrayToServer(route) {
-    var response = await fetch(route, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(colorArray)
-    });
-    if (response.status != 200) {
-        console.log("failed to send colorArray to server");
-    }
-}
 
 canvas.addEventListener("mousedown", (event)=>{
     isMouseDown = true;
@@ -63,34 +42,6 @@ canvas.addEventListener("mousemove",(event)=>{
     updateCell(event.offsetX, event.offsetY);
 });
 
-// draw a single pixel and update the grid around it
-function draw(x_start, y_start) {
-    c.strokeStyle = c.fillStyle;
-    c.beginPath();
-    c.rect(x_start, y_start, 50, 50);
-    c.fill();
-    c.stroke();
-
-    updateGrid(x_start,y_start);
-}
-
-// update the grid around a single pixel
-function updateGrid(x,y) {
-        c.strokeStyle = gridColor;
-        c.beginPath();
-        c.rect(x, y, 50, 50);
-        c.stroke();
-}
-
-// draw the whole grid
-function drawGrid() {
-    for (var i=0; i<800;i+=50) {
-        for (var j=0; j<800;j+=50) {
-            updateGrid(i,j);
-        }
-    }
-}
-
 function updateCell(x,y) {
     // compute coordinates of top left pixel for the 50x50 area
     x_start = x-x%50;
@@ -106,6 +57,7 @@ function updateCell(x,y) {
     if (isMouseDown) {
         if(drawMode) {
             draw(x_start, y_start);
+            updateGrid(x_start,y_start);
             colorArray[tileNumber] = c.fillStyle;
         }
         else {
@@ -122,13 +74,6 @@ function setDrawMode(d) {
     }
     else {
         colorpicker_btn.setAttribute("style","background-color: #32cd32");
-    }
-}
-
-// fill the colorArray with black
-function initializeColorArray() {
-    for (var i=0; i<256;i++) {
-        colorArray[i] = "#000000";
     }
 }
 
@@ -175,22 +120,6 @@ async function loadColorArrayFromServer(id) {
         colorArray = res.colorArray
     }
     drawColorArrayToCanvas();
-}
-
-// draw the loaded colorArray to the canvas
-function drawColorArrayToCanvas() {
-    for (var i=0; i<256; i++) {
-        c.fillStyle = colorArray[i];
-
-        y = Math.floor(i/16);
-        if (y%2==0) {
-            x = 15-i%16;
-        } else {
-            x = i%16;
-        }
-        draw(50*x,50*y);
-    }
-    drawGrid();
 }
 
 document.addEventListener("DOMContentLoaded", function() {
