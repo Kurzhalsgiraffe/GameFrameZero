@@ -1,7 +1,7 @@
-var apply_btn = document.querySelector("#apply-btn");
+c = canvas.getContext("2d");
+c.fillStyle = "#ffffff";
+c.strokeStyle = c.fillStyle;
 
-// send colorArray to /apply route
-apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
 
 async function sendColorArrayToServer(route) {
     var response = await fetch(route, {
@@ -27,7 +27,7 @@ function drawColorArrayToCanvas() {
         } else {
             x = i%16;
         }
-        draw(50*x,50*y);
+        draw(PIXEL_SIZE*x,PIXEL_SIZE*y);
     }
     drawGrid();
 }
@@ -43,14 +43,14 @@ function initializeColorArray() {
 function updateGrid(x,y) {
     c.strokeStyle = gridColor;
     c.beginPath();
-    c.rect(x, y, 50, 50);
+    c.rect(x, y, PIXEL_SIZE, PIXEL_SIZE);
     c.stroke();
 }
 
 // draw the whole grid
 function drawGrid() {
-    for (var i=0; i<800;i+=50) {
-        for (var j=0; j<800;j+=50) {
+    for (var i=0; i<FRAME_SIZE;i+=PIXEL_SIZE) {
+        for (var j=0; j<FRAME_SIZE;j+=PIXEL_SIZE) {
             updateGrid(i,j);
         }
     }
@@ -60,7 +60,7 @@ function drawGrid() {
 function draw(x_start, y_start) {
     c.strokeStyle = c.fillStyle;
     c.beginPath();
-    c.rect(x_start, y_start, 50, 50);
+    c.rect(x_start, y_start, PIXEL_SIZE, PIXEL_SIZE);
     c.fill();
     c.stroke();
 }

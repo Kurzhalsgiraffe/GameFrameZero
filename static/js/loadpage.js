@@ -1,9 +1,13 @@
 const gridColor = 'rgba(255, 255, 255, 1.0)';
+const PIXEL_SIZE = 50;
+const FRAME_SIZE = 800;
 var colorArray = [];
 var currentPos = 1;
 
 var delete_btn = document.querySelector("#delete-btn")
 var edit_btn = document.querySelector("#edit-btn")
+var apply_btn = document.querySelector("#apply-btn");
+var animation_btn = document.querySelector("#animation-btn");
 var first_frame_btn = document.querySelector("#first-frame-btn")
 var prev_frame_btn = document.querySelector("#prev-frame-btn")
 var next_frame_btn = document.querySelector("#next-frame-btn")
@@ -11,12 +15,10 @@ var last_frame_btn = document.querySelector("#last-frame-btn")
 var frameNumber = document.getElementById("framenumber")
 var canvas = document.querySelector("canvas");
 
-c = canvas.getContext("2d");
-c.fillStyle = "#ffffff";
-c.strokeStyle = c.fillStyle;
-
 delete_btn.addEventListener("click", async () => await deleteColorArrayFromServer(currentPos));
 edit_btn.addEventListener("click", editSavedColorArray);
+apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
+animation_btn.addEventListener("click", async () => await addFrameToAnimation());
 first_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer(currentPos, "first"));
 prev_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer(currentPos, "prev"));
 next_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer(currentPos, "next"));
@@ -35,6 +37,15 @@ async function deleteColorArrayFromServer(id) {
 
 function editSavedColorArray() {
     window.location.replace("/?id="+currentPos);
+}
+
+async function addFrameToAnimation() {
+    var response = await fetch("/addanimationframe/"+currentPos, {
+        method: "POST"
+    });
+    if (response.status != 200) {
+        console.log("failed to add Frame to Animationlist");
+    }
 }
 
 // load colorArray from server relativ to the currently loaded Frame
@@ -60,5 +71,5 @@ async function loadColorArrayFromServer(id,pos) {
 
 document.addEventListener("DOMContentLoaded", function() {
     drawGrid();
-    loadColorArrayFromServer(currentPos, "first")
+    loadColorArrayFromServer(currentPos, "first");
 });

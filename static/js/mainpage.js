@@ -1,22 +1,21 @@
 const colorCirlce = document.querySelectorAll(".color-circle")
 
 const gridColor = 'rgba(255, 255, 255, 1.0)';
+const PIXEL_SIZE = 50;
+const FRAME_SIZE = 800;
 var isMouseDown;
 var drawMode = true;
 var colorArray = [];
 
-var save_btn = document.querySelector("#save-btn");
 var favcolor_field = document.getElementById("favcolor");
 var colorpicker_btn = document.querySelector("#colorpicker-btn");
 var delete_btn = document.querySelector("#delete-btn");
+var save_btn = document.querySelector("#save-btn");
+var apply_btn = document.querySelector("#apply-btn");
 var canvas = document.querySelector("canvas");
 
-c = canvas.getContext("2d");
-c.fillStyle = "#ffffff";
-c.strokeStyle = c.fillStyle;
-
-// send colorArray to /save route
 save_btn.addEventListener("click", async () => await sendColorArrayToServer("/save"));
+apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
 
 colorpicker_btn.addEventListener("click", function() {
     setDrawMode(!drawMode);

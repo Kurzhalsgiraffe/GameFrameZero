@@ -6,6 +6,9 @@ from flask import Flask, request, jsonify, url_for, render_template
 COUNT_SIZE = 2
 INDEX_SIZE = 2
 FRAME_SIZE = 768
+STANDARD_ANIMATIONTIME = "200"
+
+animationList = []
 
 app = Flask(__name__)
 
@@ -18,6 +21,10 @@ def index():
 @app.route("/images")
 def images():
     return render_template("images.html")
+
+@app.route("/animation")
+def animation():
+    return render_template("animation.html")
 
 @app.route("/load/<id>/<pos>")
 def load(id, pos):
@@ -34,6 +41,10 @@ def load(id, pos):
     except:
         return {},400
 
+@app.route("/loadanimationlist")
+def loadanimationlist():
+    return jsonify(animationList)
+
 ## ----- POST ----- ##
 
 @app.route("/apply", methods=["POST"])
@@ -41,6 +52,11 @@ def apply():
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
     led.updateFrame(b)
+    return {}
+
+@app.route("/applyanimation", methods=["POST"])         #not implemented yet: start new thread and loop animationList
+def applyanimation():
+    print(animationList)
     return {}
 
 @app.route("/save", methods=["POST"])
@@ -59,6 +75,18 @@ def save():
             file.write(newIndex)                                # write the new index to before the frame
             file.write(b)                                       # write the frame
     setFrameCount(getFrameCount()+1)
+    return {}
+
+@app.route("/addanimationframe/<id>", methods=["POST"])
+def addanimationframe(id):
+    global animationList
+    animationList.append([id,STANDARD_ANIMATIONTIME])
+    return {}
+
+@app.route("/updateanimationlist", methods=["POST"])
+def updateanimationlist():
+    global animationList
+    animationList = request.json
     return {}
 
 ## ----- DELETE ----- ##

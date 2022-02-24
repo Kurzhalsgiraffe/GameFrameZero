@@ -27,7 +27,7 @@
                         <a class="nav-link text-white active" href="#">BILDER</a>
                     </li>
                     <li class="nav-item mx-lg-2">
-                        <a class="nav-link text-white" href="#">ANIMATIONEN</a>
+                        <a class="nav-link text-white" href="animation">ANIMATIONEN</a>
                     </li>
                 </ul>
             </div>
@@ -48,13 +48,16 @@
                             <span class="fs-6 fw-bold">OPTIONEN</span>
                         </li>
                         <li>
-                            <button class="button opt-btn my-2" id="delete-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Lösche Bild vom Server"><strong>LÖSCHEN</strong></button>
+                            <button class="button opt-btn my-2" id="delete-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Lösche das Bild vom Server"><strong>LÖSCHEN</strong></button>
                         </li>
                         <li>
                             <button class="button opt-btn my-2" id="edit-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Bearbeite eine Kopie des Bildes"><strong>BEARBEITEN</strong></button>
                         </li>
                         <li>
                             <button class="button opt-btn my-2" id="apply-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Zeige das Bild auf der Matrix an"><strong>ANWENDEN</strong></button>
+                        </li>
+                        <li>
+                            <button class="button opt-btn my-2" id="animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Füge das Bild zur Animieren-Liste hinzu"><strong>ANIMATION</strong></button>
                         </li>
                     </ul>
                 </div>
@@ -63,7 +66,7 @@
             <!-- Sidebar END -->
 
             <!-- Canvas -->
-            <div class="col py-1">
+            <div class="col py-3">
                 <div class="board pt-lg-3">
                     <canvas width="800px" height="800"></canvas>
                 </div>

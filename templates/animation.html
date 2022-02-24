@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>GameFrameZero</title>
+</head>
+<body>
+
+    <!-- Navigation -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark pt-lg-3">
+        <div class="container">
+            <a class="navbar-brand fs-3 fw-bold" href="/"><i class="fa-solid fa-lightbulb mx-2"></i>GameFrame<span class="limegreen">Zero</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mx-auto mb-2">
+                    <li class="nav-item mx-lg-2">
+                    <a class="nav-link text-white" href="/">ZEICHNEN</a>
+                    </li>
+                    <li class="nav-item mx-lg-2">
+                        <a class="nav-link text-white active" href="images">BILDER</a>
+                    </li>
+                    <li class="nav-item mx-lg-2">
+                        <a class="nav-link text-white" href="#">ANIMATIONEN</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Navigation END -->
+
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+
+            <!-- Sidebar-->
+
+            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+                <div class="d-flex flex-column align-items-center  px-3 pt-2 text-white min-vh-100">
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center">
+                        <li class="mb-3 mt-5">
+                            <span class="fs-6 fw-bold">OPTIONEN</span>
+                        </li>
+                        <li>
+                            <button class="button opt-btn my-2" id="assume-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Übernehme die Animationseinstellungen"><strong>ÜBERNEHMEN</strong></button>
+                        </li>
+                        <li>
+                            <button class="button opt-btn my-2" id="apply-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Zeige das Bild auf der Matrix an"><strong>ANWENDEN</strong></button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sidebar END -->
+
+            <!-- Canvas -->
+            <div class="col py-3 d-flex justify-content-evenly">
+                <div class="flex-grow-1 pt-lg-4 pb-lg-5">
+                    <table id="animationlist">
+                    </table>
+                </div>
+                <div class="align-self-start">
+                    <div class="board pt-lg-4">
+                        <canvas width="512px" height="512"></canvas>
+                    </div>
+                </div>          
+            </div>
+            <!-- Canvasbereich END -->
+        </div>
+    </div>
+   
+    <script src="{{ url_for('static', filename='js/animationpage.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+</body>
+</html>
