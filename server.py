@@ -1,6 +1,8 @@
+#Comment out Lines 2 57 215 220 for testing on Windows
 import led
 import socket
 import os
+import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
 
 COUNT_SIZE = 2
@@ -9,6 +11,7 @@ FRAME_SIZE = 768
 STANDARD_ANIMATIONTIME = "200"
 
 animationList = []
+animationRunning = False
 
 app = Flask(__name__)
 
@@ -54,11 +57,6 @@ def apply():
     led.updateFrame(b)
     return {}
 
-@app.route("/applyanimation", methods=["POST"])         #not implemented yet: start new thread and loop animationList
-def applyanimation():
-    print(animationList)
-    return {}
-
 @app.route("/save", methods=["POST"])
 def save():
     colorArray = request.json
@@ -87,6 +85,21 @@ def addanimationframe(id):
 def updateanimationlist():
     global animationList
     animationList = request.json
+    return {}
+
+@app.route("/applyanimation", methods=["POST"])         #not implemented yet: start new thread and loop animationList
+def applyanimation():
+    global animationRunning
+    animationRunning = True
+    asyncio.set_event_loop(asyncio.new_event_loop())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(animationLoop())
+    return {}
+
+@app.route("/stopanimation", methods=["POST"])
+def stopanimation():
+    global animationRunning
+    animationRunning = False
     return {}
 
 ## ----- DELETE ----- ##
@@ -155,7 +168,7 @@ def getEmptySpaceIndex():
             i+=(INDEX_SIZE+FRAME_SIZE)
         return None
 
-def loadBinaryFromFile(loadedFrameID):
+def loadBinaryFromFile(frameID):
     i = 2
     with open('savedFrames', 'rb') as file:
         while True:
@@ -163,7 +176,7 @@ def loadBinaryFromFile(loadedFrameID):
             binaryIndex = file.read(INDEX_SIZE)
             if binaryIndex == b'':
                 break
-            if int.from_bytes(binaryIndex, "big") == loadedFrameID:
+            if int.from_bytes(binaryIndex, "big") == frameID:
                 b = file.read(FRAME_SIZE)
                 return b
             i+=(INDEX_SIZE+FRAME_SIZE)
@@ -188,6 +201,20 @@ def updateLoadedFrameID(id, pos):
         loadedFrameID = frameCount if frameCount > 0 else 1
     return loadedFrameID
 
+
+async def animationLoop():
+    animation = []
+    for frame,t in animationList:
+        b = loadBinaryFromFile(int(frame))
+        t = int(t)/1000
+        animation.append([b,t])
+
+    while animationRunning:
+        for b,time in animation:
+            if animationRunning:
+                led.updateFrame(b)
+                await asyncio.sleep(time)
+            
 
 if __name__ == "__main__":
     led.init()

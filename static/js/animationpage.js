@@ -5,13 +5,15 @@ const FRAME_SIZE = 512;
 var colorArray = [];
 
 var assume_btn = document.querySelector("#assume-btn")
-var apply_btn = document.querySelector("#apply-btn")
+var apply_btn = document.querySelector("#apply-animation-btn")
+var stop_animation_btn = document.querySelector("#stop-animation-btn")
 var animationlist = document.querySelector("#animationlist")
 var canvas = document.querySelector("canvas");
 
 animationlist.addEventListener("click", clickEventAnimationlist);
 apply_btn.addEventListener("click", applyAnimation);
 assume_btn.addEventListener("click", async () => await sendAnimationToServer());
+stop_animation_btn.addEventListener("click", stopAnimation);
 
 function clickEventAnimationlist(e) {
     if (e.target.classList.contains('remove-btn')) {
@@ -73,6 +75,15 @@ async function applyAnimation() {
     });
     if (response.status != 200) {
         console.log("failed to apply Animation");
+    }
+}
+
+async function stopAnimation() {
+    var response = await fetch("/stopanimation", {
+        method: "POST"
+    });
+    if (response.status != 200) {
+        console.log("failed to stop Animation");
     }
 }
 
