@@ -7,23 +7,14 @@ var colorArray = [];
 var assume_btn = document.querySelector("#assume-btn")
 var apply_btn = document.querySelector("#apply-animation-btn")
 var stop_animation_btn = document.querySelector("#stop-animation-btn")
-var animationlist = document.querySelector("#animationlist")
+var animationlist_body = document.querySelector("#animationlist-body")
 var canvas = document.querySelector("canvas");
 
-animationlist.addEventListener("click", clickEventAnimationlist);
 apply_btn.addEventListener("click", applyAnimation);
 assume_btn.addEventListener("click", async () => await sendAnimationToServer());
 stop_animation_btn.addEventListener("click", stopAnimation);
 
-function clickEventAnimationlist(e) {
-    if (e.target.classList.contains('remove-btn')) {
-        e.target.closest("tr").remove();
-    } 
-    else if (e.target.classList.contains('number-tile')) {
-        loadColorArrayFromServer(e.target.id.slice(6,), "same");
-    }
-}
-
+//load the current Animationlist from the server and display it in the table
 async function loadAnimationList() {
     var response = await fetch("/loadanimationlist", {
         method: "GET"
@@ -68,6 +59,98 @@ async function sendAnimationToServer() {
     }
 }
 
+function initializeAnimationlist(tiles) {
+    let x = 0;
+    animationlist_body.innerHTML = '';
+
+    for (let tile of tiles) {
+        frameID = tile[0]
+        time = tile[1]
+        // create elements
+        const tr = document.createElement("tr");
+        const numberTile = document.createElement("td");
+        const timeTile = document.createElement("td");
+
+        // add attributes
+        tr.setAttribute("draggable", true)
+        tr.setAttribute("id", "al-"+x)
+
+        numberTile.classList.add("number-tile");
+        numberTile.setAttribute("value", "frame-"+frameID)
+
+        timeTile.classList.add("time-tile");
+
+        // add text
+        numberTile.innerHTML = `Bild ${frameID}<span class="remove-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Entferne das Bild aus der Animieren-Liste">X</span>`;
+        timeTile.innerHTML = `<input maxlength="4" size="4" value="${time}"></input> ms`;
+
+        // add elements to tr and tr to dom
+        tr.appendChild(numberTile);
+        tr.appendChild(timeTile);
+        animationlist_body.appendChild(tr);
+
+        x++;
+    }
+}
+
+function getAnimationList() {
+    arr = []
+    rows = animationlist_body.rows
+    for(var i=0; i< rows.length; i++){
+        tds = rows[i].getElementsByTagName("td")
+        frameid = tds[0].getAttribute('value').slice(6,)
+        time = tds[1].getElementsByTagName("input")[0].value
+        arr.push([frameid,time])
+    }
+    return arr;
+}
+
+function drag(event) {
+    event.dataTransfer.setData('src', event.currentTarget.id);
+}
+
+function drop(event) {
+    event.preventDefault();
+    let src = document.getElementById(event.dataTransfer.getData('src'));
+    let target = event.currentTarget;
+    if (src == target) return false;
+
+    let srcHolder = document.createElement('div');
+    let targetHolder = document.createElement('div');
+
+    animationlist_body.replaceChild(srcHolder, src);
+    animationlist_body.replaceChild(targetHolder, target);
+
+    animationlist_body.replaceChild(target, srcHolder);
+    animationlist_body.replaceChild(src, targetHolder);
+}
+
+function attachHandlers() {
+    let rows = animationlist_body.children;
+    for (let row of rows) {
+        row.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        row.addEventListener('dragstart', (e) => {
+            drag(e);
+        });
+
+        row.addEventListener('drop', (e) => {
+            drop(e);
+        });
+
+        row.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-btn')) {
+                e.currentTarget.remove();
+            } 
+            else if (e.target.classList.contains('number-tile')) {
+                loadColorArrayFromServer(e.target.getAttribute('value').slice(6,), "same");
+            }
+        });
+    }
+}
+
 async function applyAnimation() {
     var animation = getAnimationList();
     var response = await fetch("/applyanimation", {
@@ -87,46 +170,8 @@ async function stopAnimation() {
     }
 }
 
-function initializeAnimationlist(res) {
-    res.forEach((tile) => {
-        animationlist.innerHTML += `
-            <tr class="animation-tile" draggable="true" ondragstart="dragIt(event)" ondragover="dragOver(event)">
-                <td class="tile number-tile" id="frame-${tile[0]}">Bild ${tile[0]}<span class="remove-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Entferne das Bild aus der Animieren-Liste">X</span></td>
-                <td class="tile time-tile"><input id="time-1" maxlength="4" size="4" value="${tile[1]}"></input> ms</td>
-            </tr>
-        `;
-    });
-}
-
-function getAnimationList() {
-    arr = []
-    rows = animationlist.rows
-    for(var i=0; i< rows.length; i++){
-        tds = rows[i].getElementsByTagName("td")
-        id = tds[0].id.slice(6,)
-        value = tds[1].getElementsByTagName("input")[0].value
-        arr.push([id,value])
-    }
-    return arr;
-}
-
-function dragIt(event){
-  shadow=event.target;
-}
-
-function dragOver(e){
-    children=Array.from(e.target.parentNode.parentNode.children);
-    try {
-        if(children.indexOf(e.target.parentNode)>children.indexOf(shadow)) {
-            e.target.parentNode.after(shadow);
-        } else {
-            e.target.parentNode.before(shadow);
-        }
-    }
-    catch {}
-}
-
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function() {
     drawGrid();
-    loadAnimationList()
+    await loadAnimationList()
+    attachHandlers();
 });
