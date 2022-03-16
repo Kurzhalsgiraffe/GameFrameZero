@@ -4,7 +4,7 @@ c.strokeStyle = c.fillStyle;
 
 
 async function sendColorArrayToServer(route) {
-    var response = await fetch(route, {
+    let response = await fetch(route, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -18,7 +18,7 @@ async function sendColorArrayToServer(route) {
 
 // draw the loaded colorArray to the canvas
 function drawColorArrayToCanvas() {
-    for (var i=0; i<256; i++) {
+    for (let i=0; i<256; i++) {
         c.fillStyle = colorArray[i];
 
         y = Math.floor(i/16);
@@ -34,7 +34,7 @@ function drawColorArrayToCanvas() {
 
 // fill the colorArray with black
 function initializeColorArray() {
-    for (var i=0; i<256;i++) {
+    for (let i=0; i<256;i++) {
         colorArray[i] = "#000000";
     }
 }
@@ -49,8 +49,8 @@ function updateGrid(x,y) {
 
 // draw the whole grid
 function drawGrid() {
-    for (var i=0; i<FRAME_SIZE;i+=PIXEL_SIZE) {
-        for (var j=0; j<FRAME_SIZE;j+=PIXEL_SIZE) {
+    for (let i=0; i<FRAME_SIZE;i+=PIXEL_SIZE) {
+        for (let j=0; j<FRAME_SIZE;j+=PIXEL_SIZE) {
             updateGrid(i,j);
         }
     }

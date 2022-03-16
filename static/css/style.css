@@ -137,6 +137,7 @@ canvas {
 td {
     width: 200px;
     display: block;
+    padding: 2px 5px;
 }
 
 .remove-btn {

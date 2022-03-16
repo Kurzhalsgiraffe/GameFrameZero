@@ -1,18 +1,16 @@
 const colorCirlce = document.querySelectorAll(".color-circle")
-
 const gridColor = 'rgba(255, 255, 255, 1.0)';
 const PIXEL_SIZE = 50;
 const FRAME_SIZE = 800;
+const favcolor_field = document.getElementById("favcolor");
+const colorpicker_btn = document.querySelector("#colorpicker-btn");
+const delete_btn = document.querySelector("#delete-btn");
+const save_btn = document.querySelector("#save-btn");
+const apply_btn = document.querySelector("#apply-btn");
+const canvas = document.querySelector("canvas");
 var isMouseDown;
 var drawMode = true;
 var colorArray = [];
-
-var favcolor_field = document.getElementById("favcolor");
-var colorpicker_btn = document.querySelector("#colorpicker-btn");
-var delete_btn = document.querySelector("#delete-btn");
-var save_btn = document.querySelector("#save-btn");
-var apply_btn = document.querySelector("#apply-btn");
-var canvas = document.querySelector("canvas");
 
 save_btn.addEventListener("click", async () => await sendColorArrayToServer("/save"));
 apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
@@ -110,19 +108,18 @@ function removeActiveCircleColor() {
 
 // load colorArray from server relativ to the currently loaded Frame
 async function loadColorArrayFromServer(id) {
-    var response = await fetch("/load/"+id+"/same", {
-        method: "GET"
-    });
-    if (response.status != 200) {
+    let response = await fetch("/load/"+id+"/same");
+    if (response.status == 200) {
+        res = await response.json()
+        if (Object.keys(res).length === 0 && res.constructor === Object) {
+            initializeColorArray();
+        } else {
+            colorArray = res.colorArray
+        }
+        drawColorArrayToCanvas();  
+    } else {
         console.log("failed to load colorArray from server")
     }
-    res = await response.json()
-    if (Object.keys(res).length === 0 && res.constructor === Object) {
-        initializeColorArray();
-    } else {
-        colorArray = res.colorArray
-    }
-    drawColorArrayToCanvas();
 }
 
 document.addEventListener("DOMContentLoaded", function() {

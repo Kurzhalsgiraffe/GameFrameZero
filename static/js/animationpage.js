@@ -2,13 +2,12 @@ const number_tile = document.querySelectorAll(".number-tile")
 const gridColor = 'rgba(255, 255, 255, 1.0)';
 const PIXEL_SIZE = 32;
 const FRAME_SIZE = 512;
+const assume_btn = document.querySelector("#assume-btn")
+const apply_btn = document.querySelector("#apply-animation-btn")
+const stop_animation_btn = document.querySelector("#stop-animation-btn")
+const animationlist_body = document.querySelector("#animationlist-body")
+const canvas = document.querySelector("canvas");
 var colorArray = [];
-
-var assume_btn = document.querySelector("#assume-btn")
-var apply_btn = document.querySelector("#apply-animation-btn")
-var stop_animation_btn = document.querySelector("#stop-animation-btn")
-var animationlist_body = document.querySelector("#animationlist-body")
-var canvas = document.querySelector("canvas");
 
 apply_btn.addEventListener("click", applyAnimation);
 assume_btn.addEventListener("click", async () => await sendAnimationToServer());
@@ -16,38 +15,37 @@ stop_animation_btn.addEventListener("click", stopAnimation);
 
 //load the current Animationlist from the server and display it in the table
 async function loadAnimationList() {
-    var response = await fetch("/loadanimationlist", {
-        method: "GET"
-    });
-    if (response.status != 200) {
+    let response = await fetch("/animationlist/load");
+    if (response.status == 200) {
+        res = await response.json()
+        if (!(Object.keys(res).length === 0 && res.constructor === Object)) {
+            initializeAnimationlist(res)
+        }
+    } else {
         console.log("failed to load animationList from server")
     }
-    res = await response.json()
-    if (!(Object.keys(res).length === 0 && res.constructor === Object)) {
-        initializeAnimationlist(res)
-    }
+    
 }
 
 // load colorArray from server relativ to the currently loaded Frame
 async function loadColorArrayFromServer(id,pos) {
-    var response = await fetch("/load/"+id+"/"+pos, {
-        method: "GET"
-    });
-    if (response.status != 200) {
+    let response = await fetch("/load/"+id+"/"+pos);
+    if (response.status == 200) {
+        res = await response.json()
+        if (Object.keys(res).length === 0 && res.constructor === Object) {
+            initializeColorArray();
+        } else {
+            colorArray = res.colorArray
+        }
+        drawColorArrayToCanvas();
+    } else {
         console.log("failed to load colorArray from server")
     }
-    res = await response.json()
-    if (Object.keys(res).length === 0 && res.constructor === Object) {
-        initializeColorArray();
-    } else {
-        colorArray = res.colorArray
-    }
-    drawColorArrayToCanvas();
 }
 
 async function sendAnimationToServer() {
-    var animation = getAnimationList();
-    var response = await fetch("/updateanimationlist", {
+    let animation = getAnimationList();
+    let response = await fetch("/animationlist/update", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -96,7 +94,7 @@ function initializeAnimationlist(tiles) {
 function getAnimationList() {
     arr = []
     rows = animationlist_body.rows
-    for(var i=0; i< rows.length; i++){
+    for(let i=0; i< rows.length; i++){
         tds = rows[i].getElementsByTagName("td")
         frameid = tds[0].getAttribute('value').slice(6,)
         time = tds[1].getElementsByTagName("input")[0].value
@@ -152,8 +150,7 @@ function attachHandlers() {
 }
 
 async function applyAnimation() {
-    var animation = getAnimationList();
-    var response = await fetch("/applyanimation", {
+    let response = await fetch("/animationlist/apply", {
         method: "POST"
     });
     if (response.status != 200) {
@@ -162,7 +159,7 @@ async function applyAnimation() {
 }
 
 async function stopAnimation() {
-    var response = await fetch("/stopanimation", {
+    let response = await fetch("/animationlist/stop", {
         method: "POST"
     });
     if (response.status != 200) {

@@ -1,4 +1,4 @@
-#Comment out Lines 2 57 215 220 for testing on Windows
+#Comment out Lines 2 58 216 220 for testing on Windows
 import led
 import socket
 import os
@@ -45,7 +45,7 @@ def load(id, pos):
     except:
         return {},400
 
-@app.route("/loadanimationlist")
+@app.route("/animationlist/load")
 def loadanimationlist():
     return jsonify(animationList)
 
@@ -82,13 +82,13 @@ def addanimationframe(id):
     animationList.append([id,STANDARD_ANIMATIONTIME])
     return {}
 
-@app.route("/updateanimationlist", methods=["POST"])
+@app.route("/animationlist/update", methods=["POST"])
 def updateanimationlist():
     global animationList
     animationList = request.json
     return {}
 
-@app.route("/applyanimation", methods=["POST"])         #not implemented yet: start new thread and loop animationList
+@app.route("/animationlist/apply", methods=["POST"])         #not implemented yet: start new thread and loop animationList
 def applyanimation():
     global animationRunning
     animationRunning = True
@@ -97,7 +97,7 @@ def applyanimation():
     loop.run_until_complete(animationLoop())
     return {}
 
-@app.route("/stopanimation", methods=["POST"])
+@app.route("/animationlist/stop", methods=["POST"])
 def stopanimation():
     global animationRunning
     animationRunning = False
@@ -215,7 +215,6 @@ async def animationLoop():
             if animationRunning:
                 led.updateFrame(b)
                 await asyncio.sleep(time)
-            
 
 if __name__ == "__main__":
     led.init()
