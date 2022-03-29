@@ -18,9 +18,7 @@ async function loadAnimationList() {
     let response = await fetch("/animationlist/load");
     if (response.status == 200) {
         res = await response.json()
-        if (!(Object.keys(res).length === 0 && res.constructor === Object)) {
-            initializeAnimationlist(res)
-        }
+        initializeAnimationlist(res)
     } else {
         console.log("failed to load animationList from server")
     }

@@ -118,6 +118,20 @@ canvas {
 }
 
 /* Animationtable */
+.animationlist-wrapper {
+    height: 860px;
+    overflow-y: scroll;
+}
+
+.animationlist-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.animationlist-wrapper {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
 
 .animationlist {
     font-size: 24px;

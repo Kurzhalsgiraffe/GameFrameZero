@@ -1,6 +1,5 @@
-#Comment out Lines 2 58 216 220 for testing on Windows
+#Comment out Lines 2 57 215 219 for testing on Windows
 import led
-import socket
 import os
 import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
@@ -10,8 +9,8 @@ INDEX_SIZE = 2
 FRAME_SIZE = 768
 STANDARD_ANIMATIONTIME = "200"
 
-animationList = [["4","300"],["5","300"],["6","300"],["7","300"],["4","300"],["5","300"],["6","300"],["7","300"],["4","500"],\
-    ["8","200"],["9","200"],["8","200"],["9","200"],["10","200"],["11","200"],["10","200"],["11","200"],["8","200"],["9","200"],["8","200"],["9","200"],["10","200"],["11","200"],["10","200"],["11","500"]]
+animationList = [["4","200"],["5","200"],["6","200"],["7","200"]] * 3 + [["4","300"]] \
+    + [["8","200"],["9","200"],["8","200"],["9","200"],["10","200"],["11","200"],["10","200"],["11","200"]]*3
 animationRunning = False
 
 app = Flask(__name__)
@@ -221,4 +220,4 @@ if __name__ == "__main__":
     if not os.path.exists("savedFrames"):
         with open('savedFrames', 'wb') as file:
             file.write(bytes(COUNT_SIZE))
-    app.run(host=socket.gethostname())
+    app.run(host="0.0.0.0")
