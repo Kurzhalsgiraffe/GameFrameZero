@@ -1,18 +1,3 @@
-## Material i used
-
-- Raspberry Pi Zero WH
-- 16x16 256 Pixel LED Matrix, WS2812B (Individually Addressable)
-
-- DC 5V >3A Power Adapter (Depends on the Brightness of your LED Matrix, i set it on btightness=50)
-- DC Socket
-- Button for Shutting down the PI via GPIO
-- Powerswitch
-- PCB for soldering
-- Block screw clamps
-- PCB Socket Strips
-- Solder
-- Some Cables
-
 ## Software
 
 --- Work in Progress ---
@@ -67,3 +52,18 @@ Paste
 ````
 dtoverlay=gpio-shutdown, gpio_pin=3, active_low=1, gpio_pull=up
 ````
+
+### Material i used
+
+- Raspberry Pi Zero WH
+- 16x16 256 Pixel LED Matrix, WS2812B (Individually Addressable)
+
+- DC 5V >3A Power Adapter (Depends on the Brightness of your LED Matrix, i set it on btightness=50)
+- DC Socket
+- Button for Shutting down the PI via GPIO
+- Powerswitch
+- PCB for soldering
+- Block screw clamps
+- PCB Socket Strips
+- Solder
+- Some Cables
