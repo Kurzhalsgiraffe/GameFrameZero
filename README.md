@@ -1,34 +1,69 @@
-# LED-Matrix
+## Material i used
 
-Für dieses Projekt baute ich mir einen 16x16 DIY Game-Frame aus einem 5 Meter WS2812B (Neopixel) LED-Streifen.
-Die Inspiration für dieses Projekt kam von https://www.youtube.com/watch?v=jkg7T7jlIzU.
+- Raspberry Pi Zero WH
+- 16x16 256 Pixel LED Matrix, WS2812B (Individually Addressable)
 
-## Hardware
-
-- Raspberry Pi Zero W
-- WS2812B Neopixel 5 Meter (60 LEDs/Meter)
-- Pegelwandler (3.3V -> 5V)
+- DC 5V >3A Power Adapter (Depends on the Brightness of your LED Matrix, i set it on btightness=50)
+- DC Socket
+- Button for Shutting down the PI via GPIO
+- Powerswitch
+- PCB for soldering
+- Block screw clamps
+- PCB Socket Strips
+- Solder
+- Some Cables
 
 ## Software
 
 --- Work in Progress ---
 
-Die Idee war es, eine einfache WebApp für das Zeichnen der Pixelbilder zu bauen, und die Pixelwerte an einen
-Flask Server zu übermitteln, der auf dem RPI0 läuft. Später sollen Animationen und Live-Zeichnungen möglich sein.
+This is a hobby project and definitely doesn't meet any security standards or coding idioms. I'm still working on it and trying to improve my work
 
 ## Installation
 
+Clone Repository
+````
+git clone https://github.com/Kurzhalsgiraffe/GameFrameZero
+````
 
+Make sure to install it with sudo, if you want to run the Server as root
+````
+sudo apt install python3-pip
+sudo pip3 install flask
+sudo pip3 install rpi-ws281x
+````
 
+## Setup the Autostart
+
+Create service file
 ````
-git clone https://github.com/Kurzhalsgiraffe/LED-Matrix
+cd /etc/systemd/system
+sudo nano gameframezero.service
 ````
+Paste
 ````
-cd LED-Matrix
+[Unit]
+Description=GameFrameZero Autostart
+
+[Service]
+User=root
+WorkingDirectory=/home/pi/GameFrameZero/
+ExecStart=python3 server.py
+Restart=always
 ````
+Start the service
 ````
-docker build -t neopixel .
+sudo systemctl start gameframezero.service
+sudo systemctl enable gameframezero.service
 ````
+
+## Setup the GPIO-Shutdown
+
+If you want to shutdown the Raspberry-Pi without an SSH connection, you need to enable gpio-shutdown
 ````
-docker run -d --privileged neopixel
+sudo nano /boot/config.txt
+````
+Paste
+````
+dtoverlay=gpio-shutdown, gpio_pin=3, active_low=1, gpio_pull=up
 ````
