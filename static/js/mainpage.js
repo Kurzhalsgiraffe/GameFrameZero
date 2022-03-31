@@ -111,7 +111,7 @@ async function loadColorArrayFromServer(id) {
     let response = await fetch("/load/"+id+"/same");
     if (response.status == 200) {
         res = await response.json()
-        if (Object.keys(res).length === 0 && res.constructor === Object) {
+        if (!res.colorArray) {
             initializeColorArray();
         } else {
             colorArray = res.colorArray

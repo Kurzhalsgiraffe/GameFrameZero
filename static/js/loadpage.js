@@ -40,7 +40,7 @@ function editSavedColorArray() {
 }
 
 async function addFrameToAnimation() {
-    let response = await fetch("/addanimationframe/"+currentPos, {
+    let response = await fetch("/animationlist/add/"+currentPos, {
         method: "POST"
     });
     if (response.status != 200) {
@@ -51,9 +51,9 @@ async function addFrameToAnimation() {
 // load colorArray from server relativ to the currently loaded Frame
 async function loadColorArrayFromServer(id,pos) {
     let response = await fetch("/load/"+id+"/"+pos);
+    res = await response.json()
     if (response.status == 200) {
-        res = await response.json()
-        if (Object.keys(res).length === 0 && res.constructor === Object) {
+        if (!res.colorArray) {
             currentPos = 1;
             frameNumber.textContent="KEIN BILD";
             initializeColorArray();

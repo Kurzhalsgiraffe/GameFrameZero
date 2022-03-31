@@ -1,6 +1,7 @@
-#Comment out Lines 2 57 215 219 for testing on Windows
+#Comment out Lines 2 70 223 227 for testing on Windows
 import led
 import os
+import sqlite3
 import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
 
@@ -31,16 +32,28 @@ def animation():
 
 @app.route("/load/<id>/<pos>")
 def load(id, pos):
-    loadedFrameID = updateLoadedFrameID(id, pos)
+
+    loadedFrameID = int(id)
+    if pos == "first":
+        loadedFrameID = getFirstID()
+    elif pos == "prev":
+        loadedFrameID = getPreviousID(loadedFrameID)
+    elif pos == "next":
+        loadedFrameID = getNextID(loadedFrameID)
+    elif pos == "last":
+        loadedFrameID = getLastID()
+
     try:
-        b = loadBinaryFromFile(loadedFrameID)
-        if len(b) == FRAME_SIZE:
-            d = {
-                "colorArray": binaryToColorArray(b),
-                "frameID": loadedFrameID
-            }
-            return jsonify(d)
-        return {}
+        b = loadBinaryFromDatabase(loadedFrameID)
+        if b:
+            if len(b) == FRAME_SIZE:
+                d = {
+                    "colorArray": binaryToColorArray(b),
+                    "frameID": loadedFrameID
+                }
+                return jsonify(d)
+        else:
+            return {}
     except:
         return {},400
 
@@ -61,21 +74,18 @@ def apply():
 def save():
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
-    newIndex = (getFrameCount()+1).to_bytes(COUNT_SIZE,"big")
-    emptyIndex = getEmptySpaceIndex()  
-    if emptyIndex:                                      # if there is a space marked as deleted...
-        with open('savedFrames', 'r+b') as file:        # the frame will be written to the index and so the old image will be overwritten
-            file.seek(emptyIndex,0)                     
-            file.write(newIndex)                        # write the new index to before the inserted frame
-            file.write(b)                               # write the frame
-    else:                                                       # if there is no free space...
-        with open('savedFrames', 'ab') as file:                 # the frame will be append to the end of the file
-            file.write(newIndex)                                # write the new index to before the frame
-            file.write(b)                                       # write the frame
-    setFrameCount(getFrameCount()+1)
-    return {}
+    try:
+        conn = db_connection()
+        cursor = conn.cursor()
+        cursor = cursor.execute("INSERT INTO images VALUES (NULL,?)", (b,))
+        conn.commit()
+        conn.close()
+        return {}
+    except:
+        return {},400
+        
 
-@app.route("/addanimationframe/<id>", methods=["POST"])
+@app.route("/animationlist/add/<id>", methods=["POST"])
 def addanimationframe(id):
     global animationList
     animationList.append([id,STANDARD_ANIMATIONTIME])
@@ -87,7 +97,7 @@ def updateanimationlist():
     animationList = request.json
     return {}
 
-@app.route("/animationlist/apply", methods=["POST"])         #not implemented yet: start new thread and loop animationList
+@app.route("/animationlist/apply", methods=["POST"])
 def applyanimation():
     global animationRunning
     animationRunning = True
@@ -106,24 +116,16 @@ def stopanimation():
 
 @app.route("/delete/<id>", methods=["DELETE"])
 def delete(id):
-    loadedFrameID = int(id)
-    i = 2
-    with open('savedFrames', 'r+b') as file:
-        while True:
-            file.seek(i,0)
-            binaryIndex = file.read(INDEX_SIZE)
-            if binaryIndex == b'':
-                break
-            intIndex = int.from_bytes(binaryIndex, "big")    
-            if intIndex == loadedFrameID:
-                file.seek(i,0)
-                file.write(b'\x00\x00')       # write the index to b'\x00\x00' (mark it as deleted)
-                setFrameCount(getFrameCount()-1)
-            elif intIndex > loadedFrameID:
-                file.seek(i,0)
-                file.write((intIndex-1).to_bytes(COUNT_SIZE,"big"))
-            i+=(INDEX_SIZE+FRAME_SIZE)
-    return {}
+    frameID = int(id)
+    try:
+        conn = db_connection()
+        cursor = conn.cursor()
+        cursor = cursor.execute(" DELETE FROM images WHERE id=?",(frameID,))
+        conn.commit()
+        conn.close()
+        return {}
+    except:
+        return {},400
 
 ## ----- FUNCTIONS ----- ##
 
@@ -141,71 +143,77 @@ def binaryToColorArray(binary):
         c.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
     return c
 
-# read the count variable (First two Bytes of file)
-def getFrameCount():
-    with open('savedFrames', 'rb') as file:
-        file.seek(0,0)
-        return int.from_bytes(file.read(COUNT_SIZE), "big")
+def db_connection():
+    conn = None
+    try:
+        conn = sqlite3.connect("database.sqlite")
+    except:
+        return None
+    return conn
 
-# set the count variable (First two Bytes of file) to parameter
-def setFrameCount(c):
-    with open('savedFrames', 'r+b') as file:
-        file.seek(0,0)
-        c = c.to_bytes(COUNT_SIZE,"big")
-        file.write(c)
-
-# iterate through all index values of file (2 bytes before each frame) and checks if they are marked as deleted (b'\x00\x00')
-def getEmptySpaceIndex():
-    with open('savedFrames', 'rb') as file:
-        i = 2
-        while True:
-            file.seek(i,0)
-            binaryIndex = file.read(INDEX_SIZE)
-            if binaryIndex == b'':
-                break
-            elif binaryIndex == b'\x00\x00':
-                return i
-            i+=(INDEX_SIZE+FRAME_SIZE)
+def loadBinaryFromDatabase(frameID):
+    try:
+        conn = db_connection()
+        cursor = conn.cursor()
+        cursor = cursor.execute(" SELECT * FROM images WHERE id=?",(frameID,))
+        data = cursor.fetchall()
+        conn.close()
+        return bytearray(data[0][1])
+    except:
         return None
 
-def loadBinaryFromFile(frameID):
-    i = 2
-    with open('savedFrames', 'rb') as file:
-        while True:
-            file.seek(i,0)
-            binaryIndex = file.read(INDEX_SIZE)
-            if binaryIndex == b'':
-                break
-            if int.from_bytes(binaryIndex, "big") == frameID:
-                b = file.read(FRAME_SIZE)
-                return b
-            i+=(INDEX_SIZE+FRAME_SIZE)
-    return None
+def getFirstID():
+    try:
+        conn = db_connection()
+        cursor = conn.cursor()
+        cursor = cursor.execute("SELECT MIN(id) FROM images")
+        data = cursor.fetchone()
+        conn.close()
+        return data[0]
+    except:
+        return None
 
-def updateLoadedFrameID(id, pos):
-    frameCount = getFrameCount()
-    loadedFrameID = int(id)
-    if frameCount < loadedFrameID:
-        loadedFrameID = 1
-    if pos == "first":
-        loadedFrameID = 1
-    elif pos == "prev":
-        loadedFrameID = loadedFrameID - 1
-        if loadedFrameID == 0:
-            loadedFrameID = frameCount if frameCount > 0 else 1
-    elif pos == "next":
-        loadedFrameID = loadedFrameID + 1
-        if loadedFrameID > frameCount:
-            loadedFrameID = 1
-    elif pos == "last":
-        loadedFrameID = frameCount if frameCount > 0 else 1
-    return loadedFrameID
+def getLastID():
+    try:
+        conn = db_connection()
+        cursor = conn.cursor()
+        cursor = cursor.execute("SELECT id FROM images WHERE id = (SELECT MAX(id) FROM images)")
+        data = cursor.fetchone()
+        conn.close()
+        return data[0]
+    except:
+        return None
 
+def getNextID(current):
+    try:
+        if current == getLastID():
+            return getFirstID()
+        conn = db_connection()
+        cursor = conn.cursor()
+        cursor = cursor.execute("SELECT id FROM images WHERE id = (SELECT MIN(id) FROM images WHERE id > ?)",(current,))
+        data = cursor.fetchone()
+        conn.close()
+        return data[0]
+    except:
+        return None
+
+def getPreviousID(current):
+    try:
+        if current == getFirstID():
+            return getLastID()
+        conn = db_connection()
+        cursor = conn.cursor()
+        cursor = cursor.execute("SELECT id FROM images WHERE id = (SELECT MAX(id) FROM images WHERE id < ?)",(current,))
+        data = cursor.fetchone()
+        conn.close()
+        return data[0]
+    except:
+        return None
 
 async def animationLoop():
     animation = []
     for frame,t in animationList:
-        b = loadBinaryFromFile(int(frame))
+        b = loadBinaryFromDatabase(int(frame))
         t = int(t)/1000
         animation.append([b,t])
 
@@ -217,7 +225,11 @@ async def animationLoop():
 
 if __name__ == "__main__":
     led.init()
-    if not os.path.exists("savedFrames"):
-        with open('savedFrames', 'wb') as file:
-            file.write(bytes(COUNT_SIZE))
+    if not os.path.exists("database.sqlite"):
+        conn = db_connection()
+        cursor = conn.cursor()
+        sql = """ CREATE TABLE images (
+            id integer PRIMARY KEY AUTOINCREMENT,
+            img blob NOT NULL)"""
+        cursor.execute(sql)
     app.run(host="0.0.0.0")

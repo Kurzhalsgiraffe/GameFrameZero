@@ -6,6 +6,7 @@ const assume_btn = document.querySelector("#assume-btn")
 const apply_btn = document.querySelector("#apply-animation-btn")
 const stop_animation_btn = document.querySelector("#stop-animation-btn")
 const animationlist_body = document.querySelector("#animationlist-body")
+const frameNumber = document.getElementById("framenumber")
 const canvas = document.querySelector("canvas");
 var colorArray = [];
 
@@ -30,10 +31,12 @@ async function loadColorArrayFromServer(id,pos) {
     let response = await fetch("/load/"+id+"/"+pos);
     if (response.status == 200) {
         res = await response.json()
-        if (Object.keys(res).length === 0 && res.constructor === Object) {
+        if (!res.colorArray) {
+            frameNumber.textContent="KEIN BILD";
             initializeColorArray();
         } else {
             colorArray = res.colorArray
+            frameNumber.textContent="BILD "+res.frameID;
         }
         drawColorArrayToCanvas();
     } else {
