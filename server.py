@@ -1,7 +1,6 @@
-#Comment out Lines 2 70 223 227 for testing on Windows
+#Comment out Lines 2 70 147 151 for testing on Windows
 import led
-import os
-import sqlite3
+from databaseaccess import dao
 import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
 
@@ -10,7 +9,7 @@ INDEX_SIZE = 2
 FRAME_SIZE = 768
 STANDARD_ANIMATIONTIME = "200"
 
-animationList = [["4","200"],["5","200"],["6","200"],["7","200"]] * 3 + [["4","300"]] \
+animationList = [["4","200"],["5","200"],["6","200"],["7","200"]] * 4  \
     + [["8","200"],["9","200"],["8","200"],["9","200"],["10","200"],["11","200"],["10","200"],["11","200"]]*3
 animationRunning = False
 
@@ -34,17 +33,18 @@ def animation():
 def load(id, pos):
 
     loadedFrameID = int(id)
+    
     if pos == "first":
-        loadedFrameID = getFirstID()
+        loadedFrameID = database.getFirstID()
     elif pos == "prev":
-        loadedFrameID = getPreviousID(loadedFrameID)
+        loadedFrameID = database.getPreviousID(loadedFrameID)
     elif pos == "next":
-        loadedFrameID = getNextID(loadedFrameID)
+        loadedFrameID = database.getNextID(loadedFrameID)
     elif pos == "last":
-        loadedFrameID = getLastID()
+        loadedFrameID = database.getLastID()
 
     try:
-        b = loadBinaryFromDatabase(loadedFrameID)
+        b = database.loadBinaryFromDatabase(loadedFrameID)
         if b:
             if len(b) == FRAME_SIZE:
                 d = {
@@ -75,16 +75,11 @@ def save():
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
     try:
-        conn = db_connection()
-        cursor = conn.cursor()
-        cursor = cursor.execute("INSERT INTO images VALUES (NULL,?)", (b,))
-        conn.commit()
-        conn.close()
+        database.saveBinaryToDatabase()
         return {}
     except:
         return {},400
         
-
 @app.route("/animationlist/add/<id>", methods=["POST"])
 def addanimationframe(id):
     global animationList
@@ -118,11 +113,7 @@ def stopanimation():
 def delete(id):
     frameID = int(id)
     try:
-        conn = db_connection()
-        cursor = conn.cursor()
-        cursor = cursor.execute(" DELETE FROM images WHERE id=?",(frameID,))
-        conn.commit()
-        conn.close()
+        database.deleteBinaryFromDatabase(frameID)
         return {}
     except:
         return {},400
@@ -143,77 +134,10 @@ def binaryToColorArray(binary):
         c.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
     return c
 
-def db_connection():
-    conn = None
-    try:
-        conn = sqlite3.connect("database.sqlite")
-    except:
-        return None
-    return conn
-
-def loadBinaryFromDatabase(frameID):
-    try:
-        conn = db_connection()
-        cursor = conn.cursor()
-        cursor = cursor.execute(" SELECT * FROM images WHERE id=?",(frameID,))
-        data = cursor.fetchall()
-        conn.close()
-        return bytearray(data[0][1])
-    except:
-        return None
-
-def getFirstID():
-    try:
-        conn = db_connection()
-        cursor = conn.cursor()
-        cursor = cursor.execute("SELECT MIN(id) FROM images")
-        data = cursor.fetchone()
-        conn.close()
-        return data[0]
-    except:
-        return None
-
-def getLastID():
-    try:
-        conn = db_connection()
-        cursor = conn.cursor()
-        cursor = cursor.execute("SELECT id FROM images WHERE id = (SELECT MAX(id) FROM images)")
-        data = cursor.fetchone()
-        conn.close()
-        return data[0]
-    except:
-        return None
-
-def getNextID(current):
-    try:
-        if current == getLastID():
-            return getFirstID()
-        conn = db_connection()
-        cursor = conn.cursor()
-        cursor = cursor.execute("SELECT id FROM images WHERE id = (SELECT MIN(id) FROM images WHERE id > ?)",(current,))
-        data = cursor.fetchone()
-        conn.close()
-        return data[0]
-    except:
-        return None
-
-def getPreviousID(current):
-    try:
-        if current == getFirstID():
-            return getLastID()
-        conn = db_connection()
-        cursor = conn.cursor()
-        cursor = cursor.execute("SELECT id FROM images WHERE id = (SELECT MAX(id) FROM images WHERE id < ?)",(current,))
-        data = cursor.fetchone()
-        conn.close()
-        return data[0]
-    except:
-        return None
-
 async def animationLoop():
     animation = []
     for frame,t in animationList:
-        b = loadBinaryFromDatabase(int(frame))
+        b = database.loadBinaryFromDatabase(int(frame))
         t = int(t)/1000
         animation.append([b,t])
 
@@ -225,11 +149,9 @@ async def animationLoop():
 
 if __name__ == "__main__":
     led.init()
-    if not os.path.exists("database.sqlite"):
-        conn = db_connection()
-        cursor = conn.cursor()
-        sql = """ CREATE TABLE images (
-            id integer PRIMARY KEY AUTOINCREMENT,
-            img blob NOT NULL)"""
-        cursor.execute(sql)
+    try:
+        database = dao("database.sqlite")
+    except:
+        print("Failed to create Database connection")
+        exit(-1)
     app.run(host="0.0.0.0")
