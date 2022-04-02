@@ -1,4 +1,4 @@
-const colorCirlce = document.querySelectorAll(".color-circle")
+const colorCirlce = document.querySelectorAll(".color-circle");
 const gridColor = 'rgba(255, 255, 255, 1.0)';
 const PIXEL_SIZE = 50;
 const FRAME_SIZE = 800;
@@ -7,10 +7,8 @@ const colorpicker_btn = document.querySelector("#colorpicker-btn");
 const delete_btn = document.querySelector("#delete-btn");
 const save_btn = document.querySelector("#save-btn");
 const apply_btn = document.querySelector("#apply-btn");
-const canvas = document.querySelector("canvas");
 var isMouseDownCanvas;
 var drawMode = true;
-var colorArray = [];
 
 save_btn.addEventListener("click", async () => await sendColorArrayToServer("/save"));
 apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
@@ -110,20 +108,19 @@ function removeActiveCircleColor() {
 async function loadColorArrayFromServer(id) {
     let response = await fetch("/load/"+id+"/same");
     if (response.status == 200) {
-        res = await response.json()
+        res = await response.json();
         if (!res.colorArray) {
             initializeColorArray();
         } else {
-            colorArray = res.colorArray
+            colorArray = res.colorArray;
         }
         drawColorArrayToCanvas();  
     } else {
-        console.log("failed to load colorArray from server")
+        console.log("failed to load colorArray from server");
     }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    drawGrid();
     initializeColorArray();
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);

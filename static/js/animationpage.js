@@ -1,14 +1,12 @@
-const number_tile = document.querySelectorAll(".number-tile")
+const number_tile = document.querySelectorAll(".number-tile");
 const gridColor = 'rgba(255, 255, 255, 1.0)';
 const PIXEL_SIZE = 32;
 const FRAME_SIZE = 512;
-const assume_btn = document.querySelector("#assume-btn")
-const apply_btn = document.querySelector("#apply-animation-btn")
-const stop_animation_btn = document.querySelector("#stop-animation-btn")
-const animationlist_body = document.querySelector("#animationlist-body")
-const frameNumber = document.getElementById("framenumber")
-const canvas = document.querySelector("canvas");
-var colorArray = [];
+const assume_btn = document.querySelector("#assume-btn");
+const apply_btn = document.querySelector("#apply-animation-btn");
+const stop_animation_btn = document.querySelector("#stop-animation-btn");
+const animationlist_body = document.querySelector("#animationlist-body");
+const frameNumber = document.getElementById("framenumber");
 
 apply_btn.addEventListener("click", applyAnimation);
 assume_btn.addEventListener("click", async () => await sendAnimationToServer());
@@ -18,10 +16,10 @@ stop_animation_btn.addEventListener("click", stopAnimation);
 async function loadAnimationList() {
     let response = await fetch("/animationlist/load");
     if (response.status == 200) {
-        res = await response.json()
-        initializeAnimationlist(res)
+        res = await response.json();
+        initializeAnimationlist(res);
     } else {
-        console.log("failed to load animationList from server")
+        console.log("failed to load animationList from server");
     }
     
 }
@@ -30,17 +28,17 @@ async function loadAnimationList() {
 async function loadColorArrayFromServer(id,pos) {
     let response = await fetch("/load/"+id+"/"+pos);
     if (response.status == 200) {
-        res = await response.json()
+        res = await response.json();
         if (!res.colorArray) {
             frameNumber.textContent="KEIN BILD";
             initializeColorArray();
         } else {
-            colorArray = res.colorArray
+            colorArray = res.colorArray;
             frameNumber.textContent="BILD "+res.frameID;
         }
         drawColorArrayToCanvas();
     } else {
-        console.log("failed to load colorArray from server")
+        console.log("failed to load colorArray from server");
     }
 }
 
@@ -63,19 +61,19 @@ function initializeAnimationlist(tiles) {
     animationlist_body.innerHTML = '';
 
     for (let tile of tiles) {
-        frameID = tile[0]
-        time = tile[1]
+        frameID = tile[0];
+        time = tile[1];
         // create elements
         const tr = document.createElement("tr");
         const numberTile = document.createElement("td");
         const timeTile = document.createElement("td");
 
         // add attributes
-        tr.setAttribute("draggable", true)
-        tr.setAttribute("id", "al-"+x)
+        tr.setAttribute("draggable", true);
+        tr.setAttribute("id", "al-"+x);
 
         numberTile.classList.add("number-tile");
-        numberTile.setAttribute("value", "frame-"+frameID)
+        numberTile.setAttribute("value", "frame-"+frameID);
 
         timeTile.classList.add("time-tile");
 
@@ -93,13 +91,13 @@ function initializeAnimationlist(tiles) {
 }
 
 function getAnimationList() {
-    arr = []
-    rows = animationlist_body.rows
+    arr = [];
+    rows = animationlist_body.rows;
     for(let i=0; i< rows.length; i++){
-        tds = rows[i].getElementsByTagName("td")
-        frameid = tds[0].getAttribute('value').slice(6,)
-        time = tds[1].getElementsByTagName("input")[0].value
-        arr.push([frameid,time])
+        tds = rows[i].getElementsByTagName("td");
+        frameid = tds[0].getAttribute('value').slice(6,);
+        time = tds[1].getElementsByTagName("input")[0].value;
+        arr.push([frameid,time]);
     }
     return arr;
 }
@@ -151,7 +149,7 @@ function attachHandlers() {
 }
 
 async function applyAnimation() {
-    let response = await fetch("/animationlist/apply", {
+    let response = await fetch("/animation/apply", {
         method: "POST"
     });
     if (response.status != 200) {
@@ -160,7 +158,7 @@ async function applyAnimation() {
 }
 
 async function stopAnimation() {
-    let response = await fetch("/animationlist/stop", {
+    let response = await fetch("/animation/stop", {
         method: "POST"
     });
     if (response.status != 200) {
@@ -169,7 +167,6 @@ async function stopAnimation() {
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    drawGrid();
-    await loadAnimationList()
+    await loadAnimationList();
     attachHandlers();
 });

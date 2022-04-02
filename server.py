@@ -1,4 +1,4 @@
-#Comment out Lines 2 70 86 153 157 for testing on Windows
+#Comment out Lines 2 75 92 159 163 for testing on Windows
 import led
 from databaseaccess import dao
 import asyncio
@@ -12,6 +12,7 @@ STANDARD_ANIMATIONTIME = "200"
 animationList = [["4","200"],["5","200"],["6","200"],["7","200"]] * 4  \
     + [["8","200"],["9","200"],["8","200"],["9","200"],["10","200"],["11","200"],["10","200"],["11","200"]]*3
 animationRunning = False
+brightness = 40
 
 app = Flask(__name__)
 
@@ -57,8 +58,12 @@ def load(id, pos):
     except:
         return {},400
 
+@app.route("/brightness/load")
+def brightness_load():
+    return str(brightness)
+
 @app.route("/animationlist/load")
-def loadanimationlist():
+def animationlist_load():
     return jsonify(animationList)
 
 ## ----- POST ----- ##
@@ -80,25 +85,27 @@ def save():
     except:
         return {},400
 
-@app.route("/brightness/<brightness>", methods=["POST"])
-def updateBrightness(brightness):
+@app.route("/brightness/apply/<br>", methods=["POST"])
+def brightness_apply(br):
+    global brightness
+    brightness = br
     led.updateBrightness(brightness)
     return {}
         
 @app.route("/animationlist/add/<id>", methods=["POST"])
-def addanimationframe(id):
+def animationlist_add(id):
     global animationList
     animationList.append([id,STANDARD_ANIMATIONTIME])
     return {}
 
 @app.route("/animationlist/update", methods=["POST"])
-def updateanimationlist():
+def animationlist_update():
     global animationList
     animationList = request.json
     return {}
 
-@app.route("/animationlist/apply", methods=["POST"])
-def applyanimation():
+@app.route("/animation/apply", methods=["POST"])
+def animation_apply():
     global animationRunning
     animationRunning = True
     asyncio.set_event_loop(asyncio.new_event_loop())
@@ -106,8 +113,8 @@ def applyanimation():
     loop.run_until_complete(animationLoop())
     return {}
 
-@app.route("/animationlist/stop", methods=["POST"])
-def stopanimation():
+@app.route("/animation/stop", methods=["POST"])
+def animation_stop():
     global animationRunning
     animationRunning = False
     return {}

@@ -1,17 +1,15 @@
 const gridColor = 'rgba(255, 255, 255, 1.0)';
 const PIXEL_SIZE = 50;
 const FRAME_SIZE = 800;
-const delete_btn = document.querySelector("#delete-btn")
-const edit_btn = document.querySelector("#edit-btn")
+const delete_btn = document.querySelector("#delete-btn");
+const edit_btn = document.querySelector("#edit-btn");
 const apply_btn = document.querySelector("#apply-btn");
 const animation_btn = document.querySelector("#animation-btn");
-const first_frame_btn = document.querySelector("#first-frame-btn")
-const prev_frame_btn = document.querySelector("#prev-frame-btn")
-const next_frame_btn = document.querySelector("#next-frame-btn")
-const last_frame_btn = document.querySelector("#last-frame-btn")
-const frameNumber = document.getElementById("framenumber")
-const canvas = document.querySelector("canvas");
-var colorArray = [];
+const first_frame_btn = document.querySelector("#first-frame-btn");
+const prev_frame_btn = document.querySelector("#prev-frame-btn");
+const next_frame_btn = document.querySelector("#next-frame-btn");
+const last_frame_btn = document.querySelector("#last-frame-btn");
+const frameNumber = document.getElementById("framenumber");
 var currentPos = 1;
 
 delete_btn.addEventListener("click", async () => await deleteColorArrayFromServer(currentPos));
@@ -29,9 +27,9 @@ async function deleteColorArrayFromServer(id) {
         method: "DELETE"
     });
     if (response.status == 200) {
-        await loadColorArrayFromServer(currentPos,"same")
+        await loadColorArrayFromServer(currentPos,"same");
     } else {
-        console.log("failed to delete colorArray from server")
+        console.log("failed to delete colorArray from server");
     }
 }
 
@@ -51,24 +49,23 @@ async function addFrameToAnimation() {
 // load colorArray from server relativ to the currently loaded Frame
 async function loadColorArrayFromServer(id,pos) {
     let response = await fetch("/load/"+id+"/"+pos);
-    res = await response.json()
+    res = await response.json();
     if (response.status == 200) {
         if (!res.colorArray) {
             currentPos = 1;
             frameNumber.textContent="KEIN BILD";
             initializeColorArray();
         } else {
-            colorArray = res.colorArray
-            currentPos = res.frameID
+            colorArray = res.colorArray;
+            currentPos = res.frameID;
             frameNumber.textContent="BILD "+currentPos;
         }
         drawColorArrayToCanvas();
     } else {
-        console.log("failed to load colorArray from server")
+        console.log("failed to load colorArray from server");
     }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    drawGrid();
     loadColorArrayFromServer(currentPos, "first");
 });
