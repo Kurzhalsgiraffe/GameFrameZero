@@ -72,7 +72,11 @@ function draw(x_start, y_start) {
     c.stroke();
 }
 
-brightness_slider.addEventListener("mousedown", (event)=>{
+brightness_slider.addEventListener("click", ()=>{
+    brightness_value.textContent = brightness_slider.value;
+});
+
+brightness_slider.addEventListener("mousedown", ()=>{
     isMouseDownSlider = true;
 });
 
