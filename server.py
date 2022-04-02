@@ -89,7 +89,7 @@ def save():
 def brightness_apply(br):
     global brightness
     brightness = br
-    led.updateBrightness(brightness)
+    led.updateBrightness(int(brightness))
     return {}
         
 @app.route("/animationlist/add/<id>", methods=["POST"])
