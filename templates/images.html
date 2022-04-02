@@ -59,6 +59,17 @@
                         <li>
                             <button class="button opt-btn my-2" id="animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Füge das Bild zur Animieren-Liste hinzu"><strong>ANIMATION</strong></button>
                         </li>
+                        <li class="mb-3 mt-5">
+                            <span class="fs-6 fw-bold">HELLIGKEIT</span>
+                        </li>
+                        <li>
+                            <div class="d-flex justify-content-center mb-2">                             
+                                <span id="brightness-value">50</span>
+                            </div>
+                            <div class="slidecontainer">
+                                <input type="range" min="1" max="80" value="40" class="slider" id="brightness-slider">
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -82,7 +93,7 @@
                             <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
                         </svg>
                     </button>
-                    <span class="mx-2 my-auto fs-5 fw-bold" id="framenumber" style="color: white">BILD 1</span>
+                    <span class="mx-2 my-auto fs-5 fw-bold" id="framenumber">BILD 1</span>
                     <button class="button pic-btn mx-2" id="next-frame-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>

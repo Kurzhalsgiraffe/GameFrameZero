@@ -56,6 +56,17 @@
                         <li>
                             <button class="button opt-btn my-2" id="stop-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Stoppe die Animation"><strong>STOP</strong></button>
                         </li>
+                        <li class="mb-3 mt-5">
+                            <span class="fs-6 fw-bold">HELLIGKEIT</span>
+                        </li>
+                        <li>
+                            <div class="d-flex justify-content-center mb-2">                             
+                                <span id="brightness-value">50</span>
+                            </div>
+                            <div class="slidecontainer">
+                                <input type="range" min="1" max="80" value="40" class="slider" id="brightness-slider">
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -64,13 +75,11 @@
 
             <!-- Canvas -->
             <div class="col py-3 d-flex justify-content-evenly my-auto">
-                <div class="">
-                    <div class="animationlist-wrapper">
-                        <table class="animationlist">
-                            <tbody id="animationlist-body">
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="animationlist-wrapper">
+                    <table class="animationlist">
+                        <tbody id="animationlist-body">
+                        </tbody>
+                    </table>
                 </div>
                 <div>
                     <div class="d-flex justify-content-center board">

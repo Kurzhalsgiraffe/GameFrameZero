@@ -1,4 +1,4 @@
-#Comment out Lines 2 70 147 151 for testing on Windows
+#Comment out Lines 2 70 86 153 157 for testing on Windows
 import led
 from databaseaccess import dao
 import asyncio
@@ -79,6 +79,11 @@ def save():
         return {}
     except:
         return {},400
+
+@app.route("/brightness/<brightness>", methods=["POST"])
+def updateBrightness(brightness):
+    led.updateBrightness(brightness)
+    return {}
         
 @app.route("/animationlist/add/<id>", methods=["POST"])
 def addanimationframe(id):

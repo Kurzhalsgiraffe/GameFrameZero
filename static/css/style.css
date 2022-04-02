@@ -2,7 +2,8 @@
 
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #6acc6a;
+    background-color: #343437;
+    color: white;
 }
 
 body::-webkit-scrollbar {
@@ -121,6 +122,7 @@ canvas {
 .animationlist-wrapper {
     height: 775px;
     overflow-y: scroll;
+    color: black;
 }
 
 .animationlist-wrapper::-webkit-scrollbar {
@@ -137,7 +139,6 @@ canvas {
     font-size: 24px;
     margin: auto;
     cursor: pointer;
-    border: 1px solid #000000;
 }
 
 .time-tile {
@@ -159,3 +160,31 @@ td {
     font-weight: bold;
     float: right;
 }
+
+.slidecontainer {
+    width: 100%;
+  }
+  
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 25px;
+    background: white;
+    outline: none;
+    opacity: 0.8;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+  
+  .slider:hover {
+    opacity: 1;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #32cd32;
+    cursor: pointer;
+  }

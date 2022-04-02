@@ -8,7 +8,7 @@ const delete_btn = document.querySelector("#delete-btn");
 const save_btn = document.querySelector("#save-btn");
 const apply_btn = document.querySelector("#apply-btn");
 const canvas = document.querySelector("canvas");
-var isMouseDown;
+var isMouseDownCanvas;
 var drawMode = true;
 var colorArray = [];
 
@@ -27,16 +27,16 @@ delete_btn.addEventListener("click", function() {
 });
 
 canvas.addEventListener("mousedown", (event)=>{
-    isMouseDown = true;
+    isMouseDownCanvas = true;
     updateCell(event.offsetX, event.offsetY);
 });
 
 canvas.addEventListener("mouseup", ()=>{
-    isMouseDown = false;
+    isMouseDownCanvas = false;
 });
 
 canvas.addEventListener("mouseleave", ()=>{
-    isMouseDown = false;
+    isMouseDownCanvas = false;
 });
 
 canvas.addEventListener("mousemove",(event)=>{
@@ -55,7 +55,7 @@ function updateCell(x,y) {
         tileNumber = 16*(y_start/50)+(15-(x_start/50));
     }
 
-    if (isMouseDown) {
+    if (isMouseDownCanvas) {
         if(drawMode) {
             draw(x_start, y_start);
             updateGrid(x_start,y_start);

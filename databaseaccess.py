@@ -39,7 +39,8 @@ class dao:
         try:
             data = self.cursor.execute("SELECT MAX(id) FROM images").fetchone()
             return data[0]
-        except:
+        except Exception as e:
+            print(e)
             return None
 
     def getNextID(self, current):
@@ -48,7 +49,8 @@ class dao:
                 return self.getFirstID()
             data = self.cursor.execute("SELECT MIN(id) FROM images WHERE id > ?",(current,)).fetchone()
             return data[0]
-        except:
+        except Exception as e:
+            print(e)
             return None
 
     def getPreviousID(self, current):
@@ -57,5 +59,6 @@ class dao:
                 return self.getLastID()
             data = self.cursor.execute("SELECT MAX(id) FROM images WHERE id < ?",(current,)).fetchone()
             return data[0]
-        except:
+        except Exception as e:
+            print(e)
             return None

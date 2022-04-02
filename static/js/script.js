@@ -1,3 +1,7 @@
+const brightness_value = document.querySelector("#brightness-value");
+const brightness_slider = document.querySelector("#brightness-slider");
+var isMouseDownSlider;
+
 c = canvas.getContext("2d");
 c.fillStyle = "#ffffff";
 c.strokeStyle = c.fillStyle;
@@ -63,4 +67,28 @@ function draw(x_start, y_start) {
     c.rect(x_start, y_start, PIXEL_SIZE, PIXEL_SIZE);
     c.fill();
     c.stroke();
+}
+
+brightness_slider.addEventListener("mousedown", (event)=>{
+    isMouseDownSlider = true;
+});
+
+brightness_slider.addEventListener("mouseup", ()=>{
+    isMouseDownCanvas = false;
+    applyBrightness(brightness_slider.value)
+});
+
+brightness_slider.addEventListener("mousemove", function() {
+    if (isMouseDownSlider) {
+        brightness_value.textContent = brightness_slider.value;
+    }
+});
+
+async function applyBrightness(brightness) {
+    let response = await fetch("/brightness/"+brightness, {
+        method: "POST",
+    });
+    if (response.status != 200) {
+        console.log("failed to apply the Brightness");
+    }
 }
