@@ -1,0 +1,103 @@
+.directional-buttons {
+  width: 8rem;
+  height: 8rem;
+  display: grid;
+  grid-gap: 0.25rem;
+  grid-template-columns: 22.5fr 30fr 22.5fr;
+  grid-template-rows: 22.5fr 30fr 22.5fr;
+  grid-template-areas: "....  up  ....."
+                       "left  ..  right"
+                       ".... down .....";    
+}
+
+.direction-button {
+  color: #343437;
+  background: currentcolor;
+  border: none;
+  position: relative;
+}
+
+.direction-button:before {
+  display: block;
+  content: "";
+  position: absolute;
+  width: 2.125rem;
+  height: 2.125rem;
+  transform: rotate(45deg);
+  background: currentcolor;
+}
+
+.direction-button:after {
+  display: block;
+  content: "";
+  position: absolute;
+  border: 1rem solid transparent;
+  color: white;
+  opacity: 0.6;
+}
+
+.direction-button:hover {
+  color: #32cd32;
+  opacity: 1;
+}
+
+
+.direction-button:active:after {
+  color: #212529;
+}
+
+.move-up {
+  grid-area: up;
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+.move-up:before {
+  left: calc(50% - 1.0625rem);
+  bottom: -1.0625rem;
+}
+.move-up:after {
+  border-bottom-color: currentcolor;
+  left: calc(50% - 1rem);
+  top: -0.5rem;
+}
+
+.move-left {
+  grid-area: left;
+  border-radius: 0.25rem 0 0 0.25rem;
+}
+.move-left:before {
+  right: -1.0625rem;
+  top: calc(50% - 1.0625rem);
+}
+.move-left:after {
+  border-right-color: currentcolor;
+  top: calc(50% - 1rem);
+  left: -0.5rem;
+}
+
+.move-right {
+  grid-area: right;
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+.move-right:before {
+  left: -1.0625rem;
+  top: calc(50% - 1.0625rem);
+}
+.move-right:after {
+  border-left-color: currentcolor;
+  top: calc(50% - 1rem);
+  right: -0.5rem;
+}
+
+.move-down {
+  grid-area: down;
+  border-radius: 0 0 0.25rem 0.25rem;
+}
+.move-down:before {
+  left: calc(50% - 1.0625rem);
+  top: -1.0625rem;
+}
+.move-down:after {
+  border-top-color: currentcolor;
+  left: calc(50% - 1rem);
+  bottom: -0.5rem;
+}

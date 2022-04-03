@@ -7,11 +7,19 @@ const colorpicker_btn = document.querySelector("#colorpicker-btn");
 const delete_btn = document.querySelector("#delete-btn");
 const save_btn = document.querySelector("#save-btn");
 const apply_btn = document.querySelector("#apply-btn");
+const move_up = document.querySelector("#move-up");
+const move_left = document.querySelector("#move-left");
+const move_right = document.querySelector("#move-right");
+const move_down = document.querySelector("#move-down");
 var isMouseDownCanvas;
 var drawMode = true;
 
 save_btn.addEventListener("click", async () => await sendColorArrayToServer("/save"));
 apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
+move_up.addEventListener("click", moveUp);
+move_left.addEventListener("click", moveLeft);
+move_right.addEventListener("click", moveRight);
+move_down.addEventListener("click", moveDown);
 
 colorpicker_btn.addEventListener("click", function() {
     setDrawMode(!drawMode);
@@ -118,6 +126,78 @@ async function loadColorArrayFromServer(id) {
     } else {
         console.log("failed to load colorArray from server");
     }
+}
+
+// move all pixels up by one row
+function moveUp() {
+    for (let i=0; i<256; i++) {
+        if (i<240) {
+            colorArray[i] = colorArray[i-(2*i)%32+31]
+        } else {
+            colorArray[i] = "#000000"
+        }
+    }
+    drawColorArrayToCanvas();
+}
+
+// move all pixels to the left by one column
+function moveLeft() {
+    let newArr = []
+    for (let i=0; i<256; i++) {
+        y = Math.floor(i/16);
+        if (y%2==0) {
+            if ((15-i%16)==15) {
+                newArr[i] = "#000000";
+            } else {
+                newArr[i] = colorArray[i-1];
+            }
+
+        } else {
+            if ((i%16)==15) {
+                newArr[i] = "#000000";
+            } else {
+                newArr[i] = colorArray[i+1];
+            }
+        }
+    }
+    colorArray = newArr;
+    drawColorArrayToCanvas();
+}
+
+// move all pixels to the right by one column
+function moveRight() {
+    let newArr = []
+    for (let i=0; i<256; i++) {
+        y = Math.floor(i/16);
+        if (y%2==0) {
+            if ((15-i%16)==0) {
+                newArr[i] = "#000000";
+            } else {
+                newArr[i] = colorArray[i+1];
+            }
+
+        } else {
+            if ((i%16)==0) {
+                newArr[i] = "#000000";
+            } else {
+                newArr[i] = colorArray[i-1];
+            }
+        }
+    }
+    colorArray = newArr;
+    drawColorArrayToCanvas();
+}
+
+// move all pixels down by one row
+function moveDown() {
+    for (let i=255; i>=0; i--) {
+        if (i>15) {
+            colorArray[i] = colorArray[i-(2*i)%32-1]
+        } else {
+            colorArray[i] = "#000000"
+        }
+    }
+    drawColorArrayToCanvas();
 }
 
 document.addEventListener("DOMContentLoaded", function() {
