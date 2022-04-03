@@ -57,7 +57,7 @@ dtoverlay=gpio-shutdown, gpio_pin=3, active_low=1, gpio_pull=up
 
 - Raspberry Pi Zero WH
 - 16x16 256 Pixel LED Matrix, WS2812B (Individually Addressable)
-
+- Shadow Box Frame (20cm x 20cm) as the Frame case
 - DC 5V >3A Power Adapter (Depends on the Brightness of your LED Matrix, i set it on btightness=50)
 - DC Socket
 - Button for Shutting down the PI via GPIO
