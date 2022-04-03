@@ -1,5 +1,5 @@
 #Comment out Lines 2 75 92 159 163 for testing on Windows
-import led
+#import led
 from databaseaccess import dao
 import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
@@ -29,6 +29,10 @@ def images():
 @app.route("/animation")
 def animation():
     return render_template("animation.html")
+
+@app.route("/animation/edit")
+def animation_edit():
+    return render_template("animation_edit.html")
 
 @app.route("/load/<id>/<pos>")
 def load(id, pos):
@@ -72,7 +76,7 @@ def animationlist_load():
 def apply():
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
-    led.updateFrame(b)
+#    led.updateFrame(b)
     return {}
 
 @app.route("/save", methods=["POST"])
@@ -89,7 +93,7 @@ def save():
 def brightness_apply(br):
     global brightness
     brightness = br
-    led.updateBrightness(int(brightness))
+#    led.updateBrightness(int(brightness))
     return {}
         
 @app.route("/animationlist/add/<id>", methods=["POST"])
@@ -152,18 +156,17 @@ async def animationLoop():
         b = database.loadBinaryFromDatabase(int(frame))
         t = int(t)/1000
         animation.append([b,t])
-
     while animationRunning:
         for b,time in animation:
             if animationRunning:
-                led.updateFrame(b)
+#                led.updateFrame(b)
                 await asyncio.sleep(time)
 
 if __name__ == "__main__":
-    led.init()
+#    led.init()
     try:
         database = dao("database.sqlite")
     except:
         print("Failed to create Database connection")
         exit(-1)
-    app.run(host="0.0.0.0")
+    app.run(debug=True, host="0.0.0.0")

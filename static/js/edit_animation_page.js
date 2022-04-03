@@ -1,16 +1,11 @@
 const number_tile = document.querySelectorAll(".number-tile");
-const gridColor = 'rgba(255, 255, 255, 1.0)';
 const PIXEL_SIZE = 32;
 const FRAME_SIZE = 512;
 const assume_btn = document.querySelector("#assume-btn");
-const apply_btn = document.querySelector("#apply-animation-btn");
-const stop_animation_btn = document.querySelector("#stop-animation-btn");
 const animationlist_body = document.querySelector("#animationlist-body");
 const frameNumber = document.getElementById("framenumber");
 
-apply_btn.addEventListener("click", applyAnimation);
 assume_btn.addEventListener("click", async () => await sendAnimationToServer());
-stop_animation_btn.addEventListener("click", stopAnimation);
 
 //load the current Animationlist from the server and display it in the table
 async function loadAnimationList() {
@@ -145,24 +140,6 @@ function attachHandlers() {
                 loadColorArrayFromServer(e.target.getAttribute('value').slice(6,), "same");
             }
         });
-    }
-}
-
-async function applyAnimation() {
-    let response = await fetch("/animation/apply", {
-        method: "POST"
-    });
-    if (response.status != 200) {
-        console.log("failed to apply Animation");
-    }
-}
-
-async function stopAnimation() {
-    let response = await fetch("/animation/stop", {
-        method: "POST"
-    });
-    if (response.status != 200) {
-        console.log("failed to stop Animation");
     }
 }
 

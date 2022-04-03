@@ -1,5 +1,4 @@
 const colorCirlce = document.querySelectorAll(".color-circle");
-const gridColor = 'rgba(255, 255, 255, 1.0)';
 const PIXEL_SIZE = 50;
 const FRAME_SIZE = 800;
 const favcolor_field = document.getElementById("favcolor");

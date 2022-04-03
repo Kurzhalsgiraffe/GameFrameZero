@@ -1,4 +1,3 @@
-const gridColor = 'rgba(255, 255, 255, 1.0)';
 const PIXEL_SIZE = 50;
 const FRAME_SIZE = 800;
 const delete_btn = document.querySelector("#delete-btn");

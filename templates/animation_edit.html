@@ -27,7 +27,7 @@
                         <a class="nav-link text-white active" href="images">BILDER</a>
                     </li>
                     <li class="nav-item mx-lg-2">
-                        <a class="nav-link text-white" href="#">ANIMATIONEN</a>
+                        <a class="nav-link text-white" href="/animation">ANIMATIONEN</a>
                     </li>
                 </ul>
             </div>
@@ -48,10 +48,7 @@
                             <span class="fs-6 fw-bold">OPTIONEN</span>
                         </li>
                         <li>
-                            <button class="button opt-btn my-2" id="apply-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Starte die Animation auf der Matrix"><strong>START</strong></button>
-                        </li>
-                        <li>
-                            <button class="button opt-btn my-2" id="stop-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Stoppe die Animation"><strong>STOP</strong></button>
+                            <button class="button opt-btn my-2" id="assume-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Übernehme die Animationseinstellungen"><strong>ÜBERNEHMEN</strong></button>
                         </li>
                         <li class="mb-2 mt-4">
                             <span class="fs-6 fw-bold">HELLIGKEIT</span>
@@ -71,12 +68,28 @@
             <!-- Sidebar END -->
 
             <!-- Canvas -->
-            
+            <div class="col py-3 d-flex justify-content-evenly my-auto">
+                <div class="animationlist-wrapper">
+                    <table class="animationlist">
+                        <tbody id="animationlist-body">
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-center board">
+                        <canvas width="512px" height="512"></canvas>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <span class="mx-2 my-auto fs-5 fw-bold" id="framenumber" style="color: white"></span>
+                    </div>
+                </div>          
+            </div>
             <!-- Canvasbereich END -->
         </div>
     </div>
    
-    <script src="{{ url_for('static', filename='js/animation_page.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/edit_animation_page.js') }}"></script>
     <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
