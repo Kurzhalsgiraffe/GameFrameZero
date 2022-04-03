@@ -80,7 +80,7 @@ def save():
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
     try:
-        database.saveBinaryToDatabase()
+        database.saveBinaryToDatabase(b)
         return {}
     except:
         return {},400
