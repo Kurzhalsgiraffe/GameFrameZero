@@ -53,7 +53,6 @@ async function sendAnimationToServer() {
 
 function initializeAnimationlist(tiles) {
     let x = 0;
-    animationlist_body.innerHTML = '';
 
     for (let tile of tiles) {
         frameID = tile[0];
