@@ -35,6 +35,9 @@ User=root
 WorkingDirectory=/home/pi/GameFrameZero/
 ExecStart=python3 server.py
 Restart=always
+
+[Install]
+WantedBy=multi-user.target
 ````
 Start the service
 ````
