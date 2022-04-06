@@ -1,14 +1,11 @@
-const gridColor = 'rgba(0, 0, 0, 1.0)';
-const PIXEL_SIZE = 16;
-const FRAME_SIZE = 256;
 const apply_btn = document.querySelector("#apply-animation-btn");
 const stop_animation_btn = document.querySelector("#stop-animation-btn");
 const animations_body = document.querySelector("#animations-body");
 
+var canvasObject = new CanvasObject(canvas=null, FRAME_SIZE=256, PIXEL_SIZE=16, colorArray=[], gridColor='rgba(0, 0, 0, 1.0)');
+
 apply_btn.addEventListener("click", applyAnimation);
 stop_animation_btn.addEventListener("click", stopAnimation);
-
-colorArray = []
 
 async function applyAnimation() {
     let response = await fetch("/animation/apply", {
@@ -28,23 +25,29 @@ async function stopAnimation() {
     }
 }
 
-// load colorArray from server relativ to the currently loaded Frame
-async function loadColorArrayFromServer(id) {
-    let response = await fetch("/load/"+id+"/same");
+async function loadMultipleArraysFromServer(ids) {
+    let response = await fetch("/loadlist", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(ids)
+    });
+    
     if (response.status == 200) {
-        res = await response.json();
-        if (res.colorArray) {
-            colorArray = res.colorArray;
-        }
+        let res = await response.json();
+        return res
     } else {
         console.log("failed to load colorArray from server");
     }
 }
 
-function initializeAnimationThumbnails(animations) {
-    for (let animation of animations) {
-        title = animation[0]
-        id = animation[1];
+async function initializeAnimationThumbnails(animations, ids) {
+    let blobs = await loadMultipleArraysFromServer(ids)
+
+    for (let x=0; x<animations.length; x++) {
+        title = animations[x]
+        id = ids[x]
         // create elements
         const wrap = document.createElement("div");
         const tile = document.createElement("div");
@@ -77,57 +80,24 @@ function initializeAnimationThumbnails(animations) {
         tile.appendChild(cardbody);
         wrap.appendChild(tile);
         animations_body.appendChild(wrap);
-
-        drawImageOnCanvas(id);
     }
+    await drawThumbnails(blobs);
 }
 
-async function drawImageOnCanvas(id) {
-    const canvas = document.querySelector("#canvas-"+id);
-    let c = canvas.getContext("2d");
-    c.fillStyle = "#ffffff";
-    c.strokeStyle = c.fillStyle;
-
-    await loadColorArrayFromServer(id)
-    drawColorArrayToCanvas(c,colorArray)
-}
-
-// draw the loaded colorArray to the canvas
-function drawColorArrayToCanvas(c,colorArray) {
-    for (let i=0; i<256; i++) {
-        c.fillStyle = colorArray[i];
-
-        let y = Math.floor(i/16);
-        let x;
-        if (y%2==0) {
-            x = 15-i%16;
-        } else {
-            x = i%16;
+async function drawThumbnails(blobs) {
+    for (let blob of blobs) {
+        id = blob[0]
+        let c = document.querySelector("#canvas-"+id);
+        canvasObject.setCanvas(c);
+        canvasObject.setColorArray(blob[1])
+        
+        if (canvasObject.colorArray.length === 0) {
+            canvasObject.initializeColorArray();
         }
-        draw(c,PIXEL_SIZE*x,PIXEL_SIZE*y);
+        canvasObject.drawColorArrayToCanvas();
+        canvasObject.drawGrid()
     }
-    drawGrid(c);
+    
 }
 
-// draw the whole grid
-function drawGrid(c) {
-    for (let i=0; i<FRAME_SIZE;i+=PIXEL_SIZE) {
-        for (let j=0; j<FRAME_SIZE;j+=PIXEL_SIZE) {
-            c.strokeStyle = gridColor;
-            c.beginPath();
-            c.rect(i, j, PIXEL_SIZE, PIXEL_SIZE);
-            c.stroke();
-        }
-    }
-}
-
-// draw a single pixel
-function draw(c,x_start, y_start) {
-    c.strokeStyle = c.fillStyle;
-    c.beginPath();
-    c.rect(x_start, y_start, PIXEL_SIZE, PIXEL_SIZE);
-    c.fill();
-    c.stroke();
-}
-
-initializeAnimationThumbnails([["ani1",1],["ani3",3],["ani4",4],["ani5",5],["ani6",6],["ani7",7]])
+initializeAnimationThumbnails(["text 1", "text 12","text 13","text 14","text 15","text 16","text 17","text 18"],[1,12,13,14,15,16,17,18])

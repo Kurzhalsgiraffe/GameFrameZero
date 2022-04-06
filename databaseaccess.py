@@ -2,9 +2,13 @@ import sqlite3
 
 class dao:
     def __init__(self, dbfile):
-        self.conn = sqlite3.connect(dbfile, check_same_thread=False)
-        self.cursor = self.conn.cursor()
-        self.createTables()
+        try:
+            self.conn = sqlite3.connect(dbfile, check_same_thread=False)
+            self.cursor = self.conn.cursor()
+            self.createTables()
+        except Exception as e:
+            print(e)
+            exit(-1)
 
     def createTables(self):
         sql = """CREATE TABLE IF NOT EXISTS images (
@@ -42,22 +46,30 @@ class dao:
         self.cursor.execute(sql)
 
 
-    def loadBinaryFromDatabase(self, frameID):
+    def loadBinaryFromDB(self, frameID):
         try:
             data = self.cursor.execute("SELECT * FROM images WHERE image_id=?",(frameID,)).fetchall()
             return bytearray(data[0][1])
         except Exception as e:
             print(e)
             return None
+        
+    def loadMultipleBinarysFromDB(self, ids):
+        try:
+            data = self.cursor.execute("SELECT * FROM images WHERE image_id IN {}".format(tuple(ids))).fetchall()
+            return data
+        except Exception as e:
+            print(e)
+            return None
 
-    def saveBinaryToDatabase(self, b):
+    def saveBinaryToDB(self, b):
         try:
             self.cursor.execute("INSERT INTO images VALUES (NULL,?)", (b,))
             self.conn.commit()
         except Exception as e:
             print(e)
 
-    def deleteBinaryFromDatabase(self, frameID):
+    def deleteBinaryFromDB(self, frameID):
         try:
             self.cursor.execute("DELETE FROM images WHERE image_id=?",(frameID,))
             self.conn.commit()

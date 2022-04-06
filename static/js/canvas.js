@@ -1,76 +1,106 @@
-const gridColor = 'rgba(255, 255, 255, 1.0)';
-const canvas = document.querySelector("canvas");
-
-c = canvas.getContext("2d");
-c.fillStyle = "#ffffff";
-c.strokeStyle = c.fillStyle;
-
-var colorArray = [];
-
-async function sendColorArrayToServer(route) {
-    let response = await fetch(route, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(colorArray)
-    });
-    if (response.status != 200) {
-        console.log("failed to send colorArray to server");
+class CanvasObject {
+    constructor(canvas, FRAME_SIZE, PIXEL_SIZE, colorArray=[], gridColor="rgba(255, 255, 255, 1.0)") {
+        this.FRAME_SIZE = FRAME_SIZE;
+        this.PIXEL_SIZE = PIXEL_SIZE;
+        this.gridColor = gridColor;
+        this.colorArray = colorArray;
+        this.currentPos = 1;
+        this.setColorArray(colorArray);
+        
+        if (canvas != null) {
+            this.setCanvas(canvas);
+        }       
     }
-}
 
-// draw the loaded colorArray to the canvas
-function drawColorArrayToCanvas() {
-    for (let i=0; i<256; i++) {
-        c.fillStyle = colorArray[i];
+    setCanvas(canvas) {
+        this.canvas = canvas;
+        this.c = this.canvas.getContext("2d");
+        this.c.fillStyle = "#ffffff";
+    }
 
-        let y = Math.floor(i/16);
-        let x;
+    setColorArray(colorArray) {
+        this.colorArray = colorArray;
+    }
 
-        if (y%2==0) {
-            x = 15-i%16;
+    drawColorArrayToCanvas() {
+        for (let i=0; i<256; i++) {
+            this.c.fillStyle = this.colorArray[i];
+            let y = Math.floor(i/16);
+            let x;
+    
+            if (y%2==0) {
+                x = 15-i%16;
+            } else {
+                x = i%16;
+            }
+            this.draw(this.PIXEL_SIZE*x, this.PIXEL_SIZE*y);
+        }
+        this.drawGrid();
+    }
+
+    draw(x_start, y_start) {
+        this.c.strokeStyle = this.c.fillStyle;
+        this.c.beginPath();
+        this.c.rect(x_start, y_start, this.PIXEL_SIZE, this.PIXEL_SIZE);
+        this.c.fill();
+        this.c.stroke();
+    }
+
+    initializeColorArray() {
+        for (let i=0; i<256;i++) {
+            this.colorArray[i] = "#000000";
+        }
+    }
+
+    drawGrid() {
+        for (let x=0; x<this.FRAME_SIZE; x+=this.PIXEL_SIZE) {
+            for (let y=0; y<this.FRAME_SIZE; y+=this.PIXEL_SIZE) {
+                this.updateGrid(x,y);
+            }
+        }
+    }
+
+    updateGrid(x,y) {
+        this.c.strokeStyle = this.gridColor;
+        this.c.beginPath();
+        this.c.rect(x, y, this.PIXEL_SIZE, this.PIXEL_SIZE);
+        this.c.stroke();
+    }
+
+    async loadColorArrayFromServer(id=null,pos=null) {
+        let response
+        if (id!=null && pos!=null) {
+            response = await fetch("/load?id="+id+"&pos="+pos);
+        } else if(id!=null && pos==null) {
+            response = await fetch("/load?id="+id);
+        } else if(id==null && pos!=null) {
+            response = await fetch("/load?pos="+pos);
+        }
+        
+        let res = await response.json();
+        if (response.status == 200) {
+            if (res.colorArray) {
+                this.colorArray = res.colorArray;
+                this.currentPos = res.frameID;  
+            } else {
+                this.colorArray = []
+                this.currentPos = 0
+            }       
         } else {
-            x = i%16;
+            console.log("failed to load colorArray from server");
         }
-        draw(PIXEL_SIZE*x,PIXEL_SIZE*y);
     }
-    drawGrid();
-}
 
-// fill the colorArray with black
-function initializeColorArray() {
-    for (let i=0; i<256;i++) {
-        colorArray[i] = "#000000";
-    }
-}
-
-// update the grid around a single pixel
-function updateGrid(x,y) {
-    c.strokeStyle = gridColor;
-    c.beginPath();
-    c.rect(x, y, PIXEL_SIZE, PIXEL_SIZE);
-    c.stroke();
-}
-
-// draw the whole grid
-function drawGrid() {
-    for (let i=0; i<FRAME_SIZE;i+=PIXEL_SIZE) {
-        for (let j=0; j<FRAME_SIZE;j+=PIXEL_SIZE) {
-            updateGrid(i,j);
+    async sendColorArrayToServer(route) {
+        let response = await fetch(route, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(this.colorArray)
+        });
+        if (response.status != 200) {
+            console.log("failed to send colorArray to server");
         }
     }
 }
-
-// draw a single pixel
-function draw(x_start, y_start) {
-    c.strokeStyle = c.fillStyle;
-    c.beginPath();
-    c.rect(x_start, y_start, PIXEL_SIZE, PIXEL_SIZE);
-    c.fill();
-    c.stroke();
-}
-
-document.addEventListener("DOMContentLoaded", async function() {
-    drawGrid();
-});

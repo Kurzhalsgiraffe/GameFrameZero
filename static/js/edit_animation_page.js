@@ -1,13 +1,13 @@
+const canvas = document.querySelector("canvas");
 const number_tile = document.querySelectorAll(".number-tile");
-const PIXEL_SIZE = 32;
-const FRAME_SIZE = 512;
 const assume_btn = document.querySelector("#assume-btn");
 const animationlist_body = document.querySelector("#animationlist-body");
 const frameNumber = document.getElementById("framenumber");
 
+var canvasObject = new CanvasObject(canvas, FRAME_SIZE=512, PIXEL_SIZE=32, colorArray=[]);
+
 assume_btn.addEventListener("click", async () => await sendAnimationToServer());
 
-//load the current Animationlist from the server and display it in the table
 async function loadAnimationList() {
     let response = await fetch("/animationlist/load");
     if (response.status == 200) {
@@ -16,25 +16,19 @@ async function loadAnimationList() {
     } else {
         console.log("failed to load animationList from server");
     }
-    
 }
 
-// load colorArray from server relativ to the currently loaded Frame
-async function loadColorArrayFromServer(id,pos) {
-    let response = await fetch("/load/"+id+"/"+pos);
-    if (response.status == 200) {
-        res = await response.json();
-        if (!res.colorArray) {
-            frameNumber.textContent="KEIN BILD";
-            initializeColorArray();
-        } else {
-            colorArray = res.colorArray;
-            frameNumber.textContent="BILD "+res.frameID;
-        }
-        drawColorArrayToCanvas();
+async function loadAndShow(id=null,pos=null) {
+    await canvasObject.loadColorArrayFromServer(id,pos);
+    currentPos = canvasObject.currentPos;
+    if (canvasObject.colorArray.length === 0) {
+        canvasObject.initializeColorArray();
+        frameNumber.textContent = "KEIN BILD";
     } else {
-        console.log("failed to load colorArray from server");
+        frameNumber.textContent = "BILD " + currentPos;
     }
+    canvasObject.drawColorArrayToCanvas();
+    canvasObject.drawGrid();
 }
 
 async function sendAnimationToServer() {
@@ -136,7 +130,8 @@ function attachHandlers() {
                 e.currentTarget.remove();
             } 
             else if (e.target.classList.contains('number-tile')) {
-                loadColorArrayFromServer(e.target.getAttribute('value').slice(6,), "same");
+                let id = e.target.getAttribute('value').slice(6,)
+                loadAndShow(id,null);
             }
         });
     }
@@ -144,5 +139,6 @@ function attachHandlers() {
 
 document.addEventListener("DOMContentLoaded", async function() {
     await loadAnimationList();
+    canvasObject.drawGrid();
     attachHandlers();
 });

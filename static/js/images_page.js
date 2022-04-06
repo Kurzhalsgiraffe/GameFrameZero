@@ -1,5 +1,4 @@
-const PIXEL_SIZE = 50;
-const FRAME_SIZE = 800;
+const canvas = document.querySelector("canvas");
 const delete_btn = document.querySelector("#delete-btn");
 const edit_btn = document.querySelector("#edit-btn");
 const apply_btn = document.querySelector("#apply-btn");
@@ -9,16 +8,30 @@ const prev_frame_btn = document.querySelector("#prev-frame-btn");
 const next_frame_btn = document.querySelector("#next-frame-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
 const frameNumber = document.getElementById("framenumber");
+var canvasObject = new CanvasObject(canvas, FRAME_SIZE=800, PIXEL_SIZE=50, colorArray=[]);
 var currentPos = 1;
 
 delete_btn.addEventListener("click", async () => await deleteColorArrayFromServer(currentPos));
 edit_btn.addEventListener("click", editSavedColorArray);
-apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
+apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/apply"));
 animation_btn.addEventListener("click", async () => await addFrameToAnimation());
-first_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer(currentPos, "first"));
-prev_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer(currentPos, "prev"));
-next_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer(currentPos, "next"));
-last_frame_btn.addEventListener("click", async () => await loadColorArrayFromServer(currentPos, "last"));
+first_frame_btn.addEventListener("click", async () => await loadAndShow(null, "first"));
+prev_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "prev"));
+next_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "next"));
+last_frame_btn.addEventListener("click", async () => await loadAndShow(null, "last"));
+
+async function loadAndShow(id=null, pos=null) {
+    await canvasObject.loadColorArrayFromServer(id, pos);
+    currentPos = canvasObject.currentPos;
+    if (canvasObject.colorArray.length === 0) {
+        canvasObject.initializeColorArray();
+        frameNumber.textContent = "KEIN BILD";
+    } else {
+        frameNumber.textContent = "BILD " + currentPos;
+    }
+    canvasObject.drawColorArrayToCanvas();
+    canvasObject.drawGrid();
+}
 
 // delete current frame from server
 async function deleteColorArrayFromServer(id) {
@@ -26,7 +39,7 @@ async function deleteColorArrayFromServer(id) {
         method: "DELETE"
     });
     if (response.status == 200) {
-        await loadColorArrayFromServer(currentPos,"same");
+        await loadAndShow(currentPos,null)
     } else {
         console.log("failed to delete colorArray from server");
     }
@@ -45,26 +58,6 @@ async function addFrameToAnimation() {
     }
 }
 
-// load colorArray from server relativ to the currently loaded Frame
-async function loadColorArrayFromServer(id,pos) {
-    let response = await fetch("/load/"+id+"/"+pos);
-    res = await response.json();
-    if (response.status == 200) {
-        if (!res.colorArray) {
-            currentPos = 1;
-            frameNumber.textContent="KEIN BILD";
-            initializeColorArray();
-        } else {
-            colorArray = res.colorArray;
-            currentPos = res.frameID;
-            frameNumber.textContent="BILD "+currentPos;
-        }
-        drawColorArrayToCanvas();
-    } else {
-        console.log("failed to load colorArray from server");
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    loadColorArrayFromServer(currentPos, "first");
+document.addEventListener("DOMContentLoaded", async function() {
+    await loadAndShow(null, "first");
 });

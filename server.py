@@ -1,5 +1,6 @@
 #Comment out Lines 2 75 92 159 163 for testing on Windows
 #import led
+from turtle import pos
 from databaseaccess import dao
 import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
@@ -34,34 +35,30 @@ def animation():
 def animation_edit():
     return render_template("animation_edit.html")
 
-@app.route("/load/<id>/<pos>")
-def load(id, pos):
-    try:
-        database = dao("database.sqlite")
-    except:
-        print("Failed to create Database connection")
-        exit(-1)
+@app.route("/load")
+def load():
+    database = dao("database.sqlite")
 
-    loadedFrameID = int(id)
-    
-    if pos == "first":
-        loadedFrameID = database.getFirstID()
-    elif pos == "prev":
-        loadedFrameID = database.getPreviousID(loadedFrameID)
-    elif pos == "next":
-        loadedFrameID = database.getNextID(loadedFrameID)
-    elif pos == "last":
-        loadedFrameID = database.getLastID()
+    id = request.args.get('id', type = int)
+    pos = request.args.get('pos', type = str)
+    if pos:
+        if pos == "first":
+            id = database.getFirstID()
+        elif pos == "prev":
+            id = database.getPreviousID(id)
+        elif pos == "next":
+            id = database.getNextID(id)
+        elif pos == "last":
+            id = database.getLastID()
 
     try:
-        b = database.loadBinaryFromDatabase(loadedFrameID)
+        b = database.loadBinaryFromDB(id)
         if b:
-            if len(b) == FRAME_SIZE:
-                d = {
-                    "colorArray": binaryToColorArray(b),
-                    "frameID": loadedFrameID
-                }
-                return jsonify(d)
+            d = {
+                "colorArray": binaryToColorArray(b),
+                "frameID": id
+            }
+            return jsonify(d)
         else:
             return {}
     except Exception as e:
@@ -87,20 +84,31 @@ def apply():
 
 @app.route("/save", methods=["POST"])
 def save():
-    try:
-        database = dao("database.sqlite")
-    except Exception as e:
-        print(e)
-        exit(-1)
+    database = dao("database.sqlite")
 
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
     try:
-        database.saveBinaryToDatabase(b)
+        database.saveBinaryToDB(b)
         return {}
     except Exception as e:
         print(e)
         return {},400
+
+@app.route("/loadlist", methods=["POST"])
+def loadlist():
+    database = dao("database.sqlite")
+    try:
+        ids = request.json
+        data = database.loadMultipleBinarysFromDB(ids)
+        if data:
+            d = [(i[0], binaryToColorArray(bytearray(i[1]))) for i in data]
+            return jsonify(d)
+        else:
+            return {}
+    except Exception as e:
+        print(e)
+        return e,400
 
 @app.route("/brightness/apply/<br>", methods=["POST"])
 def brightness_apply(br):
@@ -140,14 +148,10 @@ def animation_stop():
 
 @app.route("/delete/<id>", methods=["DELETE"])
 def delete(id):
-    try:
-        database = dao("database.sqlite")
-    except Exception as e:
-        print(e)
-        exit(-1)
+    database = dao("database.sqlite")
     frameID = int(id)
     try:
-        database.deleteBinaryFromDatabase(frameID)
+        database.deleteBinaryFromDB(frameID)
         return {}
     except Exception as e:
         print(e)
@@ -170,14 +174,10 @@ def binaryToColorArray(binary):
     return c
 
 async def animationLoop():
-    try:
-        database = dao("database.sqlite")
-    except Exception as e:
-        print(e)
-        exit(-1)
+    database = dao("database.sqlite")
     animation = []
     for frame,t in animationList:
-        b = database.loadBinaryFromDatabase(int(frame))
+        b = database.loadBinaryFromDB(int(frame))
         t = int(t)/1000
         animation.append([b,t])
     while animationRunning:
