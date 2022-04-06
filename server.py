@@ -36,6 +36,11 @@ def animation_edit():
 
 @app.route("/load/<id>/<pos>")
 def load(id, pos):
+    try:
+        database = dao("database.sqlite")
+    except:
+        print("Failed to create Database connection")
+        exit(-1)
 
     loadedFrameID = int(id)
     
@@ -59,8 +64,9 @@ def load(id, pos):
                 return jsonify(d)
         else:
             return {}
-    except:
-        return {},400
+    except Exception as e:
+        print(e)
+        return e,400
 
 @app.route("/brightness/load")
 def brightness_load():
@@ -81,12 +87,19 @@ def apply():
 
 @app.route("/save", methods=["POST"])
 def save():
+    try:
+        database = dao("database.sqlite")
+    except Exception as e:
+        print(e)
+        exit(-1)
+
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
     try:
         database.saveBinaryToDatabase(b)
         return {}
-    except:
+    except Exception as e:
+        print(e)
         return {},400
 
 @app.route("/brightness/apply/<br>", methods=["POST"])
@@ -127,11 +140,17 @@ def animation_stop():
 
 @app.route("/delete/<id>", methods=["DELETE"])
 def delete(id):
+    try:
+        database = dao("database.sqlite")
+    except Exception as e:
+        print(e)
+        exit(-1)
     frameID = int(id)
     try:
         database.deleteBinaryFromDatabase(frameID)
         return {}
-    except:
+    except Exception as e:
+        print(e)
         return {},400
 
 ## ----- FUNCTIONS ----- ##
@@ -151,6 +170,11 @@ def binaryToColorArray(binary):
     return c
 
 async def animationLoop():
+    try:
+        database = dao("database.sqlite")
+    except Exception as e:
+        print(e)
+        exit(-1)
     animation = []
     for frame,t in animationList:
         b = database.loadBinaryFromDatabase(int(frame))
@@ -164,9 +188,4 @@ async def animationLoop():
 
 if __name__ == "__main__":
 #    led.init()
-    try:
-        database = dao("database.sqlite")
-    except:
-        print("Failed to create Database connection")
-        exit(-1)
     app.run(debug=True, host="0.0.0.0")

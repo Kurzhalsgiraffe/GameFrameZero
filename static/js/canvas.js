@@ -25,7 +25,9 @@ function drawColorArrayToCanvas() {
     for (let i=0; i<256; i++) {
         c.fillStyle = colorArray[i];
 
-        y = Math.floor(i/16);
+        let y = Math.floor(i/16);
+        let x;
+
         if (y%2==0) {
             x = 15-i%16;
         } else {
