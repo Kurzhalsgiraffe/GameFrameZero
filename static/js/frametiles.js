@@ -1,4 +1,4 @@
-const animations_body = document.querySelector("#tile-body");
+const tile_body = document.querySelector("#tile-body");
 var canvasObject = new CanvasObject(canvas=null, FRAME_SIZE=256, PIXEL_SIZE=16, colorArray=[], gridColor='rgba(0, 0, 0, 1.0)');
 
 async function loadMultipleArraysFromServer(ids) {
@@ -18,10 +18,10 @@ async function loadMultipleArraysFromServer(ids) {
     }
 }
 
-async function initializeCanvasTiles(ids) {
-    let blobs = await loadMultipleArraysFromServer(ids)
+async function initializeCanvasTiles(animation_ids, thumbnail_ids) {
+    let blobs = await loadMultipleArraysFromServer(thumbnail_ids)
 
-    for (let id of ids) {
+    for (let id of animation_ids) {
         const wrap = document.createElement("div");
         const tile = document.createElement("div");
         const canvas = document.createElement("canvas");
@@ -32,6 +32,7 @@ async function initializeCanvasTiles(ids) {
         tile.classList.add("card");
         tile.classList.add("h-80");
         tile.classList.add("bg-dark");
+        tile.setAttribute("id", "tile-"+id);
         canvas.classList.add("card-img-top");
         canvas.setAttribute("width", "256px");
         canvas.setAttribute("height", "256px");
@@ -42,17 +43,21 @@ async function initializeCanvasTiles(ids) {
         tile.appendChild(canvas);
         tile.appendChild(cardbody);
         wrap.appendChild(tile);
-        animations_body.appendChild(wrap);
+        tile_body.appendChild(wrap);
     }
-    await drawThumbnails(blobs);
+    if (Object.keys(blobs).length !== 0) {
+        await drawThumbnails(blobs,animation_ids);
+    }
 }
 
-async function drawThumbnails(blobs) {
-    for (let blob of blobs) {
-        id = blob[0]
+async function drawThumbnails(blobs,animation_ids) {
+    for (let x=0; x<blobs.length; x++) {
+        id = animation_ids[x]
+        blob = blobs[x][1]
+
         let c = document.querySelector("#canvas-"+id);
         canvasObject.setCanvas(c);
-        canvasObject.setColorArray(blob[1])
+        canvasObject.setColorArray(blob)
         
         if (canvasObject.colorArray.length === 0) {
             canvasObject.initializeColorArray();

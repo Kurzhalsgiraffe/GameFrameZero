@@ -8,16 +8,6 @@ var canvasObject = new CanvasObject(canvas, FRAME_SIZE=512, PIXEL_SIZE=32, color
 
 assume_btn.addEventListener("click", async () => await sendAnimationToServer());
 
-async function loadAnimationList() {
-    let response = await fetch("/animationlist/load");
-    if (response.status == 200) {
-        res = await response.json();
-        initializeAnimationlist(res);
-    } else {
-        console.log("failed to load animationList from server");
-    }
-}
-
 async function loadAndShow(id=null,pos=null) {
     await canvasObject.loadColorArrayFromServer(id,pos);
     currentPos = canvasObject.currentPos;
@@ -29,50 +19,6 @@ async function loadAndShow(id=null,pos=null) {
     }
     canvasObject.drawColorArrayToCanvas();
     canvasObject.drawGrid();
-}
-
-async function sendAnimationToServer() {
-    let animation = getAnimationList();
-    let response = await fetch("/animationlist/update", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(animation)
-    });
-    if (response.status != 200) {
-        console.log("failed to send Animation to server");
-    }
-}
-
-function initializeAnimationlist(tiles) {
-    let x = 0;
-
-    for (let tile of tiles) {
-        frameID = tile[0];
-        time = tile[1];
-        
-        const tr = document.createElement("tr");
-        const numberTile = document.createElement("td");
-        const timeTile = document.createElement("td");
-
-        tr.setAttribute("draggable", true);
-        tr.setAttribute("id", "al-"+x);
-
-        numberTile.classList.add("number-tile");
-        numberTile.setAttribute("value", "frame-"+frameID);
-
-        timeTile.classList.add("time-tile");
-
-        numberTile.innerHTML = `Bild ${frameID}<span class="remove-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Entferne das Bild aus der Animieren-Liste">X</span>`;
-        timeTile.innerHTML = `<input maxlength="4" size="4" value="${time}"></input> ms`;
-
-        tr.appendChild(numberTile);
-        tr.appendChild(timeTile);
-        animationlist_body.appendChild(tr);
-
-        x++;
-    }
 }
 
 function getAnimationList() {
@@ -135,7 +81,14 @@ function attachHandlers() {
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    await loadAnimationList();
-    canvasObject.drawGrid();
-    attachHandlers();
+    canvasObject.initializeColorArray();
+    // if there is an id in the url, load it and draw it on the canvas, so it can be edited
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if(urlParams.has('id')) {
+        const loadedIDToEdit = urlParams.get('id');
+        console.log(loadedIDToEdit)
+    }
+    canvasObject.drawGrid()
+    //attachHandlers();
 });

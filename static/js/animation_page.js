@@ -1,8 +1,17 @@
-const apply_btn = document.querySelector("#apply-animation-btn");
+const apply_animation_btn = document.querySelector("#apply-animation-btn");
 const stop_animation_btn = document.querySelector("#stop-animation-btn");
+const create_animation_btn = document.querySelector("#create-animation-btn");
+const edit_animation_btn = document.querySelector("#edit-animation-btn");
+const delete_animation_btn = document.querySelector("#delete-animation-btn");
+const animation_name = document.querySelector("#animation-name");
 
-apply_btn.addEventListener("click", applyAnimation);
+let activeTile = null;
+
+apply_animation_btn.addEventListener("click", applyAnimation);
 stop_animation_btn.addEventListener("click", stopAnimation);
+create_animation_btn.addEventListener("click", createAnimation);
+edit_animation_btn.addEventListener("click", editAnimation);
+//delete_animation_btn.addEventListener("click", deleteAnimation);
 
 async function applyAnimation() {
     let response = await fetch("/animation/apply", {
@@ -22,26 +31,84 @@ async function stopAnimation() {
     }
 }
 
-async function addContentToThumbnails(animations, ids) {
-    for (let x=0; x<animations.length; x++) {
-        text = animations[x]
-        id = ids[x]
-        const htag = document.createElement("h5");
-        const ptag = document.createElement("p");
-        let cardbody = document.querySelector("#card-body-"+id);
-
-        htag.classList.add("card-title");
-        htag.innerHTML = `Animation ${id}`;
-        ptag.innerHTML = `${text}`;
-
-        cardbody.appendChild(htag);
-        cardbody.appendChild(ptag);
+async function createAnimation() {
+    let name = animation_name.value
+    if (!name) {
+        name = null
+    }
+    let response = await fetch("/animation/create/"+name, {
+        method: "POST"
+    });
+    if (response.status != 200) {
+        console.log("failed to create Animation");
     }
 }
 
-async function initializeAnimationThumbnails(animations, ids) {
-    await initializeCanvasTiles(ids)
-    await addContentToThumbnails(animations, ids)
+async function editAnimation() {
+    if (activeTile != null) {
+        id = activeTile.id.slice(5,)
+        window.location.replace("/animation/editor?id="+id);
+    }
 }
 
-initializeAnimationThumbnails(["text 1", "text 12","text 13","text 14","text 15","text 16","text 17","text 18"],[1,12,13,14,15,16,17,18])
+async function loadAllAnimationsFromServer() {
+    let response = await fetch("/animation/load/all");
+    let res = await response.json();
+    if (response.status == 200) {
+        return [res.animationIDs, res.animationNames, res.thumbnailIDs]
+    } else {
+        console.log("failed to load colorArray from server");
+    }
+}
+
+async function addContentToThumbnails(ids, names) {
+    for (let x=0; x<ids.length; x++) {
+        text = names[x]
+        id = ids[x]
+        const htag = document.createElement("h5");
+        let cardbody = document.querySelector("#card-body-"+id);
+
+        htag.classList.add("card-title");
+        htag.innerHTML = `${text}`;
+
+        cardbody.appendChild(htag);
+    }
+}
+
+function attachHandlers(ids) {
+    for (let id of ids) {
+        let tile = document.querySelector("#tile-"+id);
+        tile.addEventListener('click', (e) => {
+            unselectTile()
+            selectTile(e.currentTarget)
+        });
+    }
+}
+
+function selectTile(t) {
+    activeTile = t;
+    activeTile.classList.add("active");
+    activeTile.setAttribute("style","border:2px solid #32cd32");
+}
+
+function unselectTile() {
+    if (activeTile != null) {
+        activeTile.classList.remove("active");
+        activeTile.setAttribute("style","border: none");
+        activeTile = null;
+    }
+}
+
+async function initializeAnimationThumbnails(animation_ids, animation_names, thumbnail_ids) {
+    await initializeCanvasTiles(animation_ids,thumbnail_ids)
+    await addContentToThumbnails(animation_ids, animation_names)
+    attachHandlers(animation_ids)
+}
+
+document.addEventListener("DOMContentLoaded", async function() {
+    let animations = await loadAllAnimationsFromServer()
+    let animation_ids = animations[0]
+    let animation_names = animations[1]
+    let thumbnail_ids = animations[2]
+    initializeAnimationThumbnails(animation_ids, animation_names, thumbnail_ids)
+});

@@ -45,8 +45,9 @@ class dao:
             FOREIGN KEY (image_id) REFERENCES images(image_id))"""
         self.cursor.execute(sql)
 
+    # -----  IMAGES TABLE  -----#
 
-    def loadBinaryFromDB(self, frameID):
+    def loadSingleBinary(self, frameID):
         try:
             data = self.cursor.execute("SELECT * FROM images WHERE image_id=?",(frameID,)).fetchall()
             return bytearray(data[0][1])
@@ -54,22 +55,25 @@ class dao:
             print(e)
             return None
         
-    def loadMultipleBinarysFromDB(self, ids):
+    def loadMultipleBinarys(self, ids):
         try:
-            data = self.cursor.execute("SELECT * FROM images WHERE image_id IN {}".format(tuple(ids))).fetchall()
+            if len(ids) >1:
+                data = self.cursor.execute("SELECT * FROM images WHERE image_id IN {}".format(tuple(ids))).fetchall()
+            elif len(ids) == 1:
+                data = self.cursor.execute("SELECT * FROM images WHERE image_id = ?", (ids[0],)).fetchall()
             return data
         except Exception as e:
             print(e)
             return None
 
-    def saveBinaryToDB(self, b):
+    def saveBinary(self, b):
         try:
             self.cursor.execute("INSERT INTO images VALUES (NULL,?)", (b,))
             self.conn.commit()
         except Exception as e:
             print(e)
 
-    def deleteBinaryFromDB(self, frameID):
+    def deleteBinary(self, frameID):
         try:
             self.cursor.execute("DELETE FROM images WHERE image_id=?",(frameID,))
             self.conn.commit()
@@ -112,6 +116,8 @@ class dao:
             print(e)
             return None
 
+    # -----  ANIMATIONS TABLE  -----#
+
     def createAnimation(self, animation_name):
         try:
             self.cursor.execute("INSERT INTO animations VALUES (NULL,?)", (animation_name,))
@@ -119,12 +125,33 @@ class dao:
         except Exception as e:
             print(e)
 
+    def getAllAnimations(self):
+        try:
+            data = self.cursor.execute("SELECT * FROM animations").fetchall()
+            return data
+        except Exception as e:
+            print(e)
+
+    # -----  IMAGES_TO_ANIMATIONS TABLE  -----#
+
     def addImageToAnimation(self, animation_id, image_id, position, time):
         try:
-            self.cursor.execute("INSERT INTO images_to_animations (animation_id, image_id, position, time) VALUES (?,?,?,?)", (animation_id,image_id,position,time))
+            self.cursor.execute("INSERT INTO images_to_animations (animation_id, image_id, pos, sleep_time) VALUES (?,?,?,?)", (animation_id,image_id,position,time))
             self.conn.commit()
         except Exception as e:
             print(e)
+
+    def getAllAnimationThumbnails(self, animation_ids):
+        try:
+            if len(animation_ids) >1:
+                data = self.cursor.execute("SELECT image_id FROM images_to_animations WHERE (animation_id,pos) IN (SELECT animation_id , MIN(pos) FROM images_to_animations GROUP BY animation_id) AND animation_id IN {}".format(tuple(animation_ids))).fetchall()
+            elif len(animation_ids) == 1:
+                data = self.cursor.execute("SELECT image_id FROM images_to_animations WHERE (animation_id,pos) IN (SELECT animation_id , MIN(pos) FROM images_to_animations GROUP BY animation_id) AND animation_id = ?", (animation_ids[0],)).fetchall()
+            return [i[0] for i in data]
+        except Exception as e:
+            print(e)
+
+    # -----  GROUPS TABLE  -----#
 
     def createGroup(self, group_name):
         try:
@@ -132,6 +159,8 @@ class dao:
             self.conn.commit()
         except Exception as e:
             print(e)
+
+    # -----  IMAGES_TO_GROUPS TABLE  -----#
 
     def addImageToGroup(self, group_id, image_id):
         try:

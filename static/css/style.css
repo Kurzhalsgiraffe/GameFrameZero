@@ -188,3 +188,19 @@ td {
     background: #32cd32;
     cursor: pointer;
   }
+
+  #animation-name{
+    width:9em;
+    border:2px solid #aaa;
+    border-radius:4px;
+    margin:8px 0;
+    outline:none;
+    padding:6px;
+    box-sizing:border-box;
+    transition:.3s;
+  }
+  
+  #animation-name:focus{
+    border-color:#32cd32;
+    box-shadow:0 0 8px 0 #32cd32;
+  }

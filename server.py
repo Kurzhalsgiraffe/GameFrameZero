@@ -1,17 +1,14 @@
 #Comment out Lines 2 75 92 159 163 for testing on Windows
 #import led
 from turtle import pos
+
+from matplotlib.image import thumbnail
 from databaseaccess import dao
 import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
 
-COUNT_SIZE = 2
-INDEX_SIZE = 2
 FRAME_SIZE = 768
-STANDARD_ANIMATIONTIME = "200"
 
-animationList = [["4","200"],["5","200"],["6","200"],["7","200"]] * 4  \
-    + [["8","200"],["9","200"],["8","200"],["9","200"],["10","200"],["11","200"],["10","200"],["11","200"]]*3
 animationRunning = False
 brightness = 40
 
@@ -31,9 +28,34 @@ def images():
 def animation():
     return render_template("animation.html")
 
-@app.route("/animation/edit")
-def animation_edit():
-    return render_template("animation_edit.html")
+@app.route("/animation/editor")
+def animation_editor():
+    return render_template("animation_editor.html")
+
+@app.route("/animation/load/all")
+def animation_load_all():
+    database = dao("database.sqlite")
+    try:
+        data = sorted(database.getAllAnimations(), key=lambda x: x[0])
+        animation_ids = []
+        animation_names = []
+        for i in data:
+            animation_ids.append(i[0])
+            if i[1]=="null":
+                animation_names.append("Animation "+str(i[0]))
+            else:
+                animation_names.append(i[1])
+        thumbnail_ids = database.getAllAnimationThumbnails(animation_ids)
+        
+        d = {
+                "animationIDs": animation_ids,
+                "animationNames": animation_names,
+                "thumbnailIDs": thumbnail_ids
+            }
+        return jsonify(d)
+    except Exception as e:
+        print(e)
+        return {},400
 
 @app.route("/load")
 def load():
@@ -52,7 +74,7 @@ def load():
             id = database.getLastID()
 
     try:
-        b = database.loadBinaryFromDB(id)
+        b = database.loadSingleBinary(id)
         if b:
             d = {
                 "colorArray": binaryToColorArray(b),
@@ -68,10 +90,6 @@ def load():
 @app.route("/brightness/load")
 def brightness_load():
     return str(brightness)
-
-@app.route("/animationlist/load")
-def animationlist_load():
-    return jsonify(animationList)
 
 ## ----- POST ----- ##
 
@@ -89,7 +107,7 @@ def save():
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
     try:
-        database.saveBinaryToDB(b)
+        database.saveBinary(b)
         return {}
     except Exception as e:
         print(e)
@@ -100,10 +118,13 @@ def loadlist():
     database = dao("database.sqlite")
     try:
         ids = request.json
-        data = database.loadMultipleBinarysFromDB(ids)
-        if data:
-            d = [(i[0], binaryToColorArray(bytearray(i[1]))) for i in data]
-            return jsonify(d)
+        if ids:
+            data = database.loadMultipleBinarys(ids)
+            if data:
+                d = [(i[0], binaryToColorArray(bytearray(i[1]))) for i in data]
+                return jsonify(d)
+            else:
+                return {}
         else:
             return {}
     except Exception as e:
@@ -115,18 +136,6 @@ def brightness_apply(br):
     global brightness
     brightness = br
 #    led.updateBrightness(int(brightness))
-    return {}
-        
-@app.route("/animationlist/add/<id>", methods=["POST"])
-def animationlist_add(id):
-    global animationList
-    animationList.append([id,STANDARD_ANIMATIONTIME])
-    return {}
-
-@app.route("/animationlist/update", methods=["POST"])
-def animationlist_update():
-    global animationList
-    animationList = request.json
     return {}
 
 @app.route("/animation/apply", methods=["POST"])
@@ -144,6 +153,25 @@ def animation_stop():
     animationRunning = False
     return {}
 
+@app.route("/animation/create/<name>", methods=["POST"])
+def animation_create(name):
+    database = dao("database.sqlite")
+    try:
+        database.createAnimation(name)
+        return {}
+    except Exception as e:
+        print(e)
+        return {},400
+
+@app.route("/animation/edit", methods=["POST"])
+def animation_edit():
+    try:
+        pass
+    except Exception as e:
+        print(e)
+        return {},400
+
+
 ## ----- DELETE ----- ##
 
 @app.route("/delete/<id>", methods=["DELETE"])
@@ -151,7 +179,17 @@ def delete(id):
     database = dao("database.sqlite")
     frameID = int(id)
     try:
-        database.deleteBinaryFromDB(frameID)
+        database.deleteBinary(frameID)
+        return {}
+    except Exception as e:
+        print(e)
+        return {},400
+
+@app.route("/animation/delete/<id>", methods=["DELETE"])
+def animation_delete(id):
+    database = dao("database.sqlite")
+    try:
+        pass
         return {}
     except Exception as e:
         print(e)
@@ -177,7 +215,7 @@ async def animationLoop():
     database = dao("database.sqlite")
     animation = []
     for frame,t in animationList:
-        b = database.loadBinaryFromDB(int(frame))
+        b = database.loadSingleBinary(int(frame))
         t = int(t)/1000
         animation.append([b,t])
     while animationRunning:
