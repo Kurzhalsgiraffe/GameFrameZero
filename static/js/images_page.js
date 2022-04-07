@@ -33,7 +33,6 @@ async function loadAndShow(id=null, pos=null) {
     canvasObject.drawGrid();
 }
 
-// delete current frame from server
 async function deleteColorArrayFromServer(id) {
     let response = await fetch("/delete/"+id, {
         method: "DELETE"

@@ -51,12 +51,11 @@ function initializeAnimationlist(tiles) {
     for (let tile of tiles) {
         frameID = tile[0];
         time = tile[1];
-        // create elements
+        
         const tr = document.createElement("tr");
         const numberTile = document.createElement("td");
         const timeTile = document.createElement("td");
 
-        // add attributes
         tr.setAttribute("draggable", true);
         tr.setAttribute("id", "al-"+x);
 
@@ -65,11 +64,9 @@ function initializeAnimationlist(tiles) {
 
         timeTile.classList.add("time-tile");
 
-        // add text
         numberTile.innerHTML = `Bild ${frameID}<span class="remove-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Entferne das Bild aus der Animieren-Liste">X</span>`;
         timeTile.innerHTML = `<input maxlength="4" size="4" value="${time}"></input> ms`;
 
-        // add elements to tr and tr to dom
         tr.appendChild(numberTile);
         tr.appendChild(timeTile);
         animationlist_body.appendChild(tr);

@@ -20,11 +20,12 @@ move_left.addEventListener("click", moveLeft);
 move_right.addEventListener("click", moveRight);
 move_down.addEventListener("click", moveDown);
 
+// toggle the drawmode (colorpicker / drawing)
 colorpicker_btn.addEventListener("click", function() {
     setDrawMode(!drawMode);
 });
 
-// set every pixel to black and initialize clean colorArray
+// set every pixel to black, initialize clean colorArray and draw the grid
 delete_btn.addEventListener("click", function() {
     canvasObject.c.clearRect(0,0,canvasObject.FRAME_SIZE,canvasObject.FRAME_SIZE);
     canvasObject.initializeColorArray();
@@ -110,6 +111,7 @@ function removeActiveCircleColor() {
     });
 }
 
+// load the colorArray by id to the canvasObject and draw it to the canvas
 async function loadAndShow(id=null,pos=null) {
     await canvasObject.loadColorArrayFromServer(id,pos);
     if (canvasObject.colorArray.length === 0) {
@@ -191,8 +193,10 @@ function moveDown() {
     canvasObject.drawColorArrayToCanvas();
 }
 
+
 document.addEventListener("DOMContentLoaded", async function() {
     canvasObject.initializeColorArray();
+    // if there is an id in the url, load it and draw it on the canvas, so it can be edited
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     if(urlParams.has('id')) {
