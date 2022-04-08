@@ -18,7 +18,9 @@ async function loadMultipleArraysFromServer(ids) {
     }
 }
 
-async function initializeCanvasTiles(animation_ids, thumbnail_ids) {
+async function initializeCanvasTiles(animation_ids, thumbnail_ids=animation_ids) {
+    console.log(animation_ids)
+    console.log(thumbnail_ids)
     let blobs = await loadMultipleArraysFromServer(thumbnail_ids)
 
     for (let id of animation_ids) {

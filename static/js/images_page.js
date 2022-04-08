@@ -2,7 +2,6 @@ const canvas = document.querySelector("canvas");
 const delete_btn = document.querySelector("#delete-btn");
 const edit_btn = document.querySelector("#edit-btn");
 const apply_btn = document.querySelector("#apply-btn");
-const animation_btn = document.querySelector("#animation-btn");
 const first_frame_btn = document.querySelector("#first-frame-btn");
 const prev_frame_btn = document.querySelector("#prev-frame-btn");
 const next_frame_btn = document.querySelector("#next-frame-btn");
@@ -14,7 +13,6 @@ var currentPos = 1;
 delete_btn.addEventListener("click", async () => await deleteColorArrayFromServer(currentPos));
 edit_btn.addEventListener("click", editSavedColorArray);
 apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/apply"));
-animation_btn.addEventListener("click", async () => await addFrameToAnimation());
 first_frame_btn.addEventListener("click", async () => await loadAndShow(null, "first"));
 prev_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "prev"));
 next_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "next"));
@@ -46,15 +44,6 @@ async function deleteColorArrayFromServer(id) {
 
 function editSavedColorArray() {
     window.location.replace("/?id="+currentPos);
-}
-
-async function addFrameToAnimation() {
-    let response = await fetch("/animationlist/add/"+currentPos, {
-        method: "POST"
-    });
-    if (response.status != 200) {
-        console.log("failed to add Frame to Animationlist");
-    }
 }
 
 document.addEventListener("DOMContentLoaded", async function() {

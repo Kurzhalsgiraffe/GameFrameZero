@@ -129,38 +129,6 @@ canvas {
     display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-.animationlist-wrapper {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-.animationlist {
-    font-size: 24px;
-    margin: auto;
-    cursor: pointer;
-}
-
-.time-tile {
-    background: #ffffff;
-}
-
-.number-tile {
-    background: #32cd32;
-}
-
-td {
-    width: 200px;
-    display: block;
-    padding: 2px 5px;
-}
-
-.remove-btn {
-    font-size: 20px;
-    font-weight: bold;
-    float: right;
-}
-
 .slidecontainer {
     width: 100%;
   }
@@ -203,4 +171,8 @@ td {
   #animation-name:focus{
     border-color:#32cd32;
     box-shadow:0 0 8px 0 #32cd32;
+  }
+
+  .card-title {
+    text-align: center;
   }

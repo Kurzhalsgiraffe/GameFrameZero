@@ -66,23 +66,54 @@
             </div>
 
             <!-- Sidebar END -->
-
+                <div class="d-flex flex-column col">
+                    <div class="d-flex justify-content-center my-5">
+                        <div class="row col-lg-8 g-4" id="tile-body"></div>
+                    </div>
+                    <div class="d-flex fs-3 fw-bold justify-content-center mt-4">AUSWAHL</div>
+                    <div class="d-flex justify-content-center mt-4">
+                        <canvas width="480px" height="480px"></canvas>
+                    </div>
+                    <div class="d-flex justify-content-center my-2">
+                        <div class="d-inline-flex">
+                            <button class="button pic-btn" id="first-frame-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                    <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </button>
+                            <button class="button pic-btn mx-2" id="prev-frame-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </button>
+                            <span class="mx-2 my-auto fs-5 fw-bold" id="framenumber">BILD 1</span>
+                            <button class="button pic-btn mx-2" id="next-frame-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </button>
+                            <button class="button pic-btn" id="last-frame-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                    <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </button>
+                        </div>                                  
+                    </div>
+                    <div class="d-flex justify-content-center my-2">
+                        <button class="button opt-btn my-2" id="add-to-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Füge das Bild zur Animationsliste hinzu"><strong>HINZUFÜGEN</strong></button>
+                    </div>
+                </div>
+            
             <!-- Canvas -->
-            <div class="col py-3 d-flex justify-content-evenly my-auto">
-                <div>
-                    <div class="d-flex justify-content-center board">
-                        <canvas width="512px" height="512"></canvas>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <span class="mx-2 my-auto fs-5 fw-bold" id="framenumber" style="color: white"></span>
-                    </div>
-                </div>          
-            </div>
+            
             <!-- Canvasbereich END -->
         </div>
     </div>
    
     <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/frametiles.js') }}"></script>
     <script src="{{ url_for('static', filename='js/edit_animation_page.js') }}"></script>
     <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
