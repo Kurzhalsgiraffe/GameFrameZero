@@ -9,8 +9,9 @@ const last_frame_btn = document.querySelector("#last-frame-btn");
 const animationlist_body = document.querySelector("#animationlist-body");
 const frameNumber = document.getElementById("framenumber");
 
-var selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[]);
-var currentPos = 1;
+let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[]);
+let currentPos = 1;
+let animation_list = [];
 
 assume_btn.addEventListener("click", async () => await sendAnimationToServer());
 first_frame_btn.addEventListener("click", async () => await loadAndShow(null, "first"));
@@ -30,6 +31,16 @@ async function loadAndShow(id=null,pos=null) {
     }
     selectorCanvasObject.drawColorArrayToCanvas();
     selectorCanvasObject.drawGrid();
+}
+
+async function loadAnimationListFromServer(animation_id) {
+    let response = await fetch("/animation/load/"+animation_id);
+    let res = await response.json();
+    if (response.status == 200) {
+        return [res.imageIDs, res.positions, res.times]
+    } else {
+        console.log("failed to load AnimationList from server");
+    }
 }
 
 // function getAnimationList() {
@@ -105,10 +116,10 @@ async function addContentToThumbnails(image_ids, image_times) {
     }
 }
 
-async function initializeAnimationTiles(image_ids, image_times) {
-    await initializeCanvasTiles(image_ids)
-    await addContentToThumbnails(image_ids, image_times)
-    //attachHandlers(animation_ids)
+async function initializeAnimationTiles(image_ids, positions, image_times) {
+    await initializeCanvasTiles(positions, image_ids)
+    await addContentToThumbnails(positions, image_times)
+    //attachHandlers()
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
@@ -116,9 +127,14 @@ document.addEventListener("DOMContentLoaded", async function() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     if(urlParams.has('id')) {
-        const loadedIDToEdit = urlParams.get('id');
-        console.log(loadedIDToEdit)
+        const animation_id = urlParams.get('id');
+        animation_list = await loadAnimationListFromServer(animation_id);
+    } else {
+        console.log("Didn't find the Animation ID")
     }
+    let image_ids = animation_list[0]
+    let positions = animation_list[1]
+    let times = animation_list[2]
+    initializeAnimationTiles(image_ids, positions, times)
     loadAndShow(null, "first")
-    initializeAnimationTiles([1], [200])
 });

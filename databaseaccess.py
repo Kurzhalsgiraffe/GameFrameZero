@@ -57,11 +57,14 @@ class dao:
         
     def loadMultipleBinarys(self, ids):
         try:
-            if len(ids) >1:
-                data = self.cursor.execute("SELECT * FROM images WHERE image_id IN {}".format(tuple(ids))).fetchall()
-            elif len(ids) == 1:
-                data = self.cursor.execute("SELECT * FROM images WHERE image_id = ?", (ids[0],)).fetchall()
-            return data
+            arr = []
+            for i in ids:
+                data = self.cursor.execute("SELECT * FROM images WHERE image_id = ?", (i,)).fetchone()
+                if data:
+                    arr.append(data)
+                else:
+                    arr.append(None)
+            return arr
         except Exception as e:
             print(e)
             return None
@@ -143,11 +146,33 @@ class dao:
 
     def getAllAnimationThumbnails(self, animation_ids):
         try:
-            if len(animation_ids) >1:
-                data = self.cursor.execute("SELECT image_id FROM images_to_animations WHERE (animation_id,pos) IN (SELECT animation_id , MIN(pos) FROM images_to_animations GROUP BY animation_id) AND animation_id IN {}".format(tuple(animation_ids))).fetchall()
-            elif len(animation_ids) == 1:
-                data = self.cursor.execute("SELECT image_id FROM images_to_animations WHERE (animation_id,pos) IN (SELECT animation_id , MIN(pos) FROM images_to_animations GROUP BY animation_id) AND animation_id = ?", (animation_ids[0],)).fetchall()
-            return [i[0] for i in data]
+            data = self.cursor.execute("SELECT * FROM images_to_animations").fetchall()    
+            s = sorted(data, key=lambda x: (x[0], x[2]))
+            d = []
+            used = []
+            ret = []
+            for i in s:
+                animation_id = i[0]
+                if animation_id not in used:
+                    used.append(animation_id)
+                    d.append(i)
+
+            for i in animation_ids:
+                for j in d:
+                    if j[0] == i:
+                        ret.append(j[1])
+                        break
+                else:
+                    ret.append(None)
+
+            return ret
+        except Exception as e:
+            print(e)
+
+    def getAnimationByID(self, animation_id):
+        try:
+            data = self.cursor.execute("SELECT * FROM images_to_animations where animation_id = ? ORDER BY pos", (animation_id,)).fetchall()
+            return data
         except Exception as e:
             print(e)
 

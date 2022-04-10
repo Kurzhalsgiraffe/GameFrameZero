@@ -18,9 +18,7 @@ async function loadMultipleArraysFromServer(ids) {
     }
 }
 
-async function initializeCanvasTiles(animation_ids, thumbnail_ids=animation_ids) {
-    console.log(animation_ids)
-    console.log(thumbnail_ids)
+async function initializeCanvasTiles(animation_ids, thumbnail_ids) {
     let blobs = await loadMultipleArraysFromServer(thumbnail_ids)
 
     for (let id of animation_ids) {
@@ -53,15 +51,16 @@ async function initializeCanvasTiles(animation_ids, thumbnail_ids=animation_ids)
 }
 
 async function drawThumbnails(blobs,animation_ids) {
+    let data
     for (let x=0; x<blobs.length; x++) {
-        id = animation_ids[x]
-        blob = blobs[x][1]
-
+        id = animation_ids[x];
+        data = blobs[x];
+        
         let c = document.querySelector("#canvas-"+id);
         canvasObject.setCanvas(c);
-        canvasObject.setColorArray(blob)
-        
-        if (canvasObject.colorArray.length === 0) {
+        if (data) {
+            canvasObject.setColorArray(data[1])
+        } else {
             canvasObject.initializeColorArray();
         }
         canvasObject.drawColorArrayToCanvas();

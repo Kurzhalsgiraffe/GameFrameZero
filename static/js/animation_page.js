@@ -57,7 +57,7 @@ async function loadAllAnimationsFromServer() {
     if (response.status == 200) {
         return [res.animationIDs, res.animationNames, res.thumbnailIDs]
     } else {
-        console.log("failed to load colorArray from server");
+        console.log("failed to load AnimationIDs from server");
     }
 }
 

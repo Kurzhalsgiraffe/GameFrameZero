@@ -32,6 +32,28 @@ def animation():
 def animation_editor():
     return render_template("animation_editor.html")
 
+@app.route("/animation/load/<id>")
+def animation_load(id):
+    database = dao("database.sqlite")
+    try:
+        data = database.getAnimationByID(id)
+        image_ids = []
+        positions = []
+        times = []
+        for i in data:
+            image_ids.append(i[1])
+            positions.append(i[2])
+            times.append(i[3])
+        d = {
+                "imageIDs": image_ids,
+                "positions": positions,
+                "times": times
+            }
+        return jsonify(d)
+    except Exception as e:
+        print(e)
+        return {},400
+
 @app.route("/animation/load/all")
 def animation_load_all():
     database = dao("database.sqlite")
@@ -120,11 +142,13 @@ def loadlist():
         ids = request.json
         if ids:
             data = database.loadMultipleBinarys(ids)
-            if data:
-                d = [(i[0], binaryToColorArray(bytearray(i[1]))) for i in data]
-                return jsonify(d)
-            else:
-                return {}
+            d = []
+            for i in data:
+                if i:
+                    d.append((i[0],binaryToColorArray(bytearray(i[1]))))
+                else:
+                    d.append(None)
+            return jsonify(d)
         else:
             return {}
     except Exception as e:
@@ -214,7 +238,7 @@ def binaryToColorArray(binary):
 async def animationLoop():
     database = dao("database.sqlite")
     animation = []
-    for frame,t in animationList:
+    for frame,t in animationList:                                               ###### FIX IT
         b = database.loadSingleBinary(int(frame))
         t = int(t)/1000
         animation.append([b,t])
