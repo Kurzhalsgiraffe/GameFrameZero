@@ -1,4 +1,4 @@
-#Comment out Lines 2 75 92 159 163 for testing on Windows
+#Comment out Lines 2 109 149 261 267 for testing on Windows
 #import led
 from turtle import pos
 
@@ -34,21 +34,8 @@ def animation_editor():
 
 @app.route("/animation/load/<id>")
 def animation_load(id):
-    database = dao("database.sqlite")
     try:
-        data = database.getAnimationByID(id)
-        image_ids = []
-        positions = []
-        times = []
-        for i in data:
-            image_ids.append(i[1])
-            positions.append(i[2])
-            times.append(i[3])
-        d = {
-                "imageIDs": image_ids,
-                "positions": positions,
-                "times": times
-            }
+        d = loadAnimationListByID(id)
         return jsonify(d)
     except Exception as e:
         print(e)
@@ -166,10 +153,10 @@ def brightness_apply(br):
 def animation_start(id):
     global animationRunning
     animationRunning = True
-    loadAnimationListByID(id)
+    d = loadAnimationListByID(id)
     asyncio.set_event_loop(asyncio.new_event_loop())
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(animationLoop())
+    loop.run_until_complete(animationLoop(d))
     return {}
 
 @app.route("/animation/stop", methods=["POST"])
@@ -237,21 +224,44 @@ def binaryToColorArray(binary):
     return c
 
 def loadAnimationListByID(id):
-    database = dao("database.sqlite")
-    
+    try:
+        database = dao("database.sqlite")
+        data = database.getAnimationByID(id)
+        image_ids = []
+        positions = []
+        times = []
+        for i in data:
+            image_ids.append(i[1])
+            positions.append(i[2])
+            times.append(i[3])
+        d = {
+                "imageIDs": image_ids,
+                "positions": positions,
+                "times": times
+            }
+        return d
+    except Exception as e:
+        print(e)
 
-async def animationLoop(animationList):
-    database = dao("database.sqlite")
-    animation = []
-    for frame,t in animationList:                                               ###### FIX IT
-        b = database.loadSingleBinary(int(frame))
-        t = int(t)/1000
-        animation.append([b,t])
-    while animationRunning:
-        for b,time in animation:
-            if animationRunning:
-#                led.updateFrame(b)
-                await asyncio.sleep(time)
+async def animationLoop(d):
+    try:
+        database = dao("database.sqlite")
+        animation = []
+        blobs = database.loadMultipleBinarys(d["imageIDs"])
+        times = d["times"]
+        for i in range(len(d["imageIDs"])):
+            b = blobs[i]
+            if b:
+                b = b[1]
+                t = times[i]/1000
+                animation.append([b,t])
+        while animationRunning:
+            for b,time in animation:
+                if animationRunning:
+    #                led.updateFrame(b)
+                    await asyncio.sleep(time)
+    except Exception as e:
+        print(e)
 
 if __name__ == "__main__":
 #    led.init()

@@ -12,11 +12,16 @@ edit_animation_btn.addEventListener("click", editAnimation);
 //delete_animation_btn.addEventListener("click", deleteAnimation);
 
 async function startAnimation() {
-    let response = await fetch("/animation/apply/"+id, {
-        method: "POST"
-    });
-    if (response.status != 200) {
-        console.log("failed to apply Animation");
+    let id;
+    let response;
+    if (activeTile) {
+        id = activeTile.id.slice(5,)
+        response = await fetch("/animation/start/"+id, {
+            method: "POST"
+        });
+        if (response.status != 200) {
+            console.log("failed to apply Animation");
+        }
     }
 }
 
@@ -43,6 +48,7 @@ async function createAnimation() {
 }
 
 async function editAnimation() {
+    let id;
     if (activeTile != null) {
         id = activeTile.id.slice(5,)
         window.location.replace("/animation/editor?id="+id);
@@ -62,7 +68,7 @@ async function loadAllAnimationsFromServer() {
 async function addContentToThumbnails(ids, names) {
     for (let x=0; x<ids.length; x++) {
         text = names[x]
-        id = ids[x]
+        let id = ids[x]
         const htag = document.createElement("h5");
         let cardbody = document.querySelector("#card-body-"+id);
 
