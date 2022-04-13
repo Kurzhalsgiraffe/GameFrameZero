@@ -1,18 +1,18 @@
-const apply_animation_btn = document.querySelector("#apply-animation-btn");
+const start_animation_btn = document.querySelector("#start-animation-btn");
 const stop_animation_btn = document.querySelector("#stop-animation-btn");
 const create_animation_btn = document.querySelector("#create-animation-btn");
 const edit_animation_btn = document.querySelector("#edit-animation-btn");
 const delete_animation_btn = document.querySelector("#delete-animation-btn");
 const animation_name = document.querySelector("#animation-name");
 
-apply_animation_btn.addEventListener("click", applyAnimation);
+start_animation_btn.addEventListener("click", startAnimation);
 stop_animation_btn.addEventListener("click", stopAnimation);
 create_animation_btn.addEventListener("click", createAnimation);
 edit_animation_btn.addEventListener("click", editAnimation);
 //delete_animation_btn.addEventListener("click", deleteAnimation);
 
-async function applyAnimation() {
-    let response = await fetch("/animation/apply", {
+async function startAnimation() {
+    let response = await fetch("/animation/apply/"+id, {
         method: "POST"
     });
     if (response.status != 200) {

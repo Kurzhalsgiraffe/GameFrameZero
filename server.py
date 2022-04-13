@@ -162,10 +162,11 @@ def brightness_apply(br):
 #    led.updateBrightness(int(brightness))
     return {}
 
-@app.route("/animation/apply", methods=["POST"])
-def animation_apply():
+@app.route("/animation/start/<id>", methods=["POST"])
+def animation_start(id):
     global animationRunning
     animationRunning = True
+    loadAnimationListByID(id)
     asyncio.set_event_loop(asyncio.new_event_loop())
     loop = asyncio.get_event_loop()
     loop.run_until_complete(animationLoop())
@@ -235,7 +236,11 @@ def binaryToColorArray(binary):
         c.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
     return c
 
-async def animationLoop():
+def loadAnimationListByID(id):
+    database = dao("database.sqlite")
+    
+
+async def animationLoop(animationList):
     database = dao("database.sqlite")
     animation = []
     for frame,t in animationList:                                               ###### FIX IT
