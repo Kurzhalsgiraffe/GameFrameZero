@@ -5,8 +5,6 @@ const edit_animation_btn = document.querySelector("#edit-animation-btn");
 const delete_animation_btn = document.querySelector("#delete-animation-btn");
 const animation_name = document.querySelector("#animation-name");
 
-let activeTile = null;
-
 apply_animation_btn.addEventListener("click", applyAnimation);
 stop_animation_btn.addEventListener("click", stopAnimation);
 create_animation_btn.addEventListener("click", createAnimation);
@@ -82,20 +80,6 @@ function attachHandlers(ids) {
             unselectTile()
             selectTile(e.currentTarget)
         });
-    }
-}
-
-function selectTile(t) {
-    activeTile = t;
-    activeTile.classList.add("active");
-    activeTile.setAttribute("style","border:2px solid #32cd32");
-}
-
-function unselectTile() {
-    if (activeTile != null) {
-        activeTile.classList.remove("active");
-        activeTile.setAttribute("style","border: none");
-        activeTile = null;
     }
 }
 

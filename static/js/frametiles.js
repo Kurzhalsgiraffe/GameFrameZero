@@ -1,5 +1,7 @@
 const tile_body = document.querySelector("#tile-body");
-var canvasObject = new CanvasObject(canvas=null, FRAME_SIZE=256, PIXEL_SIZE=16, colorArray=[], gridColor='rgba(0, 0, 0, 1.0)');
+
+let canvasObject = new CanvasObject(canvas=null, FRAME_SIZE=256, PIXEL_SIZE=16, colorArray=[], gridColor='rgba(0, 0, 0, 1.0)');
+let activeTile = null;
 
 async function loadMultipleArraysFromServer(ids) {
     let response = await fetch("/loadlist", {
@@ -14,7 +16,7 @@ async function loadMultipleArraysFromServer(ids) {
         let res = await response.json();
         return res
     } else {
-        console.log("failed to load colorArray from server");
+        console.log("failed to load Arrays from server");
     }
 }
 
@@ -29,6 +31,7 @@ async function initializeCanvasTiles(animation_ids, thumbnail_ids) {
 
         wrap.classList.add("col")
         wrap.classList.add("col-lg-3")
+        wrap.setAttribute("id", "wrap-"+id);
         tile.classList.add("card");
         tile.classList.add("h-80");
         tile.classList.add("bg-dark");
@@ -65,5 +68,19 @@ async function drawThumbnails(blobs,animation_ids) {
         }
         canvasObject.drawColorArrayToCanvas();
         canvasObject.drawGrid()
+    }
+}
+
+function selectTile(t) {
+    activeTile = t;
+    activeTile.classList.add("active");
+    activeTile.setAttribute("style","border:2px solid #32cd32");
+}
+
+function unselectTile() {
+    if (activeTile != null) {
+        activeTile.classList.remove("active");
+        activeTile.setAttribute("style","border: none");
+        activeTile = null;
     }
 }

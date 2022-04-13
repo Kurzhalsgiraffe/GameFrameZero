@@ -1,12 +1,10 @@
 const canv = document.querySelector("canvas");
-const number_tile = document.querySelectorAll(".number-tile");
 const assume_btn = document.querySelector("#assume-btn");
 const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
 const first_frame_btn = document.querySelector("#first-frame-btn");
 const prev_frame_btn = document.querySelector("#prev-frame-btn");
 const next_frame_btn = document.querySelector("#next-frame-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
-const animationlist_body = document.querySelector("#animationlist-body");
 const frameNumber = document.getElementById("framenumber");
 
 let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[]);
@@ -45,7 +43,7 @@ async function loadAnimationListFromServer(animation_id) {
 
 // function getAnimationList() {
 //     arr = [];
-//     rows = animationlist_body.rows;
+//     rows = tile_body.rows;
 //     for(let i=0; i< rows.length; i++){
 //         tds = rows[i].getElementsByTagName("td");
 //         frameid = tds[0].getAttribute('value').slice(6,);
@@ -55,60 +53,49 @@ async function loadAnimationListFromServer(animation_id) {
 //     return arr;
 // }
 
-function drag(event) {
-    event.dataTransfer.setData('src', event.currentTarget.id);
+function dragstart(event) {
+    event.dataTransfer.setData("Text", event.target.id);
+    console.log(event)
 }
 
 function drop(event) {
     event.preventDefault();
-    let src = document.getElementById(event.dataTransfer.getData('src'));
-    let target = event.currentTarget;
-    if (src == target) return false;
-
-    let srcHolder = document.createElement('div');
-    let targetHolder = document.createElement('div');
-
-    animationlist_body.replaceChild(srcHolder, src);
-    animationlist_body.replaceChild(targetHolder, target);
-
-    animationlist_body.replaceChild(target, srcHolder);
-    animationlist_body.replaceChild(src, targetHolder);
+    console.log(event)
 }
 
-function attachHandlers() {
-    let rows = animationlist_body.children;
-    for (let row of rows) {
-        row.addEventListener('dragover', (e) => {
+function attachHandlers(ids) {
+    for (let id of ids) {
+        let tile = document.querySelector("#tile-"+id);
+        
+        tile.addEventListener('click', (e) => {
+            unselectTile()
+            selectTile(e.currentTarget)
+        });
+
+        tile.addEventListener('dragover', (e) => {
             e.preventDefault();
         });
-
-        row.addEventListener('dragstart', (e) => {
-            drag(e);
+            
+        tile.addEventListener('dragstart', (e) => {
+            dragstart(e);
         });
-
-        row.addEventListener('drop', (e) => {
+            
+        tile.addEventListener('drop', (e) => {
             drop(e);
-        });
-
-        row.addEventListener('click', (e) => {
-            if (e.target.classList.contains('remove-btn')) {
-                e.currentTarget.remove();
-            } 
-            else if (e.target.classList.contains('number-tile')) {
-                let id = e.target.getAttribute('value').slice(6,)
-                loadAndShow(id,null);
-            }
         });
     }
 }
 
-async function addContentToThumbnails(image_ids, image_times) {
+async function addContentToTiles(image_ids, image_times) {
     for (let x=0; x<image_ids.length; x++) {
+        let cardbody = document.querySelector("#card-body-"+id);
+        let wrap = document.querySelector("#wrap-"+id);
+
         time = image_times[x]
         id = image_ids[x]
         const htag = document.createElement("h5");
-        let cardbody = document.querySelector("#card-body-"+id);
 
+        wrap.setAttribute("draggable", "true");
         htag.classList.add("card-title");
         htag.innerHTML = `${time/1000} Sekunden`;
 
@@ -118,8 +105,8 @@ async function addContentToThumbnails(image_ids, image_times) {
 
 async function initializeAnimationTiles(image_ids, positions, image_times) {
     await initializeCanvasTiles(positions, image_ids)
-    await addContentToThumbnails(positions, image_times)
-    //attachHandlers()
+    await addContentToTiles(positions, image_times)
+    attachHandlers(positions)
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
