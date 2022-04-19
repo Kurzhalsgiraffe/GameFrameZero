@@ -204,6 +204,15 @@ def animation_delete(id):
         print(e)
         return {},400
 
+## ----- DISABLE CACHING ----- ##
+
+@app.after_request
+def add_header(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 ## ----- FUNCTIONS ----- ##
 
 def colorArrayToBinary(colorArray):
