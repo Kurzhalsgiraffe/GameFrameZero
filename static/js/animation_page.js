@@ -9,7 +9,7 @@ start_animation_btn.addEventListener("click", startAnimation);
 stop_animation_btn.addEventListener("click", stopAnimation);
 create_animation_btn.addEventListener("click", createAnimation);
 edit_animation_btn.addEventListener("click", editAnimation);
-//delete_animation_btn.addEventListener("click", deleteAnimation);
+delete_animation_btn.addEventListener("click", deleteAnimation);
 
 async function startAnimation() {
     let id;
@@ -52,6 +52,19 @@ async function editAnimation() {
     if (activeTile != null) {
         id = activeTile.id.slice(5,)
         window.location.replace("/animation/editor?id="+id);
+    }
+}
+
+async function deleteAnimation() {
+    let id;
+    if (activeTile) {
+        id = activeTile.id.slice(5,)
+        let response = await fetch("/animation/delete/"+id, {
+            method: "DELETE"
+        });
+        if (response.status != 200) {
+            console.log("failed to delete Animation");
+        }
     }
 }
 

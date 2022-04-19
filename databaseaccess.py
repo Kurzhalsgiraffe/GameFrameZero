@@ -47,9 +47,9 @@ class dao:
 
     # -----  IMAGES TABLE  -----#
 
-    def loadSingleBinary(self, frameID):
+    def loadSingleBinary(self, image_id):
         try:
-            data = self.cursor.execute("SELECT * FROM images WHERE image_id=?",(frameID,)).fetchall()
+            data = self.cursor.execute("SELECT * FROM images WHERE image_id=?",(image_id,)).fetchall()
             return bytearray(data[0][1])
         except Exception as e:
             print(e)
@@ -76,9 +76,9 @@ class dao:
         except Exception as e:
             print(e)
 
-    def deleteBinary(self, frameID):
+    def deleteBinary(self, image_id):
         try:
-            self.cursor.execute("DELETE FROM images WHERE image_id=?",(frameID,))
+            self.cursor.execute("DELETE FROM images WHERE image_id=?",(image_id,))
             self.conn.commit()
         except Exception as e:
             print(e)
@@ -135,6 +135,13 @@ class dao:
         except Exception as e:
             print(e)
 
+    def deleteAnimation(self, animation_id):
+        try:
+            self.cursor.execute("DELETE FROM animations WHERE animation_id=?",(animation_id,))
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+
     # -----  IMAGES_TO_ANIMATIONS TABLE  -----#
 
     def addImageToAnimation(self, animation_id, image_id, position, time):
@@ -173,6 +180,13 @@ class dao:
         try:
             data = self.cursor.execute("SELECT * FROM images_to_animations where animation_id = ? ORDER BY pos", (animation_id,)).fetchall()
             return data
+        except Exception as e:
+            print(e)
+
+    def removeAllImagesFromAnimation(self, animation_id):
+        try:
+            self.cursor.execute("DELETE FROM images_to_animations WHERE animation_id=?",(animation_id,))
+            self.conn.commit()
         except Exception as e:
             print(e)
 

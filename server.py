@@ -1,4 +1,4 @@
-#Comment out Lines 2 106 146 258 264 for testing on Windows
+#Comment out Lines 2 106 146 267 273 for testing on Windows
 import led
 from databaseaccess import dao
 import asyncio
@@ -198,7 +198,8 @@ def delete(id):
 def animation_delete(id):
     database = dao("database.sqlite")
     try:
-        pass
+        database.deleteAnimation(id)
+        database.removeAllImagesFromAnimation(id)
         return {}
     except Exception as e:
         print(e)
