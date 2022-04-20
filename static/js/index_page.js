@@ -1,7 +1,5 @@
+const canvas = document.querySelector("canvas");
 const colorCirlce = document.querySelectorAll(".color-circle");
-const gridColor = 'rgba(255, 255, 255, 1.0)';
-const PIXEL_SIZE = 50;
-const FRAME_SIZE = 800;
 const favcolor_field = document.getElementById("favcolor");
 const colorpicker_btn = document.querySelector("#colorpicker-btn");
 const delete_btn = document.querySelector("#delete-btn");
@@ -11,41 +9,43 @@ const move_up = document.querySelector("#move-up");
 const move_left = document.querySelector("#move-left");
 const move_right = document.querySelector("#move-right");
 const move_down = document.querySelector("#move-down");
+var canvasObject = new CanvasObject(canvas, FRAME_SIZE=800, PIXEL_SIZE=50, colorArray=[]);
 var isMouseDownCanvas;
 var drawMode = true;
 
-save_btn.addEventListener("click", async () => await sendColorArrayToServer("/save"));
-apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/apply"));
+save_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/save"));
+apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/apply"));
 move_up.addEventListener("click", moveUp);
 move_left.addEventListener("click", moveLeft);
 move_right.addEventListener("click", moveRight);
 move_down.addEventListener("click", moveDown);
 
+// toggle the drawmode (colorpicker / drawing)
 colorpicker_btn.addEventListener("click", function() {
     setDrawMode(!drawMode);
 });
 
-// set every pixel to black and initialize clean colorArray
+// set every pixel to black, initialize clean colorArray and draw the grid
 delete_btn.addEventListener("click", function() {
-    c.clearRect(0,0,canvas.width,canvas.height);
-    drawGrid();
-    initializeColorArray();
+    canvasObject.c.clearRect(0,0,canvasObject.FRAME_SIZE,canvasObject.FRAME_SIZE);
+    canvasObject.initializeColorArray();
+    canvasObject.drawGrid();
 });
 
-canvas.addEventListener("mousedown", (event)=>{
+canvasObject.canvas.addEventListener("mousedown", (event)=>{
     isMouseDownCanvas = true;
     updateCell(event.offsetX, event.offsetY);
 });
 
-canvas.addEventListener("mouseup", ()=>{
+canvasObject.canvas.addEventListener("mouseup", ()=>{
     isMouseDownCanvas = false;
 });
 
-canvas.addEventListener("mouseleave", ()=>{
+canvasObject.canvas.addEventListener("mouseleave", ()=>{
     isMouseDownCanvas = false;
 });
 
-canvas.addEventListener("mousemove",(event)=>{
+canvasObject.canvas.addEventListener("mousemove",(event)=>{
     updateCell(event.offsetX, event.offsetY);
 });
 
@@ -63,12 +63,12 @@ function updateCell(x,y) {
 
     if (isMouseDownCanvas) {
         if(drawMode) {
-            draw(x_start, y_start);
-            updateGrid(x_start,y_start);
-            colorArray[tileNumber] = c.fillStyle;
+            canvasObject.draw(x_start, y_start);
+            canvasObject.updateGrid(x_start,y_start);
+            canvasObject.colorArray[tileNumber] = canvasObject.c.fillStyle;
         }
         else {
-            setPickedColor(colorArray[tileNumber]);
+            setPickedColor(canvasObject.colorArray[tileNumber]);
         }
     }
 }
@@ -99,7 +99,7 @@ function favColor(elem) {
 function setPickedColor(color) {
     setDrawMode(true);
     removeActiveCircleColor();
-    c.fillStyle = color;
+    canvasObject.c.fillStyle = color;
     favcolor_field.setAttribute("value", color);
     favcolor_field.value = color;
 }
@@ -111,101 +111,97 @@ function removeActiveCircleColor() {
     });
 }
 
-
-// load colorArray from server relativ to the currently loaded Frame
-async function loadColorArrayFromServer(id) {
-    let response = await fetch("/load/"+id+"/same");
-    if (response.status == 200) {
-        res = await response.json();
-        if (!res.colorArray) {
-            initializeColorArray();
-        } else {
-            colorArray = res.colorArray;
-        }
-        drawColorArrayToCanvas();  
-    } else {
-        console.log("failed to load colorArray from server");
+// load the colorArray by id to the canvasObject and draw it to the canvas
+async function loadAndShow(id=null,pos=null) {
+    await canvasObject.loadColorArrayFromServer(id,pos);
+    if (canvasObject.colorArray.length === 0) {
+        canvasObject.initializeColorArray();
     }
+    canvasObject.drawColorArrayToCanvas();
+    canvasObject.drawGrid();
 }
 
 // move all pixels up by one row
 function moveUp() {
     for (let i=0; i<256; i++) {
         if (i<240) {
-            colorArray[i] = colorArray[i-(2*i)%32+31]
+            canvasObject.colorArray[i] = canvasObject.colorArray[i-(2*i)%32+31]
         } else {
-            colorArray[i] = "#000000"
+            canvasObject.colorArray[i] = "#000000"
         }
     }
-    drawColorArrayToCanvas();
+    canvasObject.drawColorArrayToCanvas();
 }
 
 // move all pixels to the left by one column
 function moveLeft() {
     let newArr = []
     for (let i=0; i<256; i++) {
-        y = Math.floor(i/16);
+        let y = Math.floor(i/16);
         if (y%2==0) {
             if ((15-i%16)==15) {
                 newArr[i] = "#000000";
             } else {
-                newArr[i] = colorArray[i-1];
+                newArr[i] = canvasObject.colorArray[i-1];
             }
 
         } else {
             if ((i%16)==15) {
                 newArr[i] = "#000000";
             } else {
-                newArr[i] = colorArray[i+1];
+                newArr[i] = canvasObject.colorArray[i+1];
             }
         }
     }
-    colorArray = newArr;
-    drawColorArrayToCanvas();
+    canvasObject.colorArray = newArr;
+    canvasObject.drawColorArrayToCanvas();
 }
 
 // move all pixels to the right by one column
 function moveRight() {
     let newArr = []
     for (let i=0; i<256; i++) {
-        y = Math.floor(i/16);
+        let y = Math.floor(i/16);
         if (y%2==0) {
             if ((15-i%16)==0) {
                 newArr[i] = "#000000";
             } else {
-                newArr[i] = colorArray[i+1];
+                newArr[i] = canvasObject.colorArray[i+1];
             }
 
         } else {
             if ((i%16)==0) {
                 newArr[i] = "#000000";
             } else {
-                newArr[i] = colorArray[i-1];
+                newArr[i] = canvasObject.colorArray[i-1];
             }
         }
     }
-    colorArray = newArr;
-    drawColorArrayToCanvas();
+    canvasObject.colorArray = newArr;
+    canvasObject.drawColorArrayToCanvas();
 }
 
 // move all pixels down by one row
 function moveDown() {
     for (let i=255; i>=0; i--) {
         if (i>15) {
-            colorArray[i] = colorArray[i-(2*i)%32-1]
+            canvasObject.colorArray[i] = canvasObject.colorArray[i-(2*i)%32-1]
         } else {
-            colorArray[i] = "#000000"
+            canvasObject.colorArray[i] = "#000000"
         }
     }
-    drawColorArrayToCanvas();
+    canvasObject.drawColorArrayToCanvas();
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    initializeColorArray();
+
+document.addEventListener("DOMContentLoaded", async function() {
+    canvasObject.initializeColorArray();
+    // if there is an id in the url, load it and draw it on the canvas, so it can be edited
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     if(urlParams.has('id')) {
         const loadedIDToEdit = urlParams.get('id');
-        loadColorArrayFromServer(loadedIDToEdit);
+        await loadAndShow(loadedIDToEdit, null);
     }
+    canvasObject.drawGrid()
 });
