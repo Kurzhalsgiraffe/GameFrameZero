@@ -42,9 +42,12 @@ async function createAnimation() {
     let response = await fetch("/animation/create/"+name, {
         method: "POST"
     });
-    if (response.status != 200) {
+    if (response.status == 200) {
+        window.location.reload(true);
+    } else {
         console.log("failed to create Animation");
     }
+    
 }
 
 async function editAnimation() {
@@ -62,8 +65,10 @@ async function deleteAnimation() {
         let response = await fetch("/animation/delete/"+id, {
             method: "DELETE"
         });
-        if (response.status != 200) {
-            console.log("failed to delete Animation");
+        if (response.status == 200) {
+            window.location.reload(true);
+        } else {
+            console.log("failed to create Animation");
         }
     }
 }
@@ -92,7 +97,7 @@ async function addContentToThumbnails(ids, names) {
     }
 }
 
-function attachHandlers(ids) {
+async function attachHandlers(ids) {
     for (let id of ids) {
         let tile = document.querySelector("#tile-"+id);
         tile.addEventListener('click', (e) => {
@@ -102,16 +107,17 @@ function attachHandlers(ids) {
     }
 }
 
-async function initializeAnimationThumbnails(animation_ids, animation_names, thumbnail_ids) {
-    await initializeCanvasTiles(animation_ids,thumbnail_ids)
-    await addContentToThumbnails(animation_ids, animation_names)
-    attachHandlers(animation_ids)
-}
-
-document.addEventListener("DOMContentLoaded", async function() {
+async function initializeAnimationThumbnails() {
     let animations = await loadAllAnimationsFromServer()
     let animation_ids = animations[0]
     let animation_names = animations[1]
     let thumbnail_ids = animations[2]
-    initializeAnimationThumbnails(animation_ids, animation_names, thumbnail_ids)
+
+    await createCanvasTiles(animation_ids,thumbnail_ids)
+    await addContentToThumbnails(animation_ids, animation_names)
+    await attachHandlers(animation_ids)
+}
+
+document.addEventListener("DOMContentLoaded", async function() {
+    initializeAnimationThumbnails()
 });

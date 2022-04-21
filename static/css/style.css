@@ -157,7 +157,7 @@ canvas {
     cursor: pointer;
   }
 
-  #animation-name{
+  .animation-input{
     width:9em;
     border:2px solid #aaa;
     border-radius:4px;
@@ -168,7 +168,7 @@ canvas {
     transition:.3s;
   }
   
-  #animation-name:focus{
+  .animation-input:focus{
     border-color:#32cd32;
     box-shadow:0 0 8px 0 #32cd32;
   }

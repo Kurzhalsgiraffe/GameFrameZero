@@ -1,10 +1,11 @@
-#Comment out Lines 2 106 146 267 273 for testing on Windows
-import led
+#Comment out Lines 2 107 147 295 301 for testing on Windows
+#import led
 from databaseaccess import dao
 import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
 
 FRAME_SIZE = 768
+STANDARD_ANIMATION_TIME = 200
 
 animationRunning = False
 brightness = 40
@@ -29,7 +30,7 @@ def animation():
 def animation_editor():
     return render_template("animation_editor.html")
 
-@app.route("/animation/load/<id>")
+@app.route("/animation/load/<id>")              # load all image_ids, times and positions for this id
 def animation_load(id):
     try:
         d = loadAnimationListByID(id)
@@ -38,7 +39,7 @@ def animation_load(id):
         print(e)
         return {},400
 
-@app.route("/animation/load/all")
+@app.route("/animation/load/all")               # load informations about all animations (ids, names, thumbnails)
 def animation_load_all():
     database = dao("database.sqlite")
     try:
@@ -71,20 +72,20 @@ def load():
     pos = request.args.get('pos', type = str)
     if pos:
         if pos == "first":
-            id = database.getFirstID()
+            id = database.getFirstImageID()
         elif pos == "prev":
-            id = database.getPreviousID(id)
+            id = database.getPreviousImageID(id)
         elif pos == "next":
-            id = database.getNextID(id)
+            id = database.getNextImageID(id)
         elif pos == "last":
-            id = database.getLastID()
+            id = database.getLastImageID()
 
     try:
         b = database.loadSingleBinary(id)
         if b:
             d = {
                 "colorArray": binaryToColorArray(b),
-                "frameID": id
+                "imageID": id
             }
             return jsonify(d)
         else:
@@ -103,7 +104,7 @@ def brightness_load():
 def apply():
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
-    led.updateFrame(b)
+#    led.updateFrame(b)
     return {}
 
 @app.route("/save", methods=["POST"])
@@ -143,7 +144,7 @@ def loadlist():
 def brightness_apply(br):
     global brightness
     brightness = br
-    led.updateBrightness(int(brightness))
+#    led.updateBrightness(int(brightness))
     return {}
 
 @app.route("/animation/start/<id>", methods=["POST"])
@@ -172,23 +173,49 @@ def animation_create(name):
         print(e)
         return {},400
 
-@app.route("/animation/edit", methods=["POST"])
-def animation_edit():
+@app.route("/animation/frame/remove/<animation_id>/<position>", methods=["POST"])
+def animation_frame_remove(animation_id, position):
+    database = dao("database.sqlite")
     try:
-        pass
+        database.RemoveImageFromAnimation(animation_id, position)
+        return {}
     except Exception as e:
         print(e)
         return {},400
 
+@app.route("/animation/frame/add/<animation_id>/<image_id>", methods=["POST"])
+def animation_frame_add(animation_id, image_id):
+    database = dao("database.sqlite")
+    try:
+        lastPos = database.getLastPositionByAnimationID(animation_id)
+        if lastPos:
+            nextPos = lastPos + 1
+        else:
+            nextPos = 1
+        database.addImageToAnimation(animation_id, image_id, nextPos, STANDARD_ANIMATION_TIME)
+        return {}
+    except Exception as e:
+        print(e)
+        return {},400
+
+@app.route("/animation/frame/updatetime/<animation_id>/<position>/<time>", methods=["POST"])
+def animation_frame_updatetime(animation_id, position, time):
+    database = dao("database.sqlite")
+    try:
+        database.UpdateAnimationTimeOfFrame(animation_id, position, time)
+        return {}
+    except Exception as e:
+        print(e)
+        return {},400
 
 ## ----- DELETE ----- ##
 
 @app.route("/delete/<id>", methods=["DELETE"])
 def delete(id):
     database = dao("database.sqlite")
-    frameID = int(id)
+    image_id = int(id)
     try:
-        database.deleteBinary(frameID)
+        database.deleteBinary(image_id)
         return {}
     except Exception as e:
         print(e)
@@ -265,11 +292,11 @@ async def animationLoop(d):
         while animationRunning:
             for b,time in animation:
                 if animationRunning:
-                    led.updateFrame(b)
+#                    led.updateFrame(b)
                     await asyncio.sleep(time)
     except Exception as e:
         print(e)
 
 if __name__ == "__main__":
-    led.init()
-    app.run(host="0.0.0.0")
+#    led.init()
+    app.run(debug=True, host="0.0.0.0")

@@ -36,7 +36,7 @@ async function deleteColorArrayFromServer(id) {
         method: "DELETE"
     });
     if (response.status == 200) {
-        await loadAndShow(currentPos,null)
+        await loadAndShow(currentPos,"next")
     } else {
         console.log("failed to delete colorArray from server");
     }

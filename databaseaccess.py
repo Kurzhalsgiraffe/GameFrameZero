@@ -83,7 +83,7 @@ class dao:
         except Exception as e:
             print(e)
 
-    def getFirstID(self):
+    def getFirstImageID(self):
         try:
             data = self.cursor.execute("SELECT MIN(image_id) FROM images").fetchone()
             return data[0]
@@ -91,7 +91,7 @@ class dao:
             print(e)
             return None
 
-    def getLastID(self):
+    def getLastImageID(self):
         try:
             data = self.cursor.execute("SELECT MAX(image_id) FROM images").fetchone()
             return data[0]
@@ -99,20 +99,20 @@ class dao:
             print(e)
             return None
 
-    def getNextID(self, current):
+    def getNextImageID(self, current):
         try:
-            if current == self.getLastID():
-                return self.getFirstID()
+            if current == self.getLastImageID():
+                return self.getFirstImageID()
             data = self.cursor.execute("SELECT MIN(image_id) FROM images WHERE image_id > ?",(current,)).fetchone()
             return data[0]
         except Exception as e:
             print(e)
             return None
 
-    def getPreviousID(self, current):
+    def getPreviousImageID(self, current):
         try:
-            if current == self.getFirstID():
-                return self.getLastID()
+            if current == self.getFirstImageID():
+                return self.getLastImageID()
             data = self.cursor.execute("SELECT MAX(image_id) FROM images WHERE image_id < ?",(current,)).fetchone()
             return data[0]
         except Exception as e:
@@ -151,6 +151,14 @@ class dao:
         except Exception as e:
             print(e)
 
+    def RemoveImageFromAnimation(self, animation_id, position):
+        try:
+            self.cursor.execute("DELETE FROM images_to_animations WHERE animation_id=? AND pos=?", (animation_id,position))                 # delete it
+            self.cursor.execute("UPDATE images_to_animations SET pos = pos -1 WHERE animation_id=? AND pos>?", (animation_id,position))     # update pos on every frame with higher pos
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+
     def getAllAnimationThumbnails(self, animation_ids):
         try:
             data = self.cursor.execute("SELECT * FROM images_to_animations").fetchall()    
@@ -176,6 +184,13 @@ class dao:
         except Exception as e:
             print(e)
 
+    def removeAllImagesFromAnimation(self, animation_id):
+        try:
+            self.cursor.execute("DELETE FROM images_to_animations WHERE animation_id=?",(animation_id,))
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+
     def getAnimationByID(self, animation_id):
         try:
             data = self.cursor.execute("SELECT * FROM images_to_animations where animation_id = ? ORDER BY pos", (animation_id,)).fetchall()
@@ -183,12 +198,20 @@ class dao:
         except Exception as e:
             print(e)
 
-    def removeAllImagesFromAnimation(self, animation_id):
+    def UpdateAnimationTimeOfFrame(self, animation_id, position, time):
         try:
-            self.cursor.execute("DELETE FROM images_to_animations WHERE animation_id=?",(animation_id,))
+            self.cursor.execute("UPDATE images_to_animations SET sleep_time=? WHERE animation_id=? AND pos=?", (time,animation_id,position))
             self.conn.commit()
         except Exception as e:
             print(e)
+
+    def getLastPositionByAnimationID(self, animation_id):
+        try:
+            data = self.cursor.execute("SELECT MAX(pos) FROM images_to_animations WHERE animation_id=?", (animation_id,)).fetchone()
+            return data[0]
+        except Exception as e:
+            print(e)
+            return None
 
     # -----  GROUPS TABLE  -----#
 
