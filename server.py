@@ -1,4 +1,4 @@
-#Comment out Lines 2 107 147 291 297 for testing on Windows
+#Comment out Lines 2 107 147 295 301 for testing on Windows
 import led
 from databaseaccess import dao
 import asyncio
@@ -187,7 +187,11 @@ def animation_frame_remove(animation_id, position):
 def animation_frame_add(animation_id, image_id):
     database = dao("database.sqlite")
     try:
-        nextPos = database.getLastPositionByAnimationID(animation_id) + 1
+        lastPos = database.getLastPositionByAnimationID(animation_id)
+        if lastPos:
+            nextPos = lastPos + 1
+        else:
+            nextPos = 1
         database.addImageToAnimation(animation_id, image_id, nextPos, STANDARD_ANIMATION_TIME)
         return {}
     except Exception as e:
