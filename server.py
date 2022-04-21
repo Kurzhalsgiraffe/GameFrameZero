@@ -5,6 +5,7 @@ import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
 
 FRAME_SIZE = 768
+STANDARD_ANIMATION_TIME = 200
 
 animationRunning = False
 brightness = 40
@@ -71,13 +72,13 @@ def load():
     pos = request.args.get('pos', type = str)
     if pos:
         if pos == "first":
-            id = database.getFirstID()
+            id = database.getFirstImageID()
         elif pos == "prev":
-            id = database.getPreviousID(id)
+            id = database.getPreviousImageID(id)
         elif pos == "next":
-            id = database.getNextID(id)
+            id = database.getNextImageID(id)
         elif pos == "last":
-            id = database.getLastID()
+            id = database.getLastImageID()
 
     try:
         b = database.loadSingleBinary(id)
@@ -176,12 +177,12 @@ def animation_create(name):
 def animation_addframe(animation_id, image_id):
     database = dao("database.sqlite")
     try:
-        database.addImageToAnimation(animation_id, image_id, )                 ################## WIE KOMME ICH AN DIE POSITION????? (AUTOINKREMENT WÄRE NICE)
+        nextPos = database.getLastPositionByAnimationID(animation_id) + 1
+        database.addImageToAnimation(animation_id, image_id, nextPos, STANDARD_ANIMATION_TIME)
         return {}
     except Exception as e:
         print(e)
         return {},400
-
 
 ## ----- DELETE ----- ##
 

@@ -1,5 +1,4 @@
 const canv = document.querySelector("canvas");
-const assume_btn = document.querySelector("#assume-btn");
 const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
 const first_frame_btn = document.querySelector("#first-frame-btn");
 const prev_frame_btn = document.querySelector("#prev-frame-btn");
@@ -7,14 +6,11 @@ const next_frame_btn = document.querySelector("#next-frame-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
 const frameNumber = document.getElementById("framenumber");
 
-STANDARD_ANIMATION_TIME = 800;
-
 let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[]);
 let currentPos = 1;
 let animation_id;
 let animation_list = [];
 
-assume_btn.addEventListener("click", async () => await sendAnimationToServer());
 first_frame_btn.addEventListener("click", async () => await loadAndShow(null, "first"));
 prev_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "prev"));
 next_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "next"));
@@ -103,11 +99,12 @@ async function attachHandlers(ids) {
 
 async function addContentToTiles(image_ids, image_times) {
     for (let x=0; x<image_ids.length; x++) {
+        id = image_ids[x]
+        time = image_times[x]
+
         let cardbody = document.querySelector("#card-body-"+id);
         let wrap = document.querySelector("#wrap-"+id);
 
-        time = image_times[x]
-        id = image_ids[x]
         const htag = document.createElement("h5");
 
         wrap.setAttribute("draggable", "true");
