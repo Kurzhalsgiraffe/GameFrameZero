@@ -1,5 +1,5 @@
 #Comment out Lines 2 107 147 295 301 for testing on Windows
-#import led
+import led
 from databaseaccess import dao
 import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
@@ -104,7 +104,7 @@ def brightness_load():
 def apply():
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
-#    led.updateFrame(b)
+    led.updateFrame(b)
     return {}
 
 @app.route("/save", methods=["POST"])
@@ -144,7 +144,7 @@ def loadlist():
 def brightness_apply(br):
     global brightness
     brightness = br
-#    led.updateBrightness(int(brightness))
+    led.updateBrightness(int(brightness))
     return {}
 
 @app.route("/animation/start/<id>", methods=["POST"])
@@ -292,11 +292,11 @@ async def animationLoop(d):
         while animationRunning:
             for b,time in animation:
                 if animationRunning:
-#                    led.updateFrame(b)
+                    led.updateFrame(b)
                     await asyncio.sleep(time)
     except Exception as e:
         print(e)
 
 if __name__ == "__main__":
-#    led.init()
+    led.init()
     app.run(debug=True, host="0.0.0.0")
