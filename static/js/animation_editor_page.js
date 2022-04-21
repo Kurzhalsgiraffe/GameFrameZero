@@ -1,10 +1,12 @@
 const canv = document.querySelector("canvas");
 const remove_animation_frame_btn = document.querySelector("#remove-animation-frame-btn");
+const update_time_on_frame_btn = document.querySelector("#update-time-on-frame-btn");
 const first_frame_btn = document.querySelector("#first-frame-btn");
 const prev_frame_btn = document.querySelector("#prev-frame-btn");
 const next_frame_btn = document.querySelector("#next-frame-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
 const frameNumber = document.getElementById("framenumber");
+const animation_time = document.querySelector("#animation-time");
 const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
 
 let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[]);
@@ -13,6 +15,7 @@ let animation_id;
 let animation_list = [];
 
 remove_animation_frame_btn.addEventListener("click", async () => await RemoveFrameFromAnimation());
+update_time_on_frame_btn.addEventListener("click", async () => await UpdateTime());
 first_frame_btn.addEventListener("click", async () => await loadAndShow(null, "first"));
 prev_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "prev"));
 next_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "next"));
@@ -43,7 +46,24 @@ async function RemoveFrameFromAnimation() {
         if (response.status == 200) {
             window.location.reload(true);
         } else {
-            console.log("failed to remove frame number " + currentPos + " from the Animation");
+            console.log("failed to remove frame number " + active_frame_id + " from the Animation");
+        }
+    }
+}
+
+async function UpdateTime() {
+    let active_frame_id;
+    let response;
+    let time = animation_time.value
+    if (activeTile != null && time-length>0) {
+        active_frame_id = activeTile.id.slice(5,);
+        response = await fetch("/animation/frame/updatetime/"+animation_id+"/"+active_frame_id+"/"+time, {
+            method: "POST"
+        });
+        if (response.status == 200) {
+            window.location.reload(true);
+        } else {
+            console.log("failed to update time of frame number " + active_frame_id);
         }
     }
 }

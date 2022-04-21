@@ -198,6 +198,12 @@ class dao:
         except Exception as e:
             print(e)
 
+    def UpdateAnimationTimeOfFrame(self, animation_id, position, time):
+        try:
+            self.cursor.execute("UPDATE images_to_animations SET sleep_time=? WHERE animation_id=? AND pos=?", (time,animation_id,position))
+            self.conn.commit()
+        except Exception as e:
+            print(e)
 
     def getLastPositionByAnimationID(self, animation_id):
         try:

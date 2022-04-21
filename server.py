@@ -1,5 +1,5 @@
-#Comment out Lines 2 106 146 267 273 for testing on Windows
-#import led
+#Comment out Lines 2 107 147 291 297 for testing on Windows
+import led
 from databaseaccess import dao
 import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
@@ -104,7 +104,7 @@ def brightness_load():
 def apply():
     colorArray = request.json
     b = colorArrayToBinary(colorArray)
-#    led.updateFrame(b)
+    led.updateFrame(b)
     return {}
 
 @app.route("/save", methods=["POST"])
@@ -144,7 +144,7 @@ def loadlist():
 def brightness_apply(br):
     global brightness
     brightness = br
-#    led.updateBrightness(int(brightness))
+    led.updateBrightness(int(brightness))
     return {}
 
 @app.route("/animation/start/<id>", methods=["POST"])
@@ -189,6 +189,16 @@ def animation_frame_add(animation_id, image_id):
     try:
         nextPos = database.getLastPositionByAnimationID(animation_id) + 1
         database.addImageToAnimation(animation_id, image_id, nextPos, STANDARD_ANIMATION_TIME)
+        return {}
+    except Exception as e:
+        print(e)
+        return {},400
+
+@app.route("/animation/frame/updatetime/<animation_id>/<position>/<time>", methods=["POST"])
+def animation_frame_updatetime(animation_id, position, time):
+    database = dao("database.sqlite")
+    try:
+        database.UpdateAnimationTimeOfFrame(animation_id, position, time)
         return {}
     except Exception as e:
         print(e)
@@ -278,11 +288,11 @@ async def animationLoop(d):
         while animationRunning:
             for b,time in animation:
                 if animationRunning:
-#                    led.updateFrame(b)
+                    led.updateFrame(b)
                     await asyncio.sleep(time)
     except Exception as e:
         print(e)
 
 if __name__ == "__main__":
-#    led.init()
-    app.run(debug=True, host="0.0.0.0")
+    led.init()
+    app.run(host="0.0.0.0")
