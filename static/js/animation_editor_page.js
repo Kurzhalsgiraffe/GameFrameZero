@@ -9,7 +9,7 @@ const frameNumber = document.getElementById("framenumber");
 const animation_time = document.querySelector("#animation-time");
 const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
 
-let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[]);
+let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[], gridColor='rgba(0, 0, 0, 1.0)');
 let currentPos = 1;
 let animation_id;
 let animation_list = [];
@@ -134,27 +134,32 @@ async function attachHandlers(ids) {
     }
 }
 
-async function addContentToTiles(image_ids, image_times) {
+async function addContentToTiles(image_ids, positions, image_times) {
     for (let x=0; x<image_ids.length; x++) {
-        id = image_ids[x]
+        image_id = image_ids[x]
+        pos = positions[x]
         time = image_times[x]
 
-        let cardbody = document.querySelector("#card-body-"+id);
-        let wrap = document.querySelector("#wrap-"+id);
+        let cardbody = document.querySelector("#card-body-"+pos);
+        let wrap = document.querySelector("#wrap-"+pos);
 
-        const htag = document.createElement("h5");
+        const image_id_tag = document.createElement("h4");
+        const time_tag = document.createElement("h5");
 
         wrap.setAttribute("draggable", "true");
-        htag.classList.add("card-title");
-        htag.innerHTML = `${time/1000} Sekunden`;
+        image_id_tag.classList.add("card-title");
+        image_id_tag.innerHTML = `BILD ${image_id}`;
+        time_tag.classList.add("card-title");
+        time_tag.innerHTML = `${time/1000} Sekunden`;
 
-        cardbody.appendChild(htag);
+        cardbody.appendChild(image_id_tag);
+        cardbody.appendChild(time_tag);
     }
 }
 
 async function initializeAnimationTiles(image_ids, positions, image_times) {
     await createCanvasTiles(positions, image_ids)
-    await addContentToTiles(positions, image_times)
+    await addContentToTiles(image_ids, positions, image_times)
     await attachHandlers(positions)
 }
 
