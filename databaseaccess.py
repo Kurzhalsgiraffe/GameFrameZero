@@ -151,6 +151,14 @@ class dao:
         except Exception as e:
             print(e)
 
+    def RemoveImageFromAnimation(self, animation_id, position):
+        try:
+            self.cursor.execute("DELETE FROM images_to_animations WHERE animation_id=? AND pos=?", (animation_id,position))                 # delete it
+            self.cursor.execute("UPDATE images_to_animations SET pos = pos -1 WHERE animation_id=? AND pos>?", (animation_id,position))     # update pos on every frame with higher pos
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+
     def getAllAnimationThumbnails(self, animation_ids):
         try:
             data = self.cursor.execute("SELECT * FROM images_to_animations").fetchall()    

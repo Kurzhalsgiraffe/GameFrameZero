@@ -173,8 +173,18 @@ def animation_create(name):
         print(e)
         return {},400
 
-@app.route("/animation/addframe/<animation_id>/<image_id>", methods=["POST"])
-def animation_addframe(animation_id, image_id):
+@app.route("/animation/frame/remove/<animation_id>/<position>", methods=["POST"])
+def animation_frame_remove(animation_id, position):
+    database = dao("database.sqlite")
+    try:
+        database.RemoveImageFromAnimation(animation_id, position)
+        return {}
+    except Exception as e:
+        print(e)
+        return {},400
+
+@app.route("/animation/frame/add/<animation_id>/<image_id>", methods=["POST"])
+def animation_frame_add(animation_id, image_id):
     database = dao("database.sqlite")
     try:
         nextPos = database.getLastPositionByAnimationID(animation_id) + 1

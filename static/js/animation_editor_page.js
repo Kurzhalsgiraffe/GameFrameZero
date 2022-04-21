@@ -1,16 +1,18 @@
 const canv = document.querySelector("canvas");
-const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
+const remove_animation_frame_btn = document.querySelector("#remove-animation-frame-btn");
 const first_frame_btn = document.querySelector("#first-frame-btn");
 const prev_frame_btn = document.querySelector("#prev-frame-btn");
 const next_frame_btn = document.querySelector("#next-frame-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
 const frameNumber = document.getElementById("framenumber");
+const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
 
 let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[]);
 let currentPos = 1;
 let animation_id;
 let animation_list = [];
 
+remove_animation_frame_btn.addEventListener("click", async () => await RemoveFrameFromAnimation());
 first_frame_btn.addEventListener("click", async () => await loadAndShow(null, "first"));
 prev_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "prev"));
 next_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "next"));
@@ -30,9 +32,24 @@ async function loadAndShow(id=null,pos=null) {
     selectorCanvasObject.drawGrid();
 }
 
+async function RemoveFrameFromAnimation() {
+    let active_frame_id;
+    let response;
+    if (activeTile != null) {
+        active_frame_id = activeTile.id.slice(5,);
+        response = await fetch("/animation/frame/remove/"+animation_id+"/"+active_frame_id, {
+            method: "POST"
+        });
+        if (response.status == 200) {
+            window.location.reload(true);
+        } else {
+            console.log("failed to remove frame number " + currentPos + " from the Animation");
+        }
+    }
+}
+
 async function addFrameToAnimation() {
-    
-    let response = await fetch("/animation/addframe/"+animation_id+"/"+currentPos, {
+    let response = await fetch("/animation/frame/add/"+animation_id+"/"+currentPos, {
         method: "POST"
     });
     if (response.status == 200) {
