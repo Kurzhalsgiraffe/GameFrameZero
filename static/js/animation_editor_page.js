@@ -7,8 +7,11 @@ const next_frame_btn = document.querySelector("#next-frame-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
 const frameNumber = document.getElementById("framenumber");
 
+STANDARD_ANIMATION_TIME = 800;
+
 let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[]);
 let currentPos = 1;
+let animation_id;
 let animation_list = [];
 
 assume_btn.addEventListener("click", async () => await sendAnimationToServer());
@@ -31,11 +34,23 @@ async function loadAndShow(id=null,pos=null) {
     selectorCanvasObject.drawGrid();
 }
 
+async function addFrameToAnimation() {
+    
+    let response = await fetch("/animation/addframe/"+animation_id+"/"+currentPos, {
+        method: "POST"
+    });
+    if (response.status == 200) {
+        window.location.reload(true);
+    } else {
+        console.log("failed to add frame number " + currentPos + " to the Animation");
+    }
+}
+
 async function loadAnimationListFromServer(animation_id) {
     let response = await fetch("/animation/load/"+animation_id);
     let res = await response.json();
     if (response.status == 200) {
-        return [res.imageIDs, res.positions, res.times]
+        return [res.imageIDs, res.positions, res.times];
     } else {
         console.log("failed to load AnimationList from server");
     }
@@ -55,20 +70,20 @@ async function loadAnimationListFromServer(animation_id) {
 
 function dragstart(event) {
     event.dataTransfer.setData("Text", event.target.id);
-    console.log(event)
+    console.log(event);
 }
 
 function drop(event) {
     event.preventDefault();
-    console.log(event)
+    console.log(event);
 }
 
-function attachHandlers(ids) {
+async function attachHandlers(ids) {
     for (let id of ids) {
         let tile = document.querySelector("#tile-"+id);
         
         tile.addEventListener('click', (e) => {
-            unselectTile()
+            unselectTile();
             selectTile(e.currentTarget)
         });
 
@@ -104,24 +119,23 @@ async function addContentToTiles(image_ids, image_times) {
 }
 
 async function initializeAnimationTiles(image_ids, positions, image_times) {
-    await initializeCanvasTiles(positions, image_ids)
+    await createCanvasTiles(positions, image_ids)
     await addContentToTiles(positions, image_times)
-    attachHandlers(positions)
+    await attachHandlers(positions)
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    // if there is an id in the url, load it and draw it on the canvas, so it can be edited
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     if(urlParams.has('id')) {
-        const animation_id = urlParams.get('id');
+        animation_id = urlParams.get('id');
         animation_list = await loadAnimationListFromServer(animation_id);
     } else {
-        console.log("Didn't find the Animation ID")
+        console.log("Didn't find the Animation ID");
     }
-    let image_ids = animation_list[0]
-    let positions = animation_list[1]
-    let times = animation_list[2]
-    initializeAnimationTiles(image_ids, positions, times)
-    loadAndShow(null, "first")
+    let image_ids = animation_list[0];
+    let positions = animation_list[1];
+    let times = animation_list[2];
+    initializeAnimationTiles(image_ids, positions, times);
+    loadAndShow(null, "first");
 });

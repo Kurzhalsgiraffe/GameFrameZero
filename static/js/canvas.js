@@ -81,7 +81,7 @@ class CanvasObject {
         if (response.status == 200) {
             if (res.colorArray) {
                 this.colorArray = res.colorArray;
-                this.currentPos = res.frameID;  
+                this.currentPos = res.imageID;  
             } else {
                 this.colorArray = []
                 this.currentPos = 0
