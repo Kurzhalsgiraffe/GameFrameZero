@@ -15,7 +15,7 @@ async function startAnimation() {
     let id;
     let response;
     if (activeTile) {
-        id = activeTile.id.slice(5,)
+        id = activeTile.id.slice(5,);
         response = await fetch("/animation/start/"+id, {
             method: "POST"
         });
@@ -35,15 +35,15 @@ async function stopAnimation() {
 }
 
 async function createAnimation() {
-    let name = animation_name.value
+    let name = animation_name.value;
     if (!name) {
-        name = null
+        name = null;
     }
     let response = await fetch("/animation/create/"+name, {
         method: "POST"
     });
     if (response.status == 200) {
-        window.location.reload(true);
+        initializeAnimationThumbnails();
     } else {
         console.log("failed to create Animation");
     }
@@ -53,7 +53,7 @@ async function createAnimation() {
 async function editAnimation() {
     let id;
     if (activeTile != null) {
-        id = activeTile.id.slice(5,)
+        id = activeTile.id.slice(5,);
         window.location.replace("/animation/editor?id="+id);
     }
 }
@@ -66,7 +66,7 @@ async function deleteAnimation() {
             method: "DELETE"
         });
         if (response.status == 200) {
-            window.location.reload(true);
+            initializeAnimationThumbnails();
         } else {
             console.log("failed to create Animation");
         }
@@ -77,7 +77,7 @@ async function loadAllAnimationsFromServer() {
     let response = await fetch("/animation/load/all");
     let res = await response.json();
     if (response.status == 200) {
-        return [res.animationIDs, res.animationNames, res.thumbnailIDs]
+        return [res.animationIDs, res.animationNames, res.thumbnailIDs];
     } else {
         console.log("failed to load AnimationIDs from server");
     }
@@ -101,23 +101,25 @@ async function attachHandlers(ids) {
     for (let id of ids) {
         let tile = document.querySelector("#tile-"+id);
         tile.addEventListener('click', (e) => {
-            unselectTile()
-            selectTile(e.currentTarget)
+            unselectTile();
+            selectTile(e.currentTarget);
         });
     }
 }
 
 async function initializeAnimationThumbnails() {
-    let animations = await loadAllAnimationsFromServer()
-    let animation_ids = animations[0]
-    let animation_names = animations[1]
-    let thumbnail_ids = animations[2]
+    clearTileBody();
 
-    await createCanvasTiles(animation_ids,thumbnail_ids)
-    await addContentToThumbnails(animation_ids, animation_names)
-    await attachHandlers(animation_ids)
+    let animations = await loadAllAnimationsFromServer();
+    let animation_ids = animations[0];
+    let animation_names = animations[1];
+    let thumbnail_ids = animations[2];
+
+    await createCanvasTiles(animation_ids,thumbnail_ids);
+    await addContentToThumbnails(animation_ids, animation_names);
+    await attachHandlers(animation_ids);
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    initializeAnimationThumbnails()
+    initializeAnimationThumbnails();
 });

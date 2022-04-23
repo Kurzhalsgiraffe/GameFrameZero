@@ -11,7 +11,6 @@ const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
 
 let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[], gridColor='rgba(0, 0, 0, 1.0)');
 let currentPos = 1;
-let animation_list = [];
 let animation_id;
 let dragStartPosition;
 
@@ -45,7 +44,7 @@ async function RemoveFrameFromAnimation() {
             method: "POST"
         });
         if (response.status == 200) {
-            window.location.reload(true);
+            initializeAnimationTiles();
         } else {
             console.log("failed to remove frame number " + active_frame_id + " from the Animation");
         }
@@ -55,14 +54,14 @@ async function RemoveFrameFromAnimation() {
 async function UpdateTime() {
     let active_frame_id;
     let response;
-    let time = animation_time.value
+    let time = animation_time.value;
     if (activeTile != null && time-length>0) {
         active_frame_id = activeTile.id.slice(5,);
         response = await fetch("/animation/frame/updatetime/"+animation_id+"/"+active_frame_id+"/"+time, {
             method: "POST"
         });
         if (response.status == 200) {
-            window.location.reload(true);
+            initializeAnimationTiles();
         } else {
             console.log("failed to update time of frame number " + active_frame_id);
         }
@@ -74,7 +73,7 @@ async function addFrameToAnimation() {
         method: "POST"
     });
     if (response.status == 200) {
-        window.location.reload(true);
+        initializeAnimationTiles();
     } else {
         console.log("failed to add frame number " + currentPos + " to the Animation");
     }
@@ -92,13 +91,12 @@ async function loadAnimationListFromServer() {
 
 async function switchFramePositions(target_id) {
     let response;
-    console.log(dragStartPosition, target_id)
     if (dragStartPosition != target_id) {
         response = await fetch("/animation/frame/switchpositions/"+animation_id+"/"+dragStartPosition+"/"+target_id, {
             method: "POST"
         });
         if (response.status == 200) {
-            window.location.reload(true);
+            initializeAnimationTiles();
         } else {
             console.log("failed to switch frames " + dragStartPosition + " and " + target_id);
         }
@@ -130,9 +128,9 @@ async function attachHandlers(ids) {
 
 async function addContentToTiles(image_ids, positions, image_times) {
     for (let x=0; x<image_ids.length; x++) {
-        image_id = image_ids[x]
-        pos = positions[x]
-        time = image_times[x]
+        let image_id = image_ids[x]
+        let pos = positions[x]
+        let time = image_times[x]
 
         let cardbody = document.querySelector("#card-body-"+pos);
         let tile = document.querySelector("#tile-"+pos);
@@ -151,10 +149,17 @@ async function addContentToTiles(image_ids, positions, image_times) {
     }
 }
 
-async function initializeAnimationTiles(image_ids, positions, image_times) {
-    await createCanvasTiles(positions, image_ids)
-    await addContentToTiles(image_ids, positions, image_times)
-    await attachHandlers(positions)
+async function initializeAnimationTiles() {
+    clearTileBody();
+
+    let animation_list = await loadAnimationListFromServer();
+    let image_ids = animation_list[0];
+    let positions = animation_list[1];
+    let times = animation_list[2];
+
+    await createCanvasTiles(positions, image_ids);
+    await addContentToTiles(image_ids, positions, times);
+    await attachHandlers(positions);
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
@@ -162,13 +167,9 @@ document.addEventListener("DOMContentLoaded", async function() {
     const urlParams = new URLSearchParams(queryString);
     if(urlParams.has('id')) {
         animation_id = urlParams.get('id');
-        animation_list = await loadAnimationListFromServer();
+        initializeAnimationTiles();
+        loadAndShow(null, "first");
     } else {
         console.log("Didn't find the Animation ID");
     }
-    let image_ids = animation_list[0];
-    let positions = animation_list[1];
-    let times = animation_list[2];
-    initializeAnimationTiles(image_ids, positions, times);
-    loadAndShow(null, "first");
 });

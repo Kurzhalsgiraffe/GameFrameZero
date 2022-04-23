@@ -14,14 +14,14 @@ async function loadMultipleArraysFromServer(ids) {
     
     if (response.status == 200) {
         let res = await response.json();
-        return res
+        return res;
     } else {
         console.log("failed to load Arrays from server");
     }
 }
 
 async function createCanvasTiles(animation_ids, thumbnail_ids) {
-    let blobs = await loadMultipleArraysFromServer(thumbnail_ids)
+    let blobs = await loadMultipleArraysFromServer(thumbnail_ids);
 
     for (let id of animation_ids) {
         const wrap = document.createElement("div");
@@ -29,8 +29,8 @@ async function createCanvasTiles(animation_ids, thumbnail_ids) {
         const canvas = document.createElement("canvas");
         const cardbody = document.createElement("div");
 
-        wrap.classList.add("col")
-        wrap.classList.add("col-lg-3")
+        wrap.classList.add("col");
+        wrap.classList.add("col-lg-3");
         wrap.setAttribute("id", "wrap-"+id);
         tile.classList.add("card");
         tile.classList.add("h-80");
@@ -54,7 +54,7 @@ async function createCanvasTiles(animation_ids, thumbnail_ids) {
 }
 
 async function drawThumbnails(blobs,animation_ids) {
-    let data
+    let data;
     for (let x=0; x<blobs.length; x++) {
         id = animation_ids[x];
         data = blobs[x];
@@ -67,7 +67,7 @@ async function drawThumbnails(blobs,animation_ids) {
             canvasObject.initializeColorArray();
         }
         canvasObject.drawColorArrayToCanvas();
-        canvasObject.drawGrid()
+        canvasObject.drawGrid();
     }
 }
 
@@ -82,5 +82,11 @@ function unselectTile() {
         activeTile.classList.remove("active");
         activeTile.setAttribute("style","border: none");
         activeTile = null;
+    }
+}
+
+function clearTileBody() {
+    while (tile_body.firstChild) {
+        tile_body.removeChild(tile_body.lastChild);
     }
 }
