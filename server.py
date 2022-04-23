@@ -1,4 +1,4 @@
-#Comment out Lines 2 107 147 305 311 for testing on Windows
+#Comment out Lines 2 107 147 319 325 for testing on Windows
 import led
 from databaseaccess import dao
 import asyncio
@@ -173,16 +173,6 @@ def animation_create(name):
         print(e)
         return {},400
 
-@app.route("/animation/frame/remove/<animation_id>/<position>", methods=["POST"])
-def animation_frame_remove(animation_id, position):
-    database = dao("database.sqlite")
-    try:
-        database.RemoveImageFromAnimation(animation_id, position)
-        return {}
-    except Exception as e:
-        print(e)
-        return {},400
-
 @app.route("/animation/frame/add/<animation_id>/<image_id>", methods=["POST"])
 def animation_frame_add(animation_id, image_id):
     database = dao("database.sqlite")
@@ -198,18 +188,29 @@ def animation_frame_add(animation_id, image_id):
         print(e)
         return {},400
 
-@app.route("/animation/frame/updatetime/<animation_id>/<position>/<time>", methods=["POST"])
-def animation_frame_updatetime(animation_id, position, time):
+@app.route("/animation/frame/updatetime", methods=["POST"])
+def animation_frame_updatetime():
+    animation_id = request.args.get('animation_id', type = int)
+    position = request.args.get('position', type = str)
+    time = request.args.get('time', type = int)
+
     database = dao("database.sqlite")
     try:
-        database.UpdateAnimationTimeOfFrame(animation_id, position, time)
+        if position == "all":
+            database.UpdateAnimationTimeOfAllFrames(animation_id, time)
+        else:
+            database.UpdateAnimationTimeOfFrame(animation_id, position, time)
         return {}
     except Exception as e:
         print(e)
         return {},400
 
-@app.route("/animation/frame/switchpositions/<animation_id>/<source_id>/<target_id>", methods=["POST"])
-def animation_frame_switchpositions(animation_id, source_id, target_id):
+@app.route("/animation/frame/switchpositions", methods=["POST"])
+def animation_frame_switchpositions():
+    animation_id = request.args.get('animation_id', type = int)
+    source_id = request.args.get('source_id', type = int)
+    target_id = request.args.get('target_id', type = int)
+
     database = dao("database.sqlite")
     try:
         database.SwitchPositions(animation_id, source_id, target_id)
@@ -237,6 +238,19 @@ def animation_delete(id):
     try:
         database.deleteAnimation(id)
         database.removeAllImagesFromAnimation(id)
+        return {}
+    except Exception as e:
+        print(e)
+        return {},400
+
+@app.route("/animation/frame/remove", methods=["DELETE"])
+def animation_frame_remove():
+    animation_id = request.args.get('id', type = int)
+    position = request.args.get('pos', type = int)
+
+    database = dao("database.sqlite")
+    try:
+        database.RemoveImageFromAnimation(animation_id, position)
         return {}
     except Exception as e:
         print(e)

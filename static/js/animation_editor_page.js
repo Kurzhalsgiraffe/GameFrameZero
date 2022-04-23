@@ -6,6 +6,7 @@ const prev_frame_btn = document.querySelector("#prev-frame-btn");
 const next_frame_btn = document.querySelector("#next-frame-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
 const frameNumber = document.getElementById("framenumber");
+const animation_time_all_checkbox = document.querySelector("#set-time-for-all-checkbox");
 const animation_time = document.querySelector("#animation-time");
 const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
 
@@ -40,8 +41,8 @@ async function RemoveFrameFromAnimation() {
     let response;
     if (activeTile != null) {
         active_frame_id = activeTile.id.slice(5,);
-        response = await fetch("/animation/frame/remove/"+animation_id+"/"+active_frame_id, {
-            method: "POST"
+        response = await fetch("/animation/frame/remove?id="+animation_id+"&pos="+active_frame_id, {
+            method: "DELETE"
         });
         if (response.status == 200) {
             initializeAnimationTiles();
@@ -52,18 +53,24 @@ async function RemoveFrameFromAnimation() {
 }
 
 async function UpdateTime() {
-    let active_frame_id;
+    let position = null;
     let response;
     let time = animation_time.value;
-    if (activeTile != null && time-length>0) {
-        active_frame_id = activeTile.id.slice(5,);
-        response = await fetch("/animation/frame/updatetime/"+animation_id+"/"+active_frame_id+"/"+time, {
+
+    if (animation_time_all_checkbox.checked) {
+        position = "all"
+    } else if (activeTile != null) {
+        position = activeTile.id.slice(5,);
+    }
+
+    if (time-length>0 && position != null) {
+        response = await fetch("/animation/frame/updatetime?animation_id="+animation_id+"&position="+position+"&time="+time, {
             method: "POST"
-        });
+        }); 
         if (response.status == 200) {
             initializeAnimationTiles();
         } else {
-            console.log("failed to update time of frame number " + active_frame_id);
+            console.log("failed to update time of frame number " + position);
         }
     }
 }
@@ -91,8 +98,9 @@ async function loadAnimationListFromServer() {
 
 async function switchFramePositions(target_id) {
     let response;
+    let source_id = dragStartPosition
     if (dragStartPosition != target_id) {
-        response = await fetch("/animation/frame/switchpositions/"+animation_id+"/"+dragStartPosition+"/"+target_id, {
+        response = await fetch("/animation/frame/switchpositions?animation_id="+animation_id+"&source_id="+source_id+"&target_id="+target_id, {
             method: "POST"
         });
         if (response.status == 200) {

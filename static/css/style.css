@@ -176,3 +176,8 @@ canvas {
   .card-title {
     text-align: center;
   }
+
+  input[type=checkbox] {
+    transform: scale(1.25);
+    accent-color: #32cd32;
+  }

@@ -204,6 +204,13 @@ class dao:
             self.conn.commit()
         except Exception as e:
             print(e)
+
+    def UpdateAnimationTimeOfAllFrames(self, animation_id, time):
+        try:
+            self.cursor.execute("UPDATE images_to_animations SET sleep_time=? WHERE animation_id=?", (time,animation_id))
+            self.conn.commit()
+        except Exception as e:
+            print(e)
     
     def SwitchPositions(self, animation_id, source_id, target_id):
         try:
