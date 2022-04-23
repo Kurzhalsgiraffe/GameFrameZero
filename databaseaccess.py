@@ -204,6 +204,16 @@ class dao:
             self.conn.commit()
         except Exception as e:
             print(e)
+    
+    def SwitchPositions(self, animation_id, source_id, target_id):
+        try:
+            source_values = self.cursor.execute("SELECT image_id, sleep_time FROM images_to_animations WHERE animation_id=? And pos=?", (animation_id,source_id)).fetchone()
+            target_values = self.cursor.execute("SELECT image_id, sleep_time FROM images_to_animations WHERE animation_id=? And pos=?", (animation_id,target_id)).fetchone()
+            self.cursor.execute("UPDATE images_to_animations SET image_id=?, sleep_time=? WHERE animation_id=? AND pos=?", (target_values[0],target_values[1],animation_id,source_id))
+            self.cursor.execute("UPDATE images_to_animations SET image_id=?, sleep_time=? WHERE animation_id=? AND pos=?", (source_values[0],source_values[1],animation_id,target_id))
+            self.conn.commit()
+        except Exception as e:
+            print(e)
 
     def getLastPositionByAnimationID(self, animation_id):
         try:

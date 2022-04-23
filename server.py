@@ -1,4 +1,4 @@
-#Comment out Lines 2 107 147 295 301 for testing on Windows
+#Comment out Lines 2 107 147 305 311 for testing on Windows
 import led
 from databaseaccess import dao
 import asyncio
@@ -53,7 +53,7 @@ def animation_load_all():
             else:
                 animation_names.append(i[1])
         thumbnail_ids = database.getAllAnimationThumbnails(animation_ids)
-        
+
         d = {
                 "animationIDs": animation_ids,
                 "animationNames": animation_names,
@@ -208,6 +208,16 @@ def animation_frame_updatetime(animation_id, position, time):
         print(e)
         return {},400
 
+@app.route("/animation/frame/switchpositions/<animation_id>/<source_id>/<target_id>", methods=["POST"])
+def animation_frame_switchpositions(animation_id, source_id, target_id):
+    database = dao("database.sqlite")
+    try:
+        database.SwitchPositions(animation_id, source_id, target_id)
+        return {}
+    except Exception as e:
+        print(e)
+        return {},400
+
 ## ----- DELETE ----- ##
 
 @app.route("/delete/<id>", methods=["DELETE"])
@@ -299,4 +309,4 @@ async def animationLoop(d):
 
 if __name__ == "__main__":
     led.init()
-    app.run(debug=True, host="0.0.0.0")
+    app.run(host="0.0.0.0")

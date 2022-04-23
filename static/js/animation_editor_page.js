@@ -11,8 +11,9 @@ const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
 
 let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[], gridColor='rgba(0, 0, 0, 1.0)');
 let currentPos = 1;
-let animation_id;
 let animation_list = [];
+let animation_id;
+let dragStartPosition;
 
 remove_animation_frame_btn.addEventListener("click", async () => await RemoveFrameFromAnimation());
 update_time_on_frame_btn.addEventListener("click", async () => await UpdateTime());
@@ -79,7 +80,7 @@ async function addFrameToAnimation() {
     }
 }
 
-async function loadAnimationListFromServer(animation_id) {
+async function loadAnimationListFromServer() {
     let response = await fetch("/animation/load/"+animation_id);
     let res = await response.json();
     if (response.status == 200) {
@@ -89,32 +90,25 @@ async function loadAnimationListFromServer(animation_id) {
     }
 }
 
-// function getAnimationList() {
-//     arr = [];
-//     rows = tile_body.rows;
-//     for(let i=0; i< rows.length; i++){
-//         tds = rows[i].getElementsByTagName("td");
-//         frameid = tds[0].getAttribute('value').slice(6,);
-//         time = tds[1].getElementsByTagName("input")[0].value;
-//         arr.push([frameid,time]);
-//     }
-//     return arr;
-// }
-
-function dragstart(event) {
-    event.dataTransfer.setData("Text", event.target.id);
-    console.log(event);
-}
-
-function drop(event) {
-    event.preventDefault();
-    console.log(event);
+async function switchFramePositions(target_id) {
+    let response;
+    console.log(dragStartPosition, target_id)
+    if (dragStartPosition != target_id) {
+        response = await fetch("/animation/frame/switchpositions/"+animation_id+"/"+dragStartPosition+"/"+target_id, {
+            method: "POST"
+        });
+        if (response.status == 200) {
+            window.location.reload(true);
+        } else {
+            console.log("failed to switch frames " + dragStartPosition + " and " + target_id);
+        }
+    }
 }
 
 async function attachHandlers(ids) {
     for (let id of ids) {
         let tile = document.querySelector("#tile-"+id);
-        
+
         tile.addEventListener('click', (e) => {
             unselectTile();
             selectTile(e.currentTarget)
@@ -123,13 +117,13 @@ async function attachHandlers(ids) {
         tile.addEventListener('dragover', (e) => {
             e.preventDefault();
         });
-            
+
         tile.addEventListener('dragstart', (e) => {
-            dragstart(e);
+            dragStartPosition = e.currentTarget.id.slice(5,);
         });
-            
+
         tile.addEventListener('drop', (e) => {
-            drop(e);
+            switchFramePositions(e.currentTarget.id.slice(5,));
         });
     }
 }
@@ -141,12 +135,12 @@ async function addContentToTiles(image_ids, positions, image_times) {
         time = image_times[x]
 
         let cardbody = document.querySelector("#card-body-"+pos);
-        let wrap = document.querySelector("#wrap-"+pos);
+        let tile = document.querySelector("#tile-"+pos);
 
         const image_id_tag = document.createElement("h4");
         const time_tag = document.createElement("h5");
 
-        wrap.setAttribute("draggable", "true");
+        tile.setAttribute("draggable", "true");
         image_id_tag.classList.add("card-title");
         image_id_tag.innerHTML = `BILD ${image_id}`;
         time_tag.classList.add("card-title");
@@ -168,7 +162,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     const urlParams = new URLSearchParams(queryString);
     if(urlParams.has('id')) {
         animation_id = urlParams.get('id');
-        animation_list = await loadAnimationListFromServer(animation_id);
+        animation_list = await loadAnimationListFromServer();
     } else {
         console.log("Didn't find the Animation ID");
     }
