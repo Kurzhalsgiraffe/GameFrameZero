@@ -101,7 +101,7 @@ class dao:
 
     def getNextImageID(self, current):
         try:
-            if current == self.getLastImageID():
+            if current >= self.getLastImageID():
                 return self.getFirstImageID()
             data = self.cursor.execute("SELECT MIN(image_id) FROM images WHERE image_id > ?",(current,)).fetchone()
             return data[0]
