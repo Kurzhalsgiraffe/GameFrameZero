@@ -15,6 +15,7 @@ var drawMode = true;
 
 save_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/save"));
 apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/apply"));
+favcolor_field.addEventListener("change", () => setPickedColor(favcolor_field.value));
 move_up.addEventListener("click", moveUp);
 move_left.addEventListener("click", moveLeft);
 move_right.addEventListener("click", moveRight);
@@ -90,11 +91,6 @@ function standardColor(elem) {
     elem.classList.add("active");
 }
 
-// select any other color
-function favColor(elem) {
-    setPickedColor(elem.value);
-}
-
 // change fillstyle to color and update frontend components
 function setPickedColor(color) {
     setDrawMode(true);
@@ -131,6 +127,7 @@ function moveUp() {
         }
     }
     canvasObject.drawColorArrayToCanvas();
+    canvasObject.c.fillStyle = favcolor_field.value;
 }
 
 // move all pixels to the left by one column
@@ -155,6 +152,7 @@ function moveLeft() {
     }
     canvasObject.colorArray = newArr;
     canvasObject.drawColorArrayToCanvas();
+    canvasObject.c.fillStyle = favcolor_field.value;
 }
 
 // move all pixels to the right by one column
@@ -179,6 +177,7 @@ function moveRight() {
     }
     canvasObject.colorArray = newArr;
     canvasObject.drawColorArrayToCanvas();
+    canvasObject.c.fillStyle = favcolor_field.value;
 }
 
 // move all pixels down by one row
@@ -191,6 +190,7 @@ function moveDown() {
         }
     }
     canvasObject.drawColorArrayToCanvas();
+    canvasObject.c.fillStyle = favcolor_field.value;
 }
 
 
