@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dpad.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <title>GameFrameZero</title>
 </head>
 <body>
@@ -90,10 +91,10 @@
                         </li>
                         <li>
                             <div class="d-flex justify-content-center mb-2">                             
-                                <span id="brightness-value">40</span>
+                                <span id="brightness-value">1</span>
                             </div>
                             <div class="slidecontainer">
-                                <input type="range" min="1" max="80" value="40" class="slider" id="brightness-slider">
+                                <input type="range" min="1" max="80" value="1" class="slider" id="brightness-slider">
                             </div>
                         </li>
                         <li class="mb-2 mt-4">

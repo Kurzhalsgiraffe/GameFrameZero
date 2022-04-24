@@ -1,15 +1,16 @@
-#Comment out Lines 2 113 153 325 331 for testing on Windows
+#Comment out Lines 2 114 154 326 332 for testing on Windows
 import led
 from databaseaccess import dao
 import asyncio
 from flask import Flask, request, jsonify, url_for, render_template
+from waitress import serve
 
 FRAME_SIZE = 768
 STANDARD_ANIMATION_TIME = 200
 SKIP_OFFSET = 10
 
 animationRunning = False
-brightness = 40
+brightness = 1
 
 app = Flask(__name__)
 
@@ -329,4 +330,5 @@ async def animationLoop(d):
 
 if __name__ == "__main__":
     led.init()
-    app.run(host="0.0.0.0")
+#    app.run(debug=True, host="0.0.0.0")
+    serve(app, host="0.0.0.0", port=80)
