@@ -49,7 +49,7 @@ async function RemoveFrameFromAnimation() {
             method: "DELETE"
         });
         if (response.status == 200) {
-            initializeAnimationTiles();
+            removeTileFromBody(activeTile.parentElement);
         } else {
             console.log("failed to remove frame number " + active_frame_id + " from the Animation");
         }

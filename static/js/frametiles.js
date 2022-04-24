@@ -90,3 +90,7 @@ function clearTileBody() {
         tile_body.removeChild(tile_body.lastChild);
     }
 }
+
+function removeTileFromBody(tile) {
+    tile_body.removeChild(tile)
+}

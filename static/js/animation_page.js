@@ -66,7 +66,7 @@ async function deleteAnimation() {
             method: "DELETE"
         });
         if (response.status == 200) {
-            initializeAnimationThumbnails();
+            removeTileFromBody(activeTile.parentElement);
         } else {
             console.log("failed to create Animation");
         }
