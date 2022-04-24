@@ -1,4 +1,4 @@
-#Comment out Lines 2 107 147 319 325 for testing on Windows
+#Comment out Lines 2 113 153 325 331 for testing on Windows
 import led
 from databaseaccess import dao
 import asyncio
@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify, url_for, render_template
 
 FRAME_SIZE = 768
 STANDARD_ANIMATION_TIME = 200
+SKIP_OFFSET = 10
 
 animationRunning = False
 brightness = 40
@@ -73,10 +74,15 @@ def load():
     if pos:
         if pos == "first":
             id = database.getFirstImageID()
+            
+        elif pos == "fastbackwards":
+            id = database.getFFWImageID(id,SKIP_OFFSET)
         elif pos == "prev":
             id = database.getPreviousImageID(id)
         elif pos == "next":
             id = database.getNextImageID(id)
+        elif pos == "fastforwards":
+            id = database.getFBWImageID(id,SKIP_OFFSET)
         elif pos == "last":
             id = database.getLastImageID()
 

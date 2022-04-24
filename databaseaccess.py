@@ -119,6 +119,38 @@ class dao:
             print(e)
             return None
 
+    def getFBWImageID(self, current, offset):
+        try:
+            if offset < 0:
+                offset = 0
+            elif offset == 0:
+                return current
+            
+            data = self.cursor.execute("SELECT image_id FROM images WHERE image_id > ?",(current,)).fetchall()
+            data = [i[0] for i in data]
+            if len(data) >= offset:
+                return data[offset-1]
+            return self.getLastImageID()
+        except Exception as e:
+            print(e)
+            return None
+
+    def getFFWImageID(self, current, offset):
+        try:
+            if offset < 0:
+                offset = 0
+            elif offset == 0:
+                return current
+
+            data = self.cursor.execute("SELECT image_id FROM images WHERE image_id < ?",(current,)).fetchall()
+            data = [i[0] for i in data]
+            if len(data) >= offset:
+                return data[-offset]
+            return self.getFirstImageID()
+        except Exception as e:
+            print(e)
+            return None
+
     # -----  ANIMATIONS TABLE  -----#
 
     def createAnimation(self, animation_name):
