@@ -1,3 +1,5 @@
+STANDARD_ANIMATION_TIME = 200
+
 const canv = document.querySelector("canvas");
 const remove_animation_frame_btn = document.querySelector("#remove-animation-frame-btn");
 const update_time_on_frame_btn = document.querySelector("#update-time-on-frame-btn");
@@ -84,7 +86,8 @@ async function addFrameToAnimation() {
         method: "POST"
     });
     if (response.status == 200) {
-        initializeAnimationTiles();
+        pos = parseInt(getLastTileID()) + 1;
+        initializeSingleAnimationTile(pos, currentPos, STANDARD_ANIMATION_TIME)
     } else {
         console.log("failed to add frame number " + currentPos + " to the Animation");
     }
@@ -169,6 +172,15 @@ async function initializeAnimationTiles() {
     let positions = animation_list[1];
     let times = animation_list[2];
 
+    await createCanvasTiles(positions, image_ids);
+    await addContentToTiles(image_ids, positions, times);
+    await attachHandlers(positions);
+}
+
+async function initializeSingleAnimationTile(position, image_id, time) {
+    let positions = [position]
+    let image_ids = [image_id]
+    let times = [time]
     await createCanvasTiles(positions, image_ids);
     await addContentToTiles(image_ids, positions, times);
     await attachHandlers(positions);
