@@ -16,6 +16,7 @@ Make sure to install it with sudo, if you want to run the Server as root
 sudo apt install python3-pip
 sudo pip3 install flask
 sudo pip3 install rpi-ws281x
+sudo pip3 install waitress
 ````
 
 ## Setup the Autostart
