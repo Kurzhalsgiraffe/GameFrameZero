@@ -1,8 +1,16 @@
-## Software
+# GameFrameZero
 
---- Work in Progress ---
+This project is a DIY LED frame that displays 16x16 pixel art.
+It's my attempt to make a comparable DIY device to all the other pixelframes that are available on the market.
+It is a Raspberry Pi Zero WH running a web server for creating, storing and animating the pixel art.
 
-This is a hobby project and definitely doesn't meet any security standards or coding idioms. I'm still working on it and trying to improve my work
+Depending on whether you have small electronic components such as switches and DC sockets lying around, the project can be replicated for around 50 euros
+
+
+<img src="images/gameframe.png" width = 640>
+<img src="images/mainpage.png" width = 400>
+<img src="images/animationpage.png" width = 400>
+<img src="images/animationeditor.PNG" width = 400>
 
 ## Installation
 
