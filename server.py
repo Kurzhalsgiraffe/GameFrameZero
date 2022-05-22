@@ -1,4 +1,4 @@
-#Comment out Lines 6 114 153 330 336 for testing on Windows
+#Comment out Lines 6 114 153 343 349 for testing on Windows
 import asyncio
 from flask import Flask, request, jsonify, render_template
 from waitress import serve
@@ -55,7 +55,7 @@ def animation_load_all():
                 animation_names.append("Animation "+str(i[0]))
             else:
                 animation_names.append(i[1])
-        thumbnail_ids = database.get_all_animation_thumbnails(animation_ids)
+        thumbnail_ids = database.get_all_animation_thumbnail_ids(animation_ids)
 
         data = {
                 "animationIDs": animation_ids,
@@ -160,9 +160,11 @@ def animation_start(animation_id):
     try:
         data = load_animation_list_by_id(animation_id)
         if data:
+            image_ids = data["imageIDs"]
+            times = data["times"]
             asyncio.set_event_loop(asyncio.new_event_loop())
             loop = asyncio.get_event_loop()
-            loop.run_until_complete(animation_loop(data))
+            loop.run_until_complete(animation_loop(image_ids, times))
             return {}
     except Exception as exception:
         print(exception)
@@ -278,6 +280,9 @@ def add_header(response):
 ## ----- FUNCTIONS ----- ##
 
 def color_array_to_binary(color_array):
+    """
+    Calculate bytearray from color_array
+    """
     b = bytearray()
     for c in color_array:
         b.append(int(c[1:3], 16))
@@ -286,12 +291,18 @@ def color_array_to_binary(color_array):
     return b
 
 def binary_to_color_array(binary):
+    """
+    Calculate color_array from bytearray
+    """
     c = []
     for i in range(0,FRAME_SIZE,3):
         c.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
     return c
 
 def load_animation_list_by_id(animation_id):
+    """
+    Load all informations of this animation
+    """
     try:
         database = Dao("database.sqlite")
         data = database.get_animation_by_id(animation_id)
@@ -312,13 +323,15 @@ def load_animation_list_by_id(animation_id):
         print(exception)
         return None
 
-async def animation_loop(data):
+async def animation_loop(image_ids, times):
+    """
+    Load all Animation details and Images, and loop them while ANIMATION_RUNNING == True
+    """
     try:
         database = Dao("database.sqlite")
         animation_list = []
-        binarys = database.load_multiple_binarys(data["imageIDs"])
-        times = data["times"]
-        for i in range(len(data["imageIDs"])):
+        binarys = database.load_multiple_binarys(image_ids)
+        for i in range(len(image_ids)):
             binary = binarys[i]
             if binary:
                 binary = binary[1]
