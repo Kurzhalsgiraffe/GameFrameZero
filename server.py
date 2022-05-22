@@ -1,4 +1,4 @@
-#Comment out Lines 6 114 153 343 349 for testing on Windows
+#Comment out Lines 6 115 154 343 349 for testing on Windows
 import asyncio
 from flask import Flask, request, jsonify, render_template
 from waitress import serve
@@ -49,20 +49,21 @@ def animation_load_all():
         data = sorted(database.get_all_animations(), key=lambda x: x[0])
         animation_ids = []
         animation_names = []
-        for i in data:
-            animation_ids.append(i[0])
-            if i[1]=="null":
-                animation_names.append("Animation "+str(i[0]))
-            else:
-                animation_names.append(i[1])
-        thumbnail_ids = database.get_all_animation_thumbnail_ids(animation_ids)
+        if data:
+            for i in data:
+                animation_ids.append(i[0])
+                if i[1]=="null":
+                    animation_names.append("Animation "+str(i[0]))
+                else:
+                    animation_names.append(i[1])
+            thumbnail_ids = database.get_all_animation_thumbnail_ids(animation_ids)
 
-        data = {
-                "animationIDs": animation_ids,
-                "animationNames": animation_names,
-                "thumbnailIDs": thumbnail_ids
-            }
-        return jsonify(data)
+            data = {
+                    "animationIDs": animation_ids,
+                    "animationNames": animation_names,
+                    "thumbnailIDs": thumbnail_ids
+                }
+            return jsonify(data)
     except Exception as exception:
         print(exception)
         return {},400
@@ -131,9 +132,9 @@ def save():
 def loadlist():
     database = Dao("database.sqlite")
     try:
-        ids = request.json
-        if ids:
-            binarys = database.load_multiple_binarys(ids)
+        image_ids = request.json
+        if image_ids:
+            binarys = database.load_multiple_binarys(image_ids)
             data = []
             for i in binarys:
                 if i:
@@ -309,16 +310,17 @@ def load_animation_list_by_id(animation_id):
         image_ids = []
         positions = []
         times = []
-        for i in data:
-            image_ids.append(i[1])
-            positions.append(i[2])
-            times.append(i[3])
-        data = {
-                "imageIDs": image_ids,
-                "positions": positions,
-                "times": times
-            }
-        return data
+        if data:
+            for i in data:
+                image_ids.append(i[1])
+                positions.append(i[2])
+                times.append(i[3])
+            data = {
+                    "imageIDs": image_ids,
+                    "positions": positions,
+                    "times": times
+                }
+            return data
     except Exception as exception:
         print(exception)
         return None
@@ -331,12 +333,10 @@ async def animation_loop(image_ids, times):
         database = Dao("database.sqlite")
         animation_list = []
         binarys = database.load_multiple_binarys(image_ids)
-        for i in range(len(image_ids)):
-            binary = binarys[i]
-            if binary:
-                binary = binary[1]
-                time = times[i]/1000
-                animation_list.append([binary,time])
+
+        for binary, time in zip(binarys,times):
+            animation_list.append([binary[1],time/1000])
+
         while ANIMATION_RUNNING:
             for binary,time in animation_list:
                 if ANIMATION_RUNNING:

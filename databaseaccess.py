@@ -208,6 +208,7 @@ class Dao:
             return data
         except Exception as exception:
             print(exception)
+            return None
 
     def delete_animation(self, animation_id):
         """
@@ -227,7 +228,8 @@ class Dao:
         This Method will add a frame to the animation
         """
         try:
-            sql = "INSERT INTO images_to_animations (animation_id, image_id, pos, sleep_time) VALUES (?,?,?,?)"
+            sql = "INSERT INTO images_to_animations \
+                (animation_id, image_id, pos, sleep_time) VALUES (?,?,?,?)"
             self.cursor.execute(sql, (animation_id,image_id,position,time))
             self.conn.commit()
         except Exception as exception:
@@ -299,6 +301,7 @@ class Dao:
             return data
         except Exception as exception:
             print(exception)
+            return None
 
     def update_animation_time_of_single_frame(self, animation_id, position, time):
         """
@@ -321,7 +324,7 @@ class Dao:
             self.conn.commit()
         except Exception as exception:
             print(exception)
-    
+
     def switch_animation_positions(self, animation_id, source_id, target_id):
         """
         This Method will swap the image_id and sleep_time values

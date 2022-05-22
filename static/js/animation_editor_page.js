@@ -69,7 +69,7 @@ async function UpdateTime() {
         position = activeTile.id.slice(5,);
     }
 
-    if (time-length>0 && position != null) {
+    if (time.length>0 && position != null) {
         response = await fetch("/animation/frame/updatetime?animation_id="+animation_id+"&position="+position+"&time="+time, {
             method: "POST"
         }); 
