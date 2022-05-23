@@ -105,6 +105,23 @@ body::-webkit-scrollbar {
     box-shadow: 0 0 40px 40px gray inset;
   }
 
+  #favcolor {
+    background-color: #343437;
+  }
+
+  #colorpicker-btn {
+    border: 2px solid #32cd32;
+  }
+
+  #colorpicker-btn:hover {
+    box-shadow: 0 0 40px 40px #32cd32 inset;
+  }
+
+  #pipette {
+    color: #ffffff;
+    font-size: 1.45rem;
+  }
+
 /* Canvas */
 
 canvas {

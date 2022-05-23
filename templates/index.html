@@ -46,7 +46,7 @@
             <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
                 <div class="d-flex flex-column align-items-center  px-3 pt-2 text-white min-vh-100">
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center">
-                        <li class="mb-2 mt-5">
+                        <li class="mb-2 mt-4">
                             <span class="fs-6 fw-bold">FARBEN</span>
                         </li>
                         <li class="nav-link px-0 align-middle d-sm-inline">
@@ -66,16 +66,20 @@
                         </li>
                         <li>
                             <div class="nav-link align-middle">
-                                <div id="favContainer"> <label for="favcolor"></label>
+                                <div> 
                                     <input type="color" name="favcolor" id="favcolor" value="#ffffff">
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="nav-link align-middle">
+                                <div>
+                                    <button class="button" id="colorpicker-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Wähle eine Farbe aus dem Bild aus"><i id="pipette" class="fa-solid fa-eye-dropper"></i></button>
                                 </div>
                             </div>
                         </li>
                         <li class="mb-2 mt-4">
                             <span class="fs-6 fw-bold">OPTIONEN</span>
-                        </li>
-                        <li>
-                            <button class="button opt-btn my-2" id="colorpicker-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Wähle eine Farbe aus dem Bild aus"><strong>PIPETTE</strong></button>
                         </li>
                         <li>
                             <button class="button opt-btn my-2" id="delete-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Setze das Bild zurück"><strong>LÖSCHEN</strong></button>
