@@ -3,18 +3,22 @@ const colorCirlce = document.querySelectorAll(".color-circle");
 const favcolor_field = document.getElementById("favcolor");
 const colorpicker_btn = document.querySelector("#colorpicker-btn");
 const delete_btn = document.querySelector("#delete-btn");
-const save_btn = document.querySelector("#save-btn");
 const apply_btn = document.querySelector("#apply-btn");
+const save_btn = document.querySelector("#save-btn");
+const replace_btn = document.querySelector("#replace-btn");
 const move_up = document.querySelector("#move-up");
 const move_left = document.querySelector("#move-left");
 const move_right = document.querySelector("#move-right");
 const move_down = document.querySelector("#move-down");
-var canvasObject = new CanvasObject(canvas, FRAME_SIZE=800, PIXEL_SIZE=50, colorArray=[]);
-var isMouseDownCanvas;
-var drawMode = true;
+const canvasObject = new CanvasObject(canvas, FRAME_SIZE=800, PIXEL_SIZE=50, colorArray=[]);
+let isMouseDownCanvas;
+let drawMode = true;
+let loadedIDToEdit = null;
 
-save_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/save"));
-apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/apply"));
+apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/apply",null));
+save_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/save",null));
+replace_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/replace",loadedIDToEdit));
+
 favcolor_field.addEventListener("change", () => setPickedColor(favcolor_field.value));
 move_up.addEventListener("click", moveUp);
 move_left.addEventListener("click", moveLeft);
@@ -200,7 +204,8 @@ document.addEventListener("DOMContentLoaded", async function() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     if(urlParams.has('id')) {
-        const loadedIDToEdit = urlParams.get('id');
+        replace_btn.setAttribute("style","display: block");
+        loadedIDToEdit = urlParams.get('id');
         await loadAndShow(loadedIDToEdit, null);
     }
     canvasObject.drawGrid()

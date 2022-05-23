@@ -80,6 +80,18 @@ class Dao:
         except Exception as exception:
             print(exception)
 
+    def replace_binary(self, image_id, binary):
+        """
+        This Method will replace an image in the Database
+        """
+        try:
+            self.delete_binary(image_id)
+            sql = "INSERT INTO images VALUES (?,?)"
+            self.cursor.execute(sql, (image_id, binary))
+            self.conn.commit()
+        except Exception as exception:
+            print(exception)
+
     def delete_binary(self, image_id):
         """
         This Method will delete an image from the Database by image_id

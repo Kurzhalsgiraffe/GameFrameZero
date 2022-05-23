@@ -70,11 +70,11 @@ class CanvasObject {
     async loadColorArrayFromServer(id=null,pos=null) {
         let response
         if (id!=null && pos!=null) {
-            response = await fetch("/load?id="+id+"&pos="+pos);
+            response = await fetch("/load/single?image_id="+id+"&pos="+pos);
         } else if(id!=null && pos==null) {
-            response = await fetch("/load?id="+id);
+            response = await fetch("/load/single?image_id="+id);
         } else if(id==null && pos!=null) {
-            response = await fetch("/load?pos="+pos);
+            response = await fetch("/load/single?pos="+pos);
         }
         
         let res = await response.json();
@@ -91,7 +91,10 @@ class CanvasObject {
         }
     }
 
-    async sendColorArrayToServer(route) {
+    async sendColorArrayToServer(route=null, image_id=null) {
+        if (image_id) {
+            route = route+"?image_id="+image_id
+        }
         let response = await fetch(route, {
             method: "POST",
             headers: {

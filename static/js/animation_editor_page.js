@@ -47,7 +47,7 @@ async function RemoveFrameFromAnimation() {
     let response;
     if (activeTile != null) {
         active_frame_id = activeTile.id.slice(5,);
-        response = await fetch("/animation/frame/remove?id="+animation_id+"&pos="+active_frame_id, {
+        response = await fetch("/animation/frame/remove?animation_id="+animation_id+"&pos="+active_frame_id, {
             method: "DELETE"
         });
         if (response.status == 200) {

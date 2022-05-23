@@ -4,7 +4,7 @@ let canvasObject = new CanvasObject(canvas=null, FRAME_SIZE=256, PIXEL_SIZE=16, 
 let activeTile = null;
 
 async function loadMultipleArraysFromServer(ids) {
-    let response = await fetch("/loadlist", {
+    let response = await fetch("/load/multiple", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

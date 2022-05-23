@@ -1,4 +1,4 @@
-#Comment out Lines 6 115 154 343 349 for testing on Windows
+#Comment out Lines 6 120 176 362 368 for testing on Windows
 import asyncio
 from flask import Flask, request, jsonify, render_template
 from waitress import serve
@@ -68,11 +68,10 @@ def animation_load_all():
         print(exception)
         return {},400
 
-@app.route("/load")
-def load():
+@app.route("/load/single")
+def load_single():
     database = Dao("database.sqlite")
-
-    image_id = request.args.get('id', type = int)
+    image_id = request.args.get('image_id', type = int)
     pos = request.args.get('pos', type = str)
     if pos:
         if pos == "first":
@@ -110,15 +109,23 @@ def brightness_load():
 
 @app.route("/apply", methods=["POST"])
 def apply():
-    color_array = request.json
-    binary = color_array_to_binary(color_array)
-    led.update_frame(binary)
-    return {}
+    database = Dao("database.sqlite")
+    image_id = request.args.get('image_id', type = int)
+    try:
+        if image_id:
+            binary = database.load_single_binary(image_id)
+        else:   
+            color_array = request.json
+            binary = color_array_to_binary(color_array)
+        led.update_frame(binary)
+        return {}
+    except Exception as exception:
+        print(exception)
+        return exception,400
 
 @app.route("/save", methods=["POST"])
 def save():
     database = Dao("database.sqlite")
-
     color_array = request.json
     binary = color_array_to_binary(color_array)
     try:
@@ -128,8 +135,23 @@ def save():
         print(exception)
         return {},400
 
-@app.route("/loadlist", methods=["POST"])
-def loadlist():
+@app.route("/replace", methods=["POST"])
+def replace():
+    database = Dao("database.sqlite")
+    image_id = request.args.get('image_id', type = int)
+    color_array = request.json
+    binary = color_array_to_binary(color_array)
+    try:
+        if image_id:
+            database.replace_binary(image_id,binary)
+            return {}
+        return {},400
+    except Exception as exception:
+        print(exception)
+        return {},400
+
+@app.route("/load/multiple", methods=["POST"])
+def load_multiple():
     database = Dao("database.sqlite")
     try:
         image_ids = request.json
@@ -204,11 +226,10 @@ def animation_frame_add(animation_id, image_id):
 
 @app.route("/animation/frame/updatetime", methods=["POST"])
 def animation_frame_updatetime():
+    database = Dao("database.sqlite")
     animation_id = request.args.get('animation_id', type = int)
     position = request.args.get('position', type = str)
     time = request.args.get('time', type = int)
-
-    database = Dao("database.sqlite")
     try:
         if position == "all":
             database.update_animation_time_of_all_frames(animation_id, time)
@@ -221,11 +242,10 @@ def animation_frame_updatetime():
 
 @app.route("/animation/frame/switchpositions", methods=["POST"])
 def animation_frame_switchpositions():
+    database = Dao("database.sqlite")
     animation_id = request.args.get('animation_id', type = int)
     source_id = request.args.get('source_id', type = int)
     target_id = request.args.get('target_id', type = int)
-
-    database = Dao("database.sqlite")
     try:
         database.switch_animation_positions(animation_id, source_id, target_id)
         return {}
@@ -258,7 +278,7 @@ def animation_delete(animation_id):
 
 @app.route("/animation/frame/remove", methods=["DELETE"])
 def animation_frame_remove():
-    animation_id = request.args.get('id', type = int)
+    animation_id = request.args.get('animation_id', type = int)
     position = request.args.get('pos', type = int)
 
     database = Dao("database.sqlite")
@@ -304,10 +324,9 @@ def load_animation_list_by_id(animation_id):
     """
     Load all informations of this animation
     """
+    database = Dao("database.sqlite")
     try:
-        database = Dao("database.sqlite")
         animation_frames = database.get_animation_by_id(animation_id)
-
         data = {
                 "imageIDs": [],
                 "positions": [],
@@ -329,8 +348,8 @@ async def animation_loop(image_ids, times):
     """
     Load all Animation details and Images, and loop them while ANIMATION_RUNNING == True
     """
+    database = Dao("database.sqlite")
     try:
-        database = Dao("database.sqlite")
         animation_list = []
         binarys = database.load_multiple_binarys(image_ids)
 
