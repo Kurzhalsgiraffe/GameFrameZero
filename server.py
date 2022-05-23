@@ -306,20 +306,20 @@ def load_animation_list_by_id(animation_id):
     """
     try:
         database = Dao("database.sqlite")
-        data = database.get_animation_by_id(animation_id)
-        image_ids = []
-        positions = []
-        times = []
-        if data:
-            for i in data:
-                image_ids.append(i[1])
-                positions.append(i[2])
-                times.append(i[3])
-            data = {
-                    "imageIDs": image_ids,
-                    "positions": positions,
-                    "times": times
-                }
+        animation_frames = database.get_animation_by_id(animation_id)
+
+        data = {
+                "imageIDs": [],
+                "positions": [],
+                "times": []
+            }
+
+        if animation_frames:
+            for i in animation_frames:
+                data["imageIDs"].append(i[1])
+                data["positions"].append(i[2])
+                data["times"].append(i[3])
+
             return data
     except Exception as exception:
         print(exception)
