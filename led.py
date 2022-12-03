@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """WS2812 LED Matrix"""
 
 if not __debug__:

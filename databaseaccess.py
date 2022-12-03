@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """SQLite Database"""
 
 import sqlite3
