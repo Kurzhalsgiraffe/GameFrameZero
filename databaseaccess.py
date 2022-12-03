@@ -2,6 +2,7 @@
 """SQLite Database"""
 
 import sqlite3
+import sys
 
 class Dao:
     """
@@ -14,7 +15,7 @@ class Dao:
             self.create_tables()
         except Exception as exception:
             print(exception)
-            exit(-1)
+            sys.exit(-1)
 
     def create_tables(self):
         """

@@ -98,8 +98,7 @@ def load_single():
                 "imageID": image_id
             }
             return jsonify(data)
-        else:
-            return {}
+        return {}
     except Exception as exception:
         print(exception)
         return exception,400

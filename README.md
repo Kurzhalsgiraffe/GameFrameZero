@@ -42,7 +42,7 @@ Description=GameFrameZero Autostart
 [Service]
 User=root
 WorkingDirectory=/home/pi/GameFrameZero/
-ExecStart=python3 server.py
+ExecStart=python3 -O server.py
 Restart=always
 
 [Install]
