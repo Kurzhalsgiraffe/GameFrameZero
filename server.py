@@ -34,7 +34,7 @@ def animation():
 def animation_editor():
     return render_template("animation_editor.html")
 
-@app.route("/animation/load/<animation_id>")              # load all image_ids, times and positions for this id
+@app.route("/animation/load/<animation_id>")
 def animation_load(animation_id):
     try:
         data = load_animation_list_by_id(animation_id)
@@ -44,7 +44,7 @@ def animation_load(animation_id):
         print(exception)
         return {},400
 
-@app.route("/animation/load/all")               # load informations about all animations (ids, names, thumbnails)
+@app.route("/animation/load/all")
 def animation_load_all():
     try:
         data = sorted(database.get_all_animations(), key=lambda x: x[0])
