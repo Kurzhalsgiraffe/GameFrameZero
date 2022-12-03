@@ -12,10 +12,10 @@ STANDARD_ANIMATION_TIME = 200
 SKIP_OFFSET = 10
 
 ANIMATION_RUNNING = False
-BRIGHTNESS = 1
 
 app = Flask(__name__)
 led = LEDMatrix()
+database = Dao("database.sqlite")
 
 ## ----- GET ----- ##
 
@@ -47,7 +47,6 @@ def animation_load(animation_id):
 
 @app.route("/animation/load/all")               # load informations about all animations (ids, names, thumbnails)
 def animation_load_all():
-    database = Dao("database.sqlite")
     try:
         data = sorted(database.get_all_animations(), key=lambda x: x[0])
         animation_ids = []
@@ -73,7 +72,6 @@ def animation_load_all():
 
 @app.route("/load/single")
 def load_single():
-    database = Dao("database.sqlite")
     image_id = request.args.get('image_id', type = int)
     pos = request.args.get('pos', type = str)
     if pos:
@@ -105,18 +103,17 @@ def load_single():
 
 @app.route("/brightness/load")
 def brightness_load():
-    return str(BRIGHTNESS)
+    return str(led.led_brightness)
 
 ## ----- POST ----- ##
 
 @app.route("/apply", methods=["POST"])
 def apply():
-    database = Dao("database.sqlite")
     image_id = request.args.get('image_id', type = int)
     try:
         if image_id:
             binary = database.load_single_binary(image_id)
-        else:   
+        else:
             color_array = request.json
             binary = color_array_to_binary(color_array)
         led.update_frame(binary)
@@ -127,7 +124,6 @@ def apply():
 
 @app.route("/save", methods=["POST"])
 def save():
-    database = Dao("database.sqlite")
     color_array = request.json
     binary = color_array_to_binary(color_array)
     try:
@@ -139,7 +135,6 @@ def save():
 
 @app.route("/replace", methods=["POST"])
 def replace():
-    database = Dao("database.sqlite")
     image_id = request.args.get('image_id', type = int)
     color_array = request.json
     binary = color_array_to_binary(color_array)
@@ -154,7 +149,6 @@ def replace():
 
 @app.route("/load/multiple", methods=["POST"])
 def load_multiple():
-    database = Dao("database.sqlite")
     try:
         image_ids = request.json
         if image_ids:
@@ -173,9 +167,7 @@ def load_multiple():
 
 @app.route("/brightness/apply/<brightness>", methods=["POST"])
 def brightness_apply(brightness):
-    global BRIGHTNESS
-    BRIGHTNESS = brightness
-    led.update_brightness(int(BRIGHTNESS))
+    led.update_brightness(int(brightness))
     return {}
 
 @app.route("/animation/start/<animation_id>", methods=["POST"])
@@ -203,7 +195,6 @@ def animation_stop():
 
 @app.route("/animation/create/<name>", methods=["POST"])
 def animation_create(name):
-    database = Dao("database.sqlite")
     try:
         database.create_animation(name)
         return {}
@@ -213,7 +204,6 @@ def animation_create(name):
 
 @app.route("/animation/frame/add/<animation_id>/<image_id>", methods=["POST"])
 def animation_frame_add(animation_id, image_id):
-    database = Dao("database.sqlite")
     try:
         last_pos = database.get_last_position_by_animation_id(animation_id)
         if last_pos:
@@ -228,7 +218,6 @@ def animation_frame_add(animation_id, image_id):
 
 @app.route("/animation/frame/updatetime", methods=["POST"])
 def animation_frame_updatetime():
-    database = Dao("database.sqlite")
     animation_id = request.args.get('animation_id', type = int)
     position = request.args.get('position', type = str)
     time = request.args.get('time', type = int)
@@ -244,7 +233,6 @@ def animation_frame_updatetime():
 
 @app.route("/animation/frame/switchpositions", methods=["POST"])
 def animation_frame_switchpositions():
-    database = Dao("database.sqlite")
     animation_id = request.args.get('animation_id', type = int)
     source_id = request.args.get('source_id', type = int)
     target_id = request.args.get('target_id', type = int)
@@ -259,7 +247,6 @@ def animation_frame_switchpositions():
 
 @app.route("/delete/<image_id>", methods=["DELETE"])
 def delete(image_id):
-    database = Dao("database.sqlite")
     try:
         database.delete_binary(int(image_id))
         return {}
@@ -269,7 +256,6 @@ def delete(image_id):
 
 @app.route("/animation/delete/<animation_id>", methods=["DELETE"])
 def animation_delete(animation_id):
-    database = Dao("database.sqlite")
     try:
         database.delete_animation(animation_id)
         database.remove_all_images_from_animation(animation_id)
@@ -282,8 +268,6 @@ def animation_delete(animation_id):
 def animation_frame_remove():
     animation_id = request.args.get('animation_id', type = int)
     position = request.args.get('pos', type = int)
-
-    database = Dao("database.sqlite")
     try:
         database.remove_image_from_animation(animation_id, position)
         return {}
@@ -306,27 +290,26 @@ def color_array_to_binary(color_array):
     """
     Calculate bytearray from color_array
     """
-    b = bytearray()
-    for c in color_array:
-        b.append(int(c[1:3], 16))
-        b.append(int(c[3:5], 16))
-        b.append(int(c[5:7], 16))
-    return b
+    byte_array = bytearray()
+    for color in color_array:
+        byte_array.append(int(color[1:3], 16))
+        byte_array.append(int(color[3:5], 16))
+        byte_array.append(int(color[5:7], 16))
+    return byte_array
 
 def binary_to_color_array(binary):
     """
     Calculate color_array from bytearray
     """
-    c = []
+    color_array = []
     for i in range(0,FRAME_SIZE,3):
-        c.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
-    return c
+        color_array.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
+    return color_array
 
 def load_animation_list_by_id(animation_id):
     """
     Load all informations of this animation
     """
-    database = Dao("database.sqlite")
     try:
         animation_frames = database.get_animation_by_id(animation_id)
         data = {
@@ -346,11 +329,20 @@ def load_animation_list_by_id(animation_id):
         print(exception)
         return None
 
+def startup_image(image_id):
+    """
+    Show image on startup
+    """
+    try:
+        binary = database.load_single_binary(image_id)
+        led.update_frame(binary)
+    except Exception as exception:
+        print(exception)
+
 async def animation_loop(image_ids, times):
     """
     Load all Animation details and Images, and loop them while ANIMATION_RUNNING == True
     """
-    database = Dao("database.sqlite")
     try:
         animation_list = []
         binarys = database.load_multiple_binarys(image_ids)
@@ -367,6 +359,7 @@ async def animation_loop(image_ids, times):
         print(exception)
 
 if __name__ == "__main__":
+    startup_image(1)
     if __debug__:
         app.run(debug=True, host="0.0.0.0")
     else:
