@@ -1,9 +1,9 @@
-#Comment out Lines 6 120 176 362 368 for testing on Windows
+"""Flask Server"""
 import asyncio
 from flask import Flask, request, jsonify, render_template
 from waitress import serve
 from databaseaccess import Dao
-import led
+#import led
 
 FRAME_SIZE = 768
 STANDARD_ANIMATION_TIME = 200
@@ -117,7 +117,7 @@ def apply():
         else:   
             color_array = request.json
             binary = color_array_to_binary(color_array)
-        led.update_frame(binary)
+#        led.update_frame(binary)
         return {}
     except Exception as exception:
         print(exception)
@@ -173,7 +173,7 @@ def load_multiple():
 def brightness_apply(brightness):
     global BRIGHTNESS
     BRIGHTNESS = brightness
-    led.update_brightness(int(BRIGHTNESS))
+#    led.update_brightness(int(BRIGHTNESS))
     return {}
 
 @app.route("/animation/start/<animation_id>", methods=["POST"])
@@ -359,12 +359,16 @@ async def animation_loop(image_ids, times):
         while ANIMATION_RUNNING:
             for binary,time in animation_list:
                 if ANIMATION_RUNNING:
-                    led.update_frame(binary)
+#                    led.update_frame(binary)
                     await asyncio.sleep(time)
     except Exception as exception:
         print(exception)
 
 if __name__ == "__main__":
-    led.init()
-#    app.run(debug=True, host="0.0.0.0")
-    serve(app, host="0.0.0.0", port=80)
+#    led.init()
+    if __debug__:
+        app.run(debug=True, host="0.0.0.0")
+    else:
+        serve(app, host="0.0.0.0", port=80)
+
+#Comment out Lines 6 120 176 362 368 for testing on Windows

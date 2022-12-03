@@ -1,6 +1,6 @@
 const canvas = document.querySelector("canvas");
 const colorCirlce = document.querySelectorAll(".color-circle");
-const favcolor_field = document.getElementById("favcolor");
+const favcolor_field = document.querySelector("#favcolor");
 const colorpicker_btn = document.querySelector("#colorpicker-btn");
 const delete_btn = document.querySelector("#delete-btn");
 const apply_btn = document.querySelector("#apply-btn");
