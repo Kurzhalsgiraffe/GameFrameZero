@@ -44,5 +44,6 @@ class LEDMatrix:
     def update_brightness(self,brightness):
         """Set brightmess value"""
         if not __debug__:
-            self.strip.setBrightness(brightness)
+            self.led_brightness = brightness
+            self.strip.setBrightness(self.led_brightness)
             self.strip.show()
