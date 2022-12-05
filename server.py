@@ -361,18 +361,6 @@ def load_animation_list_by_id(animation_id):
         print(exception)
         return None
 
-def startup_image(image_id):
-    """
-    Show image on startup
-    """
-    try:
-        database = Dao("database.sqlite")
-
-        binary = database.load_single_binary(image_id)
-        led.update_frame(binary)
-    except Exception as exception:
-        print(exception)
-
 async def animation_loop(image_ids, times):
     """
     Load all Animation details and Images, and loop them while ANIMATION_RUNNING == True
@@ -391,6 +379,18 @@ async def animation_loop(image_ids, times):
                 if ANIMATION_RUNNING:
                     led.update_frame(binary)
                     await asyncio.sleep(time)
+    except Exception as exception:
+        print(exception)
+
+def startup_image(image_id):
+    """
+    Show image on startup
+    """
+    try:
+        database = Dao("database.sqlite")
+
+        binary = database.load_single_binary(image_id)
+        led.update_frame(binary)
     except Exception as exception:
         print(exception)
 
