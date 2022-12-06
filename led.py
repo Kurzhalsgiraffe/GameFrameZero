@@ -4,8 +4,9 @@ if not __debug__:
     from rpi_ws281x import PixelStrip, Color
 
 class LEDMatrix:
-    """This Class provides all the needed Methods to interact with the LED Matrix"""
-
+    """
+    This Class provides all the needed Methods to interact with the LED Matrix
+    """
     def __init__(self):
         self.led_count = 256       # Number of LED pixels.
         self.led_pin = 18          # GPIO pin connected to the pixels (18 uses PWM!).
@@ -23,7 +24,9 @@ class LEDMatrix:
 
     # Set all Pixels to same Color
     def set_all_pixels(self, color):
-        """Set all pixels to one color"""
+        """
+        Set all pixels to one color
+        """
         if not __debug__:
             for index in range(self.led_count):
                 self.strip.setPixelColor(index, color)
@@ -31,7 +34,9 @@ class LEDMatrix:
 
     # Update current Frame by (index,Color()) tuples
     def update_frame(self, binary_colors):
-        """Set Pixel values to binary colors"""
+        """
+        Set Pixel values to binary colors
+        """
         if not __debug__:
             for index in range(self.led_count):
                 red = binary_colors[index*3]
@@ -42,9 +47,11 @@ class LEDMatrix:
             self.strip.show()
 
     def update_brightness(self,brightness):
-        """Set brightmess value"""
+        """
+        Set brightmess value
+        """
         self.led_brightness = brightness
-        
+
         if not __debug__:
             self.strip.setBrightness(self.led_brightness)
             self.strip.show()

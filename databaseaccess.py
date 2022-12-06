@@ -1,7 +1,7 @@
 """SQLite Database"""
 
 import sqlite3
-import sys
+import traceback
 
 class Dao:
     """
@@ -12,33 +12,37 @@ class Dao:
             self.conn = sqlite3.connect(dbfile, check_same_thread=False)
             self.cursor = self.conn.cursor()
             self.create_tables()
-        except Exception as exception:
-            print(exception)
-            sys.exit(-1)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     def create_tables(self):
         """
         This Method will create the Database Tables if they dont already exist
         """
-        sql = """CREATE TABLE IF NOT EXISTS images (
-            image_id integer PRIMARY KEY AUTOINCREMENT,
-            image_data blob NOT NULL)"""
-        self.cursor.execute(sql)
+        try:
+            sql = """CREATE TABLE IF NOT EXISTS images (
+                image_id integer PRIMARY KEY AUTOINCREMENT,
+                image_data blob NOT NULL)"""
+            self.cursor.execute(sql)
 
-        sql = """CREATE TABLE IF NOT EXISTS animations (
-            animation_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            animation_name TEXT NOT NULL)"""
-        self.cursor.execute(sql)
+            sql = """CREATE TABLE IF NOT EXISTS animations (
+                animation_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                animation_name TEXT NOT NULL)"""
+            self.cursor.execute(sql)
 
-        sql = """CREATE TABLE IF NOT EXISTS images_to_animations (
-            animation_id INTEGER NOT NULL,
-            image_id INTEGER NOT NULL,
-            pos INTEGER NOT NULL,
-            sleep_time INTEGER NOT NULL,
-            PRIMARY KEY (animation_id, pos),
-            FOREIGN KEY (animation_id) REFERENCES animations(animation_id),
-            FOREIGN KEY (image_id) REFERENCES images(image_id))"""
-        self.cursor.execute(sql)
+            sql = """CREATE TABLE IF NOT EXISTS images_to_animations (
+                animation_id INTEGER NOT NULL,
+                image_id INTEGER NOT NULL,
+                pos INTEGER NOT NULL,
+                sleep_time INTEGER NOT NULL,
+                PRIMARY KEY (animation_id, pos),
+                FOREIGN KEY (animation_id) REFERENCES animations(animation_id),
+                FOREIGN KEY (image_id) REFERENCES images(image_id))"""
+            self.cursor.execute(sql)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     # -----  IMAGES TABLE  -----#
 
@@ -50,8 +54,9 @@ class Dao:
             sql = "SELECT * FROM images WHERE image_id=?"
             data = self.cursor.execute(sql,(image_id,)).fetchall()
             return bytearray(data[0][1])
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
 
     def load_multiple_binarys(self, image_ids):
@@ -68,8 +73,9 @@ class Dao:
                 else:
                     arr.append(None)
             return arr
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
 
     def save_binary(self, binary):
@@ -80,8 +86,9 @@ class Dao:
             sql = "INSERT INTO images VALUES (NULL,?)"
             self.cursor.execute(sql, (binary,))
             self.conn.commit()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     def replace_binary(self, image_id, binary):
         """
@@ -92,8 +99,9 @@ class Dao:
             sql = "INSERT INTO images VALUES (?,?)"
             self.cursor.execute(sql, (image_id, binary))
             self.conn.commit()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     def delete_binary(self, image_id):
         """
@@ -103,8 +111,9 @@ class Dao:
             sql = "DELETE FROM images WHERE image_id=?"
             self.cursor.execute(sql,(image_id,))
             self.conn.commit()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     def get_first_image_id(self):
         """
@@ -114,8 +123,9 @@ class Dao:
             sql = "SELECT MIN(image_id) FROM images"
             data = self.cursor.execute(sql).fetchone()
             return data[0]
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
 
     def get_last_image_id(self):
@@ -126,8 +136,9 @@ class Dao:
             sql = "SELECT MAX(image_id) FROM images"
             data = self.cursor.execute(sql).fetchone()
             return data[0]
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
 
     def get_next_image_id(self, current):
@@ -141,8 +152,9 @@ class Dao:
             sql = "SELECT MIN(image_id) FROM images WHERE image_id > ?"
             data = self.cursor.execute(sql,(current,)).fetchone()
             return data[0]
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
 
     def get_previous_image_id(self, current):
@@ -156,8 +168,9 @@ class Dao:
             sql = "SELECT MAX(image_id) FROM images WHERE image_id < ?"
             data = self.cursor.execute(sql,(current,)).fetchone()
             return data[0]
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
 
     def get_fbw_image_id(self, current, offset):
@@ -176,8 +189,9 @@ class Dao:
             if len(data) >= offset:
                 return data[offset-1]
             return self.get_last_image_id()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
 
     def get_ffw_image_id(self, current, offset):
@@ -196,8 +210,9 @@ class Dao:
             if len(data) >= offset:
                 return data[-offset]
             return self.get_first_image_id()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
 
     # -----  ANIMATIONS TABLE  -----#
@@ -210,8 +225,9 @@ class Dao:
             sql = "INSERT INTO animations VALUES (NULL,?)"
             self.cursor.execute(sql, (animation_name,))
             self.conn.commit()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     def get_all_animations(self):
         """
@@ -221,8 +237,9 @@ class Dao:
             sql = "SELECT * FROM animations"
             data = self.cursor.execute(sql).fetchall()
             return data
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
 
     def delete_animation(self, animation_id):
@@ -233,8 +250,9 @@ class Dao:
             sql = "DELETE FROM animations WHERE animation_id=?"
             self.cursor.execute(sql, (animation_id,))
             self.conn.commit()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     # -----  IMAGES_TO_ANIMATIONS TABLE  -----#
 
@@ -243,11 +261,13 @@ class Dao:
         This Method will add a frame to the animation
         """
         try:
-            sql = "INSERT INTO images_to_animations (animation_id, image_id, pos, sleep_time) VALUES (?,?,?,?)"
+            sql = """INSERT INTO images_to_animations (
+                animation_id, image_id, pos, sleep_time) VALUES (?,?,?,?)"""
             self.cursor.execute(sql, (animation_id,image_id,position,time))
             self.conn.commit()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     def remove_image_from_animation(self, animation_id, position):
         """
@@ -261,8 +281,9 @@ class Dao:
             sql = "UPDATE images_to_animations SET pos = pos -1 WHERE animation_id=? AND pos>?"
             self.cursor.execute(sql, (animation_id,position))
             self.conn.commit()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     def get_all_animation_thumbnail_ids(self, animation_ids):
         """
@@ -288,10 +309,10 @@ class Dao:
                         break
                 else:
                     ret.append(None)
-
             return ret
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
 
     def remove_all_images_from_animation(self, animation_id):
@@ -302,8 +323,9 @@ class Dao:
             sql = "DELETE FROM images_to_animations WHERE animation_id=?"
             self.cursor.execute(sql, (animation_id,))
             self.conn.commit()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     def get_animation_by_id(self, animation_id):
         """
@@ -313,8 +335,9 @@ class Dao:
             sql = "SELECT * FROM images_to_animations where animation_id = ? ORDER BY pos"
             data = self.cursor.execute(sql, (animation_id,)).fetchall()
             return data
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
 
     def update_animation_time_of_single_frame(self, animation_id, position, time):
@@ -325,8 +348,9 @@ class Dao:
             sql = "UPDATE images_to_animations SET sleep_time=? WHERE animation_id=? AND pos=?"
             self.cursor.execute(sql, (time,animation_id,position))
             self.conn.commit()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     def update_animation_time_of_all_frames(self, animation_id, time):
         """
@@ -336,8 +360,9 @@ class Dao:
             sql = "UPDATE images_to_animations SET sleep_time=? WHERE animation_id=?"
             self.cursor.execute(sql, (time,animation_id))
             self.conn.commit()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     def switch_animation_positions(self, animation_id, source_id, target_id):
         """
@@ -345,20 +370,25 @@ class Dao:
         of the animationframes with source_id and target_id
         """
         try:
-            sql = "SELECT image_id, sleep_time FROM images_to_animations WHERE animation_id=? And pos=?"
+            sql = """SELECT image_id, sleep_time FROM
+                    images_to_animations WHERE animation_id=? And pos=?"""
             source_values = self.cursor.execute(sql, (animation_id,source_id)).fetchone()
 
-            sql = "SELECT image_id, sleep_time FROM images_to_animations WHERE animation_id=? And pos=?"
+            sql = """SELECT image_id, sleep_time FROM
+                    images_to_animations WHERE animation_id=? And pos=?"""
             target_values = self.cursor.execute(sql, (animation_id,target_id)).fetchone()
 
-            sql = "UPDATE images_to_animations SET image_id=?, sleep_time=? WHERE animation_id=? AND pos=?"
+            sql = """UPDATE images_to_animations SET
+                    image_id=?, sleep_time=? WHERE animation_id=? AND pos=?"""
             self.cursor.execute(sql, (target_values[0],target_values[1],animation_id,source_id))
 
-            sql = "UPDATE images_to_animations SET image_id=?, sleep_time=? WHERE animation_id=? AND pos=?"
+            sql = """UPDATE images_to_animations SET
+                    image_id=?, sleep_time=? WHERE animation_id=? AND pos=?"""
             self.cursor.execute(sql, (source_values[0],source_values[1],animation_id,target_id))
             self.conn.commit()
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
 
     def get_last_position_by_animation_id(self, animation_id):
         """
@@ -368,6 +398,16 @@ class Dao:
             sql = "SELECT MAX(pos) FROM images_to_animations WHERE animation_id=?"
             data = self.cursor.execute(sql, (animation_id,)).fetchone()
             return data[0]
-        except Exception as exception:
-            print(exception)
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
             return None
+
+def error_handler(err,trace):
+    """
+    Print Errors that can occurr in the DB Methods
+    """
+    print(f"SQLite error: {err.args}")
+    print("Exception class is: ", err.__class__)
+    print("SQLite traceback: ")
+    print(trace)
