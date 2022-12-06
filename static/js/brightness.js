@@ -24,7 +24,6 @@ async function loadBrightness() {
     let response = await fetch("/brightness/load");
     if (response.status == 200) {
         res = await response.text();
-        console.log(res)
         brightness_value.textContent = res;
         brightness_slider.setAttribute("value", res);
     } else {
