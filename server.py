@@ -1,8 +1,8 @@
 """Flask Server"""
 
-import asyncio
 from flask import Flask, request, jsonify, render_template
 from waitress import serve
+import time
 from databaseaccess import Dao
 from led import LEDMatrix
 
@@ -11,6 +11,7 @@ STANDARD_ANIMATION_TIME = 200
 SKIP_OFFSET = 10
 
 ANIMATION_RUNNING = False
+ANIMATION_STOPPED = True
 
 app = Flask(__name__)
 led = LEDMatrix()
@@ -185,15 +186,17 @@ def brightness_apply(brightness):
 @app.route("/animation/start/<animation_id>", methods=["POST"])
 def animation_start(animation_id):
     global ANIMATION_RUNNING
-    ANIMATION_RUNNING = True
+    global ANIMATION_STOPPED
     try:
+        while ANIMATION_STOPPED == False:
+            ANIMATION_RUNNING = False
+        ANIMATION_RUNNING = True
+        ANIMATION_STOPPED = False
         data = load_animation_list_by_id(animation_id)
         if data:
             image_ids = data["imageIDs"]
             times = data["times"]
-            asyncio.set_event_loop(asyncio.new_event_loop())
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(animation_loop(image_ids, times))
+            animation_loop(image_ids, times)
             return {}
     except Exception as exception:
         print(exception)
@@ -202,7 +205,9 @@ def animation_start(animation_id):
 @app.route("/animation/stop", methods=["POST"])
 def animation_stop():
     global ANIMATION_RUNNING
-    ANIMATION_RUNNING = False
+    global ANIMATION_STOPPED
+    while ANIMATION_STOPPED == False:
+        ANIMATION_RUNNING = False
     return {}
 
 @app.route("/animation/create/<name>", methods=["POST"])
@@ -361,7 +366,7 @@ def load_animation_list_by_id(animation_id):
         print(exception)
         return None
 
-async def animation_loop(image_ids, times):
+def animation_loop(image_ids, times):
     """
     Load all Animation details and Images, and loop them while ANIMATION_RUNNING == True
     """
@@ -371,14 +376,16 @@ async def animation_loop(image_ids, times):
         animation_list = []
         binarys = database.load_multiple_binarys(image_ids)
 
-        for binary, time in zip(binarys,times):
-            animation_list.append([binary[1],time/1000])
+        for binary, sleep_time in zip(binarys,times):
+            animation_list.append([binary[1],sleep_time/1000])
 
         while ANIMATION_RUNNING:
-            for binary,time in animation_list:
+            for binary,sleep_time in animation_list:
                 if ANIMATION_RUNNING:
                     led.update_frame(binary)
-                    await asyncio.sleep(time)
+                    time.sleep(sleep_time)
+        global ANIMATION_STOPPED
+        ANIMATION_STOPPED = True
     except Exception as exception:
         print(exception)
 
