@@ -10,26 +10,26 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <title>GameFrameZero</title>
 </head>
-<body>
+<body class="text-white">
 
     <!-- Navigation -->
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark pt-lg-3">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand fs-3 fw-bold" href="#"><i class="fa-solid fa-lightbulb mx-2"></i>GameFrame<span class="limegreen">Zero</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mx-auto mb-2">
-                    <li class="nav-item mx-lg-2">
-                    <a class="nav-link text-white active" href="#">ZEICHNEN</a>
+                <ul class="navbar-nav mx-auto my-2">
+                    <li class="nav-item mx-3">
+                        <a class="nav-link active" href="#">ZEICHNEN</a>
                     </li>
-                    <li class="nav-item mx-lg-2">
-                        <a class="nav-link text-white" href="images">BILDER</a>
+                    <li class="nav-item mx-3">
+                        <a class="nav-link" href="images">BILDER</a>
                     </li>
-                    <li class="nav-item mx-lg-2">
-                        <a class="nav-link text-white" href="animation">ANIMATIONEN</a>
+                    <li class="nav-item mx-3">
+                        <a class="nav-link" href="animation">ANIMATIONEN</a>
                     </li>
                 </ul>
             </div>
@@ -43,13 +43,13 @@
 
             <!-- Sidebar-->
 
-            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
-                <div class="d-flex flex-column align-items-center  px-3 pt-2 text-white min-vh-100">
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center">
-                        <li class="mb-2 mt-4">
+            <div class="col-xl-2 bg-dark">
+                <div class="sticky-top flex-column min-vh-100">
+                    <ul class="nav flex-column align-items-center">
+                        <li class="mb-2 mt-5">
                             <span class="fs-6 fw-bold">FARBEN</span>
                         </li>
-                        <li class="nav-link px-0 align-middle d-sm-inline">
+                        <li class="nav-link">
                             <div class="drawing-colors">
                                 <div class="color-circle bg-white active" data-color="#ffffff" onclick="standardColor(this)"></div>
                                 <div class="color-circle bg-yellow" data-color="#ffff00" onclick="standardColor(this)"></div>
@@ -65,14 +65,14 @@
                             </div>
                         </li>
                         <li>
-                            <div class="nav-link align-middle">
+                            <div class="nav-link">
                                 <div> 
                                     <input type="color" name="favcolor" id="favcolor" value="#ffffff">
                                 </div>
                             </div>
                         </li>
                         <li>
-                            <div class="nav-link align-middle">
+                            <div class="nav-link">
                                 <div>
                                     <button class="button" id="colorpicker-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Wähle eine Farbe aus dem Bild aus"><i id="pipette" class="fa-solid fa-eye-dropper"></i></button>
                                 </div>
@@ -93,16 +93,14 @@
                         <li>
                             <button class="button opt-btn my-2" id="replace-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Überschreibe das bearbeitete Bild" style="display: none"><strong>ERSETZEN</strong></button>
                         </li>
-                        <li class="mb-2 mt-4">
+                        <li class="mt-4">
                             <span class="fs-6 fw-bold">HELLIGKEIT</span>
                         </li>
+                        <li class="my-2">
+                            <span id="brightness-value">1</span>
+                        </li>
                         <li>
-                            <div class="d-flex justify-content-center mb-2">                             
-                                <span id="brightness-value">1</span>
-                            </div>
-                            <div class="slidecontainer">
-                                <input type="range" min="1" max="80" value="1" class="slider" id="brightness-slider">
-                            </div>
+                            <input type="range" min="1" max="80" value="1" class="slider" id="brightness-slider">
                         </li>
                         <li class="mb-2 mt-4">
                             <span class="fs-6 fw-bold">VERSCHIEBEN</span>
@@ -122,7 +120,7 @@
             <!-- Sidebar END -->
             <!-- Canvas -->
             <div class="col py-3">
-                <div class="board pt-lg-3">
+                <div class="board">
                     <canvas width="800px" height="800px"></canvas>
                 </div>
             </div>
@@ -130,9 +128,9 @@
         </div>
     </div>
 
+    <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
     <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
     <script src="{{ url_for('static', filename='js/index_page.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
 </body>

@@ -9,7 +9,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <title>GameFrameZero</title>
 </head>
-<body>
+<body class="text-white">
 
     <!-- Navigation -->
 
@@ -20,15 +20,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mx-auto mb-2">
-                    <li class="nav-item mx-lg-2">
-                    <a class="nav-link text-white" href="/">ZEICHNEN</a>
+                <ul class="navbar-nav mx-auto my-2">
+                    <li class="nav-item mx-3">
+                    <a class="nav-link" href="/">ZEICHNEN</a>
                     </li>
-                    <li class="nav-item mx-lg-2">
-                        <a class="nav-link text-white active" href="/images">BILDER</a>
+                    <li class="nav-item mx-3">
+                        <a class="nav-link active" href="/images">BILDER</a>
                     </li>
-                    <li class="nav-item mx-lg-2">
-                        <a class="nav-link text-white" href="/animation">ANIMATIONEN</a>
+                    <li class="nav-item mx-3">
+                        <a class="nav-link" href="/animation">ANIMATIONEN</a>
                     </li>
                 </ul>
             </div>
@@ -42,10 +42,10 @@
 
             <!-- Sidebar-->
 
-            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
-                <div class="d-flex flex-column align-items-center  px-3 pt-2 text-white min-vh-100">
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center">
-                        <li class="mb-2 mt-4">
+            <div class="col-xl-2 bg-dark">
+                <div class="sticky-top flex-column min-vh-100">
+                    <ul class="nav flex-column align-items-center">
+                        <li class="mb-2 mt-5">
                             <span class="fs-6 fw-bold">OPTIONEN</span>
                         </li>
                         <li>
@@ -64,16 +64,14 @@
                         <li>
                             <button class="button opt-btn my-2" id="update-time-on-frame-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Übernehme die Zeit auf das ausgewählte Bild"><strong>ÜBERNEHMEN</strong></button>
                         </li>
-                        <li class="mb-2 mt-4">
+                        <li class="mt-4">
                             <span class="fs-6 fw-bold">HELLIGKEIT</span>
                         </li>
+                        <li class="my-2">
+                            <span id="brightness-value">1</span>
+                        </li>
                         <li>
-                            <div class="d-flex justify-content-center mb-2">                             
-                                <span id="brightness-value">1</span>
-                            </div>
-                            <div class="slidecontainer">
-                                <input type="range" min="1" max="80" value="1" class="slider" id="brightness-slider">
-                            </div>
+                            <input type="range" min="1" max="80" value="1" class="slider" id="brightness-slider">
                         </li>
                     </ul>
                 </div>
@@ -135,11 +133,11 @@
             <!-- Canvasbereich END -->
         </div>
     </div>
-   
+    
+    <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
     <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
     <script src="{{ url_for('static', filename='js/frametiles.js') }}"></script>
     <script src="{{ url_for('static', filename='js/animation_editor_page.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
 </body>
