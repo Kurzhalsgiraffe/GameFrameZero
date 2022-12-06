@@ -310,7 +310,12 @@ def animation_frame_remove():
         print(exception)
         return {},400
 
+
+"""
 ## ----- DISABLE CACHING ----- ##
+# Caching was disabled because Loading Error occurred with caching enabled.
+# Temporarily allowing caching again, to see if the bug is still there
+
 
 @app.after_request
 def add_header(response):
@@ -318,7 +323,7 @@ def add_header(response):
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
-
+"""
 ## ----- FUNCTIONS ----- ##
 
 def color_array_to_binary(color_array):
