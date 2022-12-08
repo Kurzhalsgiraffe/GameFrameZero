@@ -6,9 +6,8 @@ from waitress import serve
 from databaseaccess import Dao
 from led import LEDMatrix
 
-FRAME_SIZE = 768
 STANDARD_ANIMATION_TIME = 200
-SKIP_OFFSET = 15
+SKIP_OFFSET = 10
 
 class Animation:
     """
@@ -36,8 +35,6 @@ class Animation:
         """
         Load all Animation details and images, and loop them
         """
-        database = Dao("database.sqlite")
-
         animation_list = []
         data = load_animation_list_by_id(animation_id)
         if data:
@@ -59,6 +56,7 @@ class Animation:
 app = Flask(__name__)
 led = LEDMatrix()
 animation = Animation()
+database = Dao("database.sqlite")
 
 ## ----- GET ----- ##
 
@@ -104,8 +102,6 @@ def animation_load_all():
     """
     Load all animation_ids, animation_names and the image_id of their first image
     """
-    database = Dao("database.sqlite")
-
     animation_ids = []
     animation_names = []
     data = sorted(database.get_all_animations(), key=lambda x: x[0])
@@ -134,8 +130,6 @@ def load_single():
     """
     image_id = request.args.get('image_id', type = int)
     pos = request.args.get('pos', type = str)
-
-    database = Dao("database.sqlite")
 
     if pos:
         if pos == "first":
@@ -176,8 +170,6 @@ def apply():
     """
     image_id = request.args.get('image_id', type = int)
 
-    database = Dao("database.sqlite")
-
     if image_id:
         binary = database.load_single_binary(image_id)
     else:
@@ -191,8 +183,6 @@ def save():
     """
     Save a new image to the database
     """
-    database = Dao("database.sqlite")
-
     color_array = request.json
     binary = color_array_to_binary(color_array)
     database.save_binary(binary)
@@ -204,8 +194,6 @@ def replace():
     Replace an image by a new image
     """
     image_id = request.args.get('image_id', type = int)
-
-    database = Dao("database.sqlite")
 
     color_array = request.json
     binary = color_array_to_binary(color_array)
@@ -220,8 +208,6 @@ def load_multiple():
     """
     Load multiple binarys by image_id
     """
-    database = Dao("database.sqlite")
-
     image_ids = request.json
     if image_ids:
         binarys = database.load_multiple_binarys(image_ids)
@@ -263,8 +249,6 @@ def animation_create(name):
     """
     Create a new animation
     """
-    database = Dao("database.sqlite")
-
     database.create_animation(name)
     return {}
 
@@ -273,8 +257,6 @@ def animation_frame_add(animation_id, image_id):
     """
     Add a frame to an animation
     """
-    database = Dao("database.sqlite")
-
     last_pos = database.get_last_position_by_animation_id(animation_id)
     if last_pos:
         next_pos = last_pos + 1
@@ -293,8 +275,6 @@ def animation_frame_updatetime():
     position = request.args.get('position', type = str)
     sleep_time = request.args.get('time', type = int)
 
-    database = Dao("database.sqlite")
-
     if position == "all":
         database.update_animation_time_of_all_frames(animation_id, sleep_time)
     else:
@@ -310,8 +290,6 @@ def animation_frame_switchpositions():
     source_id = request.args.get('source_id', type = int)
     target_id = request.args.get('target_id', type = int)
 
-    database = Dao("database.sqlite")
-
     database.switch_animation_positions(animation_id, source_id, target_id)
     return {}
 
@@ -322,8 +300,6 @@ def delete(image_id):
     """
     Delete image from database
     """
-    database = Dao("database.sqlite")
-
     database.delete_binary(int(image_id))
     return {}
 
@@ -332,8 +308,6 @@ def animation_delete(animation_id):
     """
     Delete animation and remove all images from the intermediate table
     """
-    database = Dao("database.sqlite")
-
     database.delete_animation(animation_id)
     database.remove_all_images_from_animation(animation_id)
     return {}
@@ -345,8 +319,6 @@ def animation_frame_remove():
     """
     animation_id = request.args.get('animation_id', type = int)
     position = request.args.get('pos', type = int)
-
-    database = Dao("database.sqlite")
 
     database.remove_image_from_animation(animation_id, position)
     return {}
@@ -369,37 +341,33 @@ def binary_to_color_array(binary):
     Calculate color_array from bytearray
     """
     color_array = []
-    for i in range(0,FRAME_SIZE,3):
+    for i in range(0,768,3):
         color_array.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
     return color_array
 
 def load_animation_list_by_id(animation_id):
-        """
-        Load all informations of this animation
-        """
-        database = Dao("database.sqlite")
+    """
+    Load all informations of this animation
+    """
+    animation_frames = database.get_animation_by_id(animation_id)
+    data = {
+            "imageIDs": [],
+            "positions": [],
+            "times": []
+    }
 
-        animation_frames = database.get_animation_by_id(animation_id)
-        data = {
-                "imageIDs": [],
-                "positions": [],
-                "times": []
-        }
+    if animation_frames:
+        for i in animation_frames:
+            data["imageIDs"].append(i[1])
+            data["positions"].append(i[2])
+            data["times"].append(i[3])
 
-        if animation_frames:
-            for i in animation_frames:
-                data["imageIDs"].append(i[1])
-                data["positions"].append(i[2])
-                data["times"].append(i[3])
-
-        return data
+    return data
 
 def startup_image(image_id):
     """
     Show image on startup
     """
-    database = Dao("database.sqlite")
-
     binary = database.load_single_binary(image_id)
     led.update_frame(binary)
 

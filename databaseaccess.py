@@ -9,6 +9,7 @@ class Dao:
     """
     def __init__(self, dbfile):
         try:
+            sqlite3.threadsafety = 3
             self.conn = sqlite3.connect(dbfile, check_same_thread=False)
             self.cursor = self.conn.cursor()
             self.create_tables()
