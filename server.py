@@ -10,36 +10,80 @@ FRAME_SIZE = 768
 STANDARD_ANIMATION_TIME = 200
 SKIP_OFFSET = 15
 
-ANIMATION_RUNNING = False
-ANIMATION_STOPPED = True
+class Animation:
+    """
+    This Class provides all the needed Methods to do animations
+    """
+    def __init__(self):
+        self.running = False
+        self.stopped = True
+
+    def stop(self):
+        """
+        Stop the animation
+        """
+        while self.stopped is False:
+            self.running = False
+
+    def start(self,animation_id):
+        """
+        Start the animation
+        """
+        self.stop()
+        self.animation_loop(animation_id)
+
+    def animation_loop(self,animation_id):
+        """
+        Load all Animation details and images, and loop them
+        """
+        database = Dao("database.sqlite")
+
+        animation_list = []
+        data = load_animation_list_by_id(animation_id)
+        if data:
+            self.running = True
+            self.stopped = False
+
+            binarys = database.load_multiple_binarys(data["imageIDs"])
+
+            for binary, sleep_time in zip(binarys, data["times"]):
+                animation_list.append([binary[1], sleep_time/1000])
+
+            while self.running:
+                for binary, sleep_time in animation_list:
+                    if self.running:
+                        led.update_frame(binary)
+                        time.sleep(sleep_time)
+            self.stopped = True
 
 app = Flask(__name__)
 led = LEDMatrix()
+animation = Animation()
 
 ## ----- GET ----- ##
 
 @app.route("/")
-def index():
+def index_page():
     """
     Load index page"""
     return render_template("index.html")
 
 @app.route("/images")
-def images():
+def images_page():
     """
     Load images page
     """
     return render_template("images.html")
 
 @app.route("/animation")
-def animation():
+def animation_page():
     """
     Load animation page
     """
     return render_template("animation.html")
 
 @app.route("/animation/editor")
-def animation_editor():
+def animation_editor_page():
     """
     Load animation editor page
     """
@@ -54,7 +98,6 @@ def animation_load(animation_id):
     if data:
         return jsonify(data)
     return {},400
-
 
 @app.route("/animation/load/all")
 def animation_load_all():
@@ -204,31 +247,15 @@ def animation_start(animation_id):
     """
     Start a animation, stop the currently running if nessessary
     """
-    global ANIMATION_RUNNING
-    global ANIMATION_STOPPED
-
-    data = load_animation_list_by_id(animation_id)
-    if data:
-        while ANIMATION_STOPPED is False:
-            ANIMATION_RUNNING = False
-        ANIMATION_RUNNING = True
-        ANIMATION_STOPPED = False
-
-        image_ids = data["imageIDs"]
-        times = data["times"]
-        animation_loop(image_ids, times)
-        return {}
-    return {},400
+    animation.start(animation_id)
+    return {}
 
 @app.route("/animation/stop", methods=["POST"])
 def animation_stop():
     """
     Stop the currently running animation
     """
-    global ANIMATION_RUNNING
-    global ANIMATION_STOPPED
-    while ANIMATION_STOPPED is False:
-        ANIMATION_RUNNING = False
+    animation.stop()
     return {}
 
 @app.route("/animation/create/<name>", methods=["POST"])
@@ -347,45 +374,25 @@ def binary_to_color_array(binary):
     return color_array
 
 def load_animation_list_by_id(animation_id):
-    """
-    Load all informations of this animation
-    """
-    database = Dao("database.sqlite")
+        """
+        Load all informations of this animation
+        """
+        database = Dao("database.sqlite")
 
-    animation_frames = database.get_animation_by_id(animation_id)
-    data = {
-            "imageIDs": [],
-            "positions": [],
-            "times": []
-    }
+        animation_frames = database.get_animation_by_id(animation_id)
+        data = {
+                "imageIDs": [],
+                "positions": [],
+                "times": []
+        }
 
-    if animation_frames:
-        for i in animation_frames:
-            data["imageIDs"].append(i[1])
-            data["positions"].append(i[2])
-            data["times"].append(i[3])
+        if animation_frames:
+            for i in animation_frames:
+                data["imageIDs"].append(i[1])
+                data["positions"].append(i[2])
+                data["times"].append(i[3])
 
-    return data
-
-def animation_loop(image_ids, times):
-    """
-    Load all Animation details and images, and loop them while ANIMATION_RUNNING == True
-    """
-    database = Dao("database.sqlite")
-
-    animation_list = []
-    binarys = database.load_multiple_binarys(image_ids)
-
-    for binary, sleep_time in zip(binarys,times):
-        animation_list.append([binary[1],sleep_time/1000])
-
-    while ANIMATION_RUNNING:
-        for binary,sleep_time in animation_list:
-            if ANIMATION_RUNNING:
-                led.update_frame(binary)
-                time.sleep(sleep_time)
-    global ANIMATION_STOPPED
-    ANIMATION_STOPPED = True
+        return data
 
 def startup_image(image_id):
     """
