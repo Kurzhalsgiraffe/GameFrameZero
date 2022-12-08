@@ -9,10 +9,21 @@ class Dao:
     """
     def __init__(self, dbfile):
         try:
-            sqlite3.threadsafety = 3
-            self.conn = sqlite3.connect(dbfile, check_same_thread=False)
-            self.cursor = self.conn.cursor()
+            sqlite3.threadsafety = 1
+            self.dbfile = dbfile
             self.create_tables()
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
+
+    def get_db_connection(self):
+        """
+        This Method opens a db connection
+        """
+        try:
+            conn = sqlite3.connect(self.dbfile, check_same_thread=False)
+            cursor = conn.cursor()
+            return conn, cursor
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -22,15 +33,17 @@ class Dao:
         This Method will create the Database Tables if they dont already exist
         """
         try:
+            conn, cursor = self.get_db_connection()
+
             sql = """CREATE TABLE IF NOT EXISTS images (
                 image_id integer PRIMARY KEY AUTOINCREMENT,
                 image_data blob NOT NULL)"""
-            self.cursor.execute(sql)
+            cursor.execute(sql)
 
             sql = """CREATE TABLE IF NOT EXISTS animations (
                 animation_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 animation_name TEXT NOT NULL)"""
-            self.cursor.execute(sql)
+            cursor.execute(sql)
 
             sql = """CREATE TABLE IF NOT EXISTS images_to_animations (
                 animation_id INTEGER NOT NULL,
@@ -40,7 +53,8 @@ class Dao:
                 PRIMARY KEY (animation_id, pos),
                 FOREIGN KEY (animation_id) REFERENCES animations(animation_id),
                 FOREIGN KEY (image_id) REFERENCES images(image_id))"""
-            self.cursor.execute(sql)
+            cursor.execute(sql)
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -52,8 +66,11 @@ class Dao:
         This Method will load a single image from the Database by image_id
         """
         try:
+            conn, cursor = self.get_db_connection()
+
             sql = "SELECT * FROM images WHERE image_id=?"
-            data = self.cursor.execute(sql,(image_id,)).fetchall()
+            data = cursor.execute(sql,(image_id,)).fetchall()
+            conn.close()
             return bytearray(data[0][1])
 
         except sqlite3.Error as err:
@@ -65,14 +82,18 @@ class Dao:
         This Method will load multiple images from the Database by image_ids
         """
         try:
+            conn, cursor = self.get_db_connection()
+
             arr = []
             for i in image_ids:
                 sql = "SELECT * FROM images WHERE image_id = ?"
-                data = self.cursor.execute(sql, (i,)).fetchone()
+                data = cursor.execute(sql, (i,)).fetchone()
                 if data:
                     arr.append(data)
                 else:
                     arr.append(None)
+
+            conn.close()
             return arr
 
         except sqlite3.Error as err:
@@ -84,9 +105,12 @@ class Dao:
         This Method will save an image to the Database
         """
         try:
+            conn, cursor = self.get_db_connection()
+
             sql = "INSERT INTO images VALUES (NULL,?)"
-            self.cursor.execute(sql, (binary,))
-            self.conn.commit()
+            cursor.execute(sql, (binary,))
+            conn.commit()
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -96,10 +120,13 @@ class Dao:
         This Method will replace an image in the Database
         """
         try:
+            conn, cursor = self.get_db_connection()
+
             self.delete_binary(image_id)
             sql = "INSERT INTO images VALUES (?,?)"
-            self.cursor.execute(sql, (image_id, binary))
-            self.conn.commit()
+            cursor.execute(sql, (image_id, binary))
+            conn.commit()
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -109,9 +136,12 @@ class Dao:
         This Method will delete an image from the Database by image_id
         """
         try:
+            conn, cursor = self.get_db_connection()
+
             sql = "DELETE FROM images WHERE image_id=?"
-            self.cursor.execute(sql,(image_id,))
-            self.conn.commit()
+            cursor.execute(sql,(image_id,))
+            conn.commit()
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -121,8 +151,11 @@ class Dao:
         This Method will return the first image_id
         """
         try:
+            conn, cursor = self.get_db_connection()
+
             sql = "SELECT MIN(image_id) FROM images"
-            data = self.cursor.execute(sql).fetchone()
+            data = cursor.execute(sql).fetchone()
+            conn.close()
             return data[0]
 
         except sqlite3.Error as err:
@@ -134,8 +167,11 @@ class Dao:
         This Method will return the last image_id
         """
         try:
+            conn, cursor = self.get_db_connection()
+
             sql = "SELECT MAX(image_id) FROM images"
-            data = self.cursor.execute(sql).fetchone()
+            data = cursor.execute(sql).fetchone()
+            conn.close()
             return data[0]
 
         except sqlite3.Error as err:
@@ -147,11 +183,14 @@ class Dao:
         This Method will return the next image_id
         """
         try:
+            conn, cursor = self.get_db_connection()
+
             if current >= self.get_last_image_id():
                 return self.get_first_image_id()
 
             sql = "SELECT MIN(image_id) FROM images WHERE image_id > ?"
-            data = self.cursor.execute(sql,(current,)).fetchone()
+            data = cursor.execute(sql,(current,)).fetchone()
+            conn.close()
             return data[0]
 
         except sqlite3.Error as err:
@@ -163,11 +202,14 @@ class Dao:
         This Method will return the previous image_id
         """
         try:
+            conn, cursor = self.get_db_connection()
+
             if current == self.get_first_image_id():
                 return self.get_last_image_id()
 
             sql = "SELECT MAX(image_id) FROM images WHERE image_id < ?"
-            data = self.cursor.execute(sql,(current,)).fetchone()
+            data = cursor.execute(sql,(current,)).fetchone()
+            conn.close()
             return data[0]
 
         except sqlite3.Error as err:
@@ -184,9 +226,13 @@ class Dao:
             elif offset == 0:
                 return current
 
+            conn, cursor = self.get_db_connection()
+
             sql = "SELECT image_id FROM images WHERE image_id > ?"
-            data = self.cursor.execute(sql, (current,)).fetchall()
+            data = cursor.execute(sql, (current,)).fetchall()
             data = [i[0] for i in data]
+            conn.close()
+
             if len(data) >= offset:
                 return data[offset-1]
             return self.get_last_image_id()
@@ -205,9 +251,13 @@ class Dao:
             elif offset == 0:
                 return current
 
+            conn, cursor = self.get_db_connection()
+
             sql = "SELECT image_id FROM images WHERE image_id < ?"
-            data = self.cursor.execute(sql, (current,)).fetchall()
+            data = cursor.execute(sql, (current,)).fetchall()
             data = [i[0] for i in data]
+            conn.close()
+
             if len(data) >= offset:
                 return data[-offset]
             return self.get_first_image_id()
@@ -223,9 +273,12 @@ class Dao:
         This Method will create a new animation
         """
         try:
+            conn, cursor = self.get_db_connection()
+
             sql = "INSERT INTO animations VALUES (NULL,?)"
-            self.cursor.execute(sql, (animation_name,))
-            self.conn.commit()
+            cursor.execute(sql, (animation_name,))
+            conn.commit()
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -235,8 +288,10 @@ class Dao:
         This Method will load all informations from the animations table
         """
         try:
+            conn, cursor = self.get_db_connection()
             sql = "SELECT * FROM animations"
-            data = self.cursor.execute(sql).fetchall()
+            data = cursor.execute(sql).fetchall()
+            conn.close()
             return data
 
         except sqlite3.Error as err:
@@ -248,9 +303,11 @@ class Dao:
         This Method will delete all rows with the animation_id
         """
         try:
+            conn, cursor = self.get_db_connection()
             sql = "DELETE FROM animations WHERE animation_id=?"
-            self.cursor.execute(sql, (animation_id,))
-            self.conn.commit()
+            cursor.execute(sql, (animation_id,))
+            conn.commit()
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -262,10 +319,12 @@ class Dao:
         This Method will add a frame to the animation
         """
         try:
+            conn, cursor = self.get_db_connection()
             sql = """INSERT INTO images_to_animations (
                 animation_id, image_id, pos, sleep_time) VALUES (?,?,?,?)"""
-            self.cursor.execute(sql, (animation_id,image_id,position,time))
-            self.conn.commit()
+            cursor.execute(sql, (animation_id,image_id,position,time))
+            conn.commit()
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -276,12 +335,14 @@ class Dao:
         and then update all positions to restore the continuity
         """
         try:
+            conn, cursor = self.get_db_connection()
             sql = "DELETE FROM images_to_animations WHERE animation_id=? AND pos=?"
-            self.cursor.execute(sql, (animation_id,position))
+            cursor.execute(sql, (animation_id,position))
 
             sql = "UPDATE images_to_animations SET pos = pos -1 WHERE animation_id=? AND pos>?"
-            self.cursor.execute(sql, (animation_id,position))
-            self.conn.commit()
+            cursor.execute(sql, (animation_id,position))
+            conn.commit()
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -291,8 +352,11 @@ class Dao:
         This Method will load the first Frame ID of every Animation
         """
         try:
+            conn, cursor = self.get_db_connection()
             sql = "SELECT * FROM images_to_animations"
-            data = self.cursor.execute(sql).fetchall()
+            data = cursor.execute(sql).fetchall()
+            conn.close()
+
             data = sorted(data, key=lambda x: (x[0], x[2]))
             animation = []
             used = []
@@ -321,9 +385,11 @@ class Dao:
         This Methid will remove every row with this animation_id
         """
         try:
+            conn, cursor = self.get_db_connection()
             sql = "DELETE FROM images_to_animations WHERE animation_id=?"
-            self.cursor.execute(sql, (animation_id,))
-            self.conn.commit()
+            cursor.execute(sql, (animation_id,))
+            conn.commit()
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -333,8 +399,10 @@ class Dao:
         This Method will load all informations of this animation
         """
         try:
+            conn, cursor = self.get_db_connection()
             sql = "SELECT * FROM images_to_animations where animation_id = ? ORDER BY pos"
-            data = self.cursor.execute(sql, (animation_id,)).fetchall()
+            data = cursor.execute(sql, (animation_id,)).fetchall()
+            conn.close()
             return data
 
         except sqlite3.Error as err:
@@ -346,9 +414,11 @@ class Dao:
         This Method will set the sleep_time of a single frame to time
         """
         try:
+            conn, cursor = self.get_db_connection()
             sql = "UPDATE images_to_animations SET sleep_time=? WHERE animation_id=? AND pos=?"
-            self.cursor.execute(sql, (time,animation_id,position))
-            self.conn.commit()
+            cursor.execute(sql, (time,animation_id,position))
+            conn.commit()
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -358,9 +428,11 @@ class Dao:
         This Method will set the sleep_time of all animation frames to time
         """
         try:
+            conn, cursor = self.get_db_connection()
             sql = "UPDATE images_to_animations SET sleep_time=? WHERE animation_id=?"
-            self.cursor.execute(sql, (time,animation_id))
-            self.conn.commit()
+            cursor.execute(sql, (time,animation_id))
+            conn.commit()
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -371,22 +443,25 @@ class Dao:
         of the animationframes with source_id and target_id
         """
         try:
-            sql = """SELECT image_id, sleep_time FROM
-                    images_to_animations WHERE animation_id=? And pos=?"""
-            source_values = self.cursor.execute(sql, (animation_id,source_id)).fetchone()
+            conn, cursor = self.get_db_connection()
 
             sql = """SELECT image_id, sleep_time FROM
                     images_to_animations WHERE animation_id=? And pos=?"""
-            target_values = self.cursor.execute(sql, (animation_id,target_id)).fetchone()
+            source_values = cursor.execute(sql, (animation_id,source_id)).fetchone()
+
+            sql = """SELECT image_id, sleep_time FROM
+                    images_to_animations WHERE animation_id=? And pos=?"""
+            target_values = cursor.execute(sql, (animation_id,target_id)).fetchone()
 
             sql = """UPDATE images_to_animations SET
                     image_id=?, sleep_time=? WHERE animation_id=? AND pos=?"""
-            self.cursor.execute(sql, (target_values[0],target_values[1],animation_id,source_id))
+            cursor.execute(sql, (target_values[0],target_values[1],animation_id,source_id))
 
             sql = """UPDATE images_to_animations SET
                     image_id=?, sleep_time=? WHERE animation_id=? AND pos=?"""
-            self.cursor.execute(sql, (source_values[0],source_values[1],animation_id,target_id))
-            self.conn.commit()
+            cursor.execute(sql, (source_values[0],source_values[1],animation_id,target_id))
+            conn.commit()
+            conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -396,8 +471,10 @@ class Dao:
         This Method will return the highest position of all rows with this animation_id
         """
         try:
+            conn, cursor = self.get_db_connection()
             sql = "SELECT MAX(pos) FROM images_to_animations WHERE animation_id=?"
-            data = self.cursor.execute(sql, (animation_id,)).fetchone()
+            data = cursor.execute(sql, (animation_id,)).fetchone()
+            conn.close()
             return data[0]
 
         except sqlite3.Error as err:
