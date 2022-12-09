@@ -76,12 +76,25 @@ dtoverlay=gpio-shutdown, gpio_pin=3, active_low=1, gpio_pull=up
 - Powerswitch
 - PCB for soldering
 - PCB terminal block
-- PCB Socket Strips
+- PCB socket strips
 - 3D printed case and grid
 
-<img src="images/backside.png" width = 300>
-<img src="images/backside_open.png" width = 300>
+<img src="images/backside.png" width = 400>
+<img src="images/backside_open.png" width = 400>
 
 ## Assembly
 
-<img src="images/schematic.png" width = 400>
+Solder all the components together, using PCB terminal blocks to screw in the cables is a good practice.
+The shutdown button is optional.
+GPIO 18 Pin goes to the data pin of the LED Matrix.
+I soldered some PCB socket strips to the PCB, to plug the Raspberry Pi directly onto the PCB.
+
+The grid fits perfectly to my Shadow Box Frame. If yours doesnt fit, can adjust the inventor file.
+
+
+<img src="images/schematic.png" width = 600>
+
+### Disclaimer
+
+Please note that this is just a hobby project. Code or hardware may not reflect best practice.
+Feel free to send me some pull requests! :)
