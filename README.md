@@ -89,7 +89,7 @@ The shutdown button is optional.
 GPIO 18 Pin goes to the data pin of the LED Matrix.
 I soldered some PCB socket strips to the PCB, to plug the Raspberry Pi directly onto the PCB.
 
-The grid fits perfectly to my Shadow Box Frame. If yours doesnt fit, can adjust the inventor file.
+The grid fits perfectly to my Shadow Box Frame. If yours does not fit, can adjust the inventor file.
 
 
 <img src="images/schematic.png" width = 600>
