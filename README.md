@@ -56,7 +56,7 @@ sudo systemctl enable gameframezero.service
 
 ## Setup the GPIO-Shutdown
 
-If you want to shutdown the Raspberry-Pi without an SSH connection, you need to enable gpio-shutdown
+If you want to shutdown the Raspberry-Pi by pressing a button, you need to enable gpio-shutdown
 ````
 sudo nano /boot/config.txt
 ````
@@ -69,13 +69,19 @@ dtoverlay=gpio-shutdown, gpio_pin=3, active_low=1, gpio_pull=up
 
 - Raspberry Pi Zero WH
 - 16x16 256 Pixel LED Matrix, WS2812B (Individually Addressable)
-- Shadow Box Frame (20cm x 20cm) as the Frame case
-- DC 5V >3A Power Adapter (Depends on the Brightness of your LED Matrix, i set it on btightness=50)
+- Shadow Box Frame (20cm x 20cm) as the frame case
+- DC 5V 3A Power Adapter (Current heavily depends on the brightness of your LED Matrix)
 - DC Socket
 - Button for Shutting down the PI via GPIO
 - Powerswitch
 - PCB for soldering
-- Block screw clamps
+- PCB terminal block
 - PCB Socket Strips
-- Solder
-- Some Cables
+- 3D printed case and grid
+
+<img src="images/backside.png" width = 300>
+<img src="images/backside_open.png" width = 300>
+
+## Assembly
+
+<img src="images/schematic.png" width = 400>
