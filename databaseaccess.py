@@ -92,6 +92,7 @@ class Dao:
                 for j in data:
                     if j[0] == i:
                         arr.append(j)
+                        data.remove(j)
                         break
                 else:
                     arr.append(None)
