@@ -28,6 +28,19 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
+    def vacuum(self):
+        """
+        This Method performs a Vacuum on the Database
+        """
+        try:
+            conn, cursor = self.get_db_connection()
+            sql = """VACUUM"""
+            cursor.execute(sql)
+            conn.close()
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
+
     def create_tables(self):
         """
         This Method will create the Database Tables if they dont already exist

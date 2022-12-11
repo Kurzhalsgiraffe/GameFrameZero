@@ -104,7 +104,6 @@ function getLastTileID() {
     } else {
         return 0;
     }
-    
 }
 
 function decreaseFrameIDs(id) {

@@ -372,6 +372,7 @@ def startup_image(image_id):
     led.update_frame(binary)
 
 if __name__ == "__main__":
+    database.vacuum()
     startup_image(1)
     if __debug__:
         app.run(debug=True, host="0.0.0.0")
