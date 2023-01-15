@@ -68,7 +68,7 @@ dtoverlay=gpio-shutdown, gpio_pin=3, active_low=1, gpio_pull=up
 ### Material i used
 
 - Raspberry Pi Zero WH
-- 16x16 256 Pixel LED Matrix, WS2812B (Individually Addressable)
+- 16x16 256 Pixel 5V LED Matrix, WS2812B (Individually Addressable)
 - Shadow Box Frame (20cm x 20cm) as the frame case
 - DC 5V 3A Power Adapter (Current heavily depends on the brightness of your LED Matrix)
 - DC Socket
@@ -85,6 +85,7 @@ dtoverlay=gpio-shutdown, gpio_pin=3, active_low=1, gpio_pull=up
 ## Assembly
 
 Solder all the components together, using PCB terminal blocks to screw in the cables is a good practice.
+Since the LED Matrix and the Raspberry both run on 5V, you can use the same powerline for both.
 The shutdown button is optional.
 GPIO 18 Pin goes to the data pin of the LED Matrix.
 I soldered some PCB socket strips to the PCB, to plug the Raspberry Pi directly onto the PCB.
