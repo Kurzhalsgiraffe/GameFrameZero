@@ -16,13 +16,13 @@ class Animation:
     def __init__(self):
         self.running = False
         self.stopped = True
-        self.speed_percentage = 100
+        self.speed = 1.0
 
     def set_speed(self, speed):
         """
         Set the percentage of the animation speed
         """
-        self.speed_percentage = speed
+        self.speed = float(speed)
 
     def stop(self):
         """
@@ -57,7 +57,7 @@ class Animation:
                 for binary, sleep_time in animation_list:
                     if self.running:
                         led.update_frame(binary)
-                        time.sleep(sleep_time*(1/(self.animation_speed_percentage/100)))
+                        time.sleep(sleep_time*(1/(self.speed)))
             self.stopped = True
 
 app = Flask(__name__)
@@ -173,7 +173,7 @@ def speed_load():
     """
     Load current animation speed value
     """
-    return str(animation.speed_percentage)
+    return str(animation.speed)
 
 ## ----- POST ----- ##
 
@@ -247,7 +247,7 @@ def speed_apply(speed):
     """
     Apply a speed value to the animation
     """
-    animation.set_speed(speed)
+    animation.set_speed(float(speed))
     return {}
 
 @app.route("/animation/start/<animation_id>", methods=["POST"])
