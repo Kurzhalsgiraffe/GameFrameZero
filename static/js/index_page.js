@@ -1,5 +1,5 @@
 const canvas = document.querySelector("canvas");
-const colorCirlce = document.querySelectorAll(".color-circle");
+const color_cirlces = document.querySelectorAll(".color-circle");
 const favcolor_field = document.querySelector("#favcolor");
 const colorpicker_btn = document.querySelector("#colorpicker-btn");
 const delete_btn = document.querySelector("#delete-btn");
@@ -24,6 +24,10 @@ move_up.addEventListener("click", moveUp);
 move_left.addEventListener("click", moveLeft);
 move_right.addEventListener("click", moveRight);
 move_down.addEventListener("click", moveDown);
+
+color_cirlces.forEach((circle) => {
+    circle.addEventListener('click', standardColor);
+});
 
 // toggle the drawmode (colorpicker / drawing)
 colorpicker_btn.addEventListener("click", function() {
@@ -90,8 +94,8 @@ function setDrawMode(d) {
 }
 
 // set color to one of the 8 standard colors
-function standardColor(elem) {
-    setPickedColor(elem.getAttribute("data-color"));
+function standardColor() {
+    setPickedColor(this.getAttribute("data-color"));
     elem.classList.add("active");
 }
 
@@ -106,7 +110,7 @@ function setPickedColor(color) {
 
 // remove active class from every circle
 function removeActiveCircleColor() { 
-    colorCirlce.forEach((circle) => {
+    color_cirlces.forEach((circle) => {
         circle.classList.remove("active");
     });
 }

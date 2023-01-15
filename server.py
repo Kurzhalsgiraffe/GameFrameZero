@@ -16,6 +16,13 @@ class Animation:
     def __init__(self):
         self.running = False
         self.stopped = True
+        self.speed_percentage = 100
+
+    def set_speed(self, speed):
+        """
+        Set the percentage of the animation speed
+        """
+        self.speed_percentage = speed
 
     def stop(self):
         """
@@ -50,7 +57,7 @@ class Animation:
                 for binary, sleep_time in animation_list:
                     if self.running:
                         led.update_frame(binary)
-                        time.sleep(sleep_time)
+                        time.sleep(sleep_time*(1/(self.animation_speed_percentage/100)))
             self.stopped = True
 
 app = Flask(__name__)
@@ -161,6 +168,13 @@ def brightness_load():
     """
     return str(led.led_brightness)
 
+@app.route("/speed/load")
+def speed_load():
+    """
+    Load current animation speed value
+    """
+    return str(animation.speed_percentage)
+
 ## ----- POST ----- ##
 
 @app.route("/apply", methods=["POST"])
@@ -226,6 +240,14 @@ def brightness_apply(brightness):
     Apply a brightness value to the LED strip
     """
     led.update_brightness(int(brightness))
+    return {}
+
+@app.route("/speed/apply/<speed>", methods=["POST"])
+def speed_apply(speed):
+    """
+    Apply a speed value to the animation
+    """
+    animation.set_speed(speed)
     return {}
 
 @app.route("/animation/start/<animation_id>", methods=["POST"])

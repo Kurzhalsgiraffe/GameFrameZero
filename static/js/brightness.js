@@ -1,6 +1,5 @@
 const brightness_value = document.querySelector("#brightness-value");
 const brightness_slider = document.querySelector("#brightness-slider");
-var isMouseDownSlider;
 
 brightness_slider.addEventListener("change", ()=>{
     brightness_value.textContent = brightness_slider.value;
@@ -16,7 +15,7 @@ async function applyBrightness(brightness) {
         method: "POST",
     });
     if (response.status != 200) {
-        console.log("failed to apply the Brightness");
+        console.log("failed to apply the brightness");
     }
 }
 
@@ -29,7 +28,6 @@ async function loadBrightness() {
     } else {
         console.log("failed to load brightness value from server");
     }
-    
 }
 
 document.addEventListener("DOMContentLoaded", async function() {

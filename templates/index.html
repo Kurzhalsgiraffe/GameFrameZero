@@ -46,72 +46,96 @@
             <div class="col-xl-2 bg-dark">
                 <div class="sticky-top flex-column min-vh-100">
                     <ul class="nav flex-column align-items-center">
-                        <li class="mb-2 mt-5">
-                            <span class="fs-6 fw-bold">FARBEN</span>
-                        </li>
-                        <li class="nav-link">
-                            <div class="drawing-colors">
-                                <div class="color-circle bg-white active" data-color="#ffffff" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-yellow" data-color="#ffff00" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-orange" data-color="#ffa500" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-red" data-color="#ff0000" onclick="standardColor(this)"></div>
-                                
-                            </div>
-                            <div class="drawing-colors">
-                                <div class="color-circle bg-purple" data-color="#800080" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-blue" data-color="#0000ff" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-green" data-color="#008000" onclick="standardColor(this)"></div>
-                                <div class="color-circle bg-black" data-color="#000000" onclick="standardColor(this)"></div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="nav-link">
-                                <div> 
-                                    <input type="color" name="favcolor" id="favcolor" value="#ffffff">
+                        <li class="mb-2">
+                            <div class="collapse-item ">
+                                <a class="collapse-title fs-6 fw-bold text-white">FARBEN</a>
+                                <div class="collapse-content">
+                                    <ul class="nav flex-column align-items-center">
+                                        <li class="nav-link mt-2">
+                                            <div class="drawing-colors">
+                                                <div class="color-circle bg-white active" data-color="#ffffff"></div>
+                                                <div class="color-circle bg-yellow" data-color="#ffff00"></div>
+                                                <div class="color-circle bg-orange" data-color="#ffa500"></div>
+                                                <div class="color-circle bg-red" data-color="#ff0000"></div>
+                                                
+                                            </div>
+                                            <div class="drawing-colors">
+                                                <div class="color-circle bg-purple" data-color="#800080"></div>
+                                                <div class="color-circle bg-blue" data-color="#0000ff"></div>
+                                                <div class="color-circle bg-green" data-color="#008000"></div>
+                                                <div class="color-circle bg-black" data-color="#000000"></div>
+                                            </div>
+                                        </li>
+                                        <li class="my-2">
+                                            <div class="nav-link">
+                                                <div> 
+                                                    <input type="color" name="favcolor" id="favcolor" value="#ffffff" data-bs-toggle="tooltip" data-bs-placement="right" title="Farbauswahl">
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="mb-2">
+                                            <div class="nav-link">
+                                                <div>
+                                                    <button class="button" id="colorpicker-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Pipette"><i id="pipette" class="fa-solid fa-eye-dropper"></i></button>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </li>
-                        <li>
-                            <div class="nav-link">
-                                <div>
-                                    <button class="button" id="colorpicker-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Wähle eine Farbe aus dem Bild aus"><i id="pipette" class="fa-solid fa-eye-dropper"></i></button>
+                        <li class="mb-2">
+                            <div class="collapse-item ">
+                                <a class="collapse-title fs-6 fw-bold text-white">OPTIONEN</a>
+                                <div class="collapse-content">
+                                    <ul class="nav flex-column align-items-center">
+                                        <li class="mt-2">
+                                            <button class="button opt-btn my-2" id="delete-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Setze das Bild zurück"><strong>LÖSCHEN</strong></button>
+                                        </li>
+                                        <li>
+                                            <button class="button opt-btn my-2" id="apply-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Zeige das Bild auf der Matrix an"><strong>ANWENDEN</strong></button>
+                                        </li>
+                                        <li>
+                                            <button class="button opt-btn my-2" id="save-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Speichere das Bild"><strong>SPEICHERN</strong></button>
+                                        </li>
+                                        <li class="mb-2">
+                                            <button class="button opt-btn my-2" id="replace-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Überschreibe das bearbeitete Bild" style="display: none"><strong>ERSETZEN</strong></button>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </li>
-                        <li class="mb-2 mt-4">
-                            <span class="fs-6 fw-bold">OPTIONEN</span>
+                        <li class="mb-2">
+                            <div class="collapse-item ">
+                                <a class="collapse-title fs-6 fw-bold text-white">HELLIGKEIT</a>
+                                <div class="collapse-content">
+                                    <ul class="nav flex-column align-items-center">
+                                        <li class="mt-2">
+                                            <span id="brightness-value">1</span>
+                                        </li>
+                                        <li class="my-2">
+                                            <input type="range" min="1" max="80" value="1" class="slider" id="brightness-slider">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </li>
-                        <li>
-                            <button class="button opt-btn my-2" id="delete-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Setze das Bild zurück"><strong>LÖSCHEN</strong></button>
-                        </li>
-                        <li>
-                            <button class="button opt-btn my-2" id="apply-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Zeige das Bild auf der Matrix an"><strong>ANWENDEN</strong></button>
-                        </li>
-                        <li>
-                            <button class="button opt-btn my-2" id="save-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Speichere das Bild"><strong>SPEICHERN</strong></button>
-                        </li>
-                        <li>
-                            <button class="button opt-btn my-2" id="replace-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Überschreibe das bearbeitete Bild" style="display: none"><strong>ERSETZEN</strong></button>
-                        </li>
-                        <li class="mt-4">
-                            <span class="fs-6 fw-bold">HELLIGKEIT</span>
-                        </li>
-                        <li class="my-2">
-                            <span id="brightness-value">1</span>
-                        </li>
-                        <li>
-                            <input type="range" min="1" max="80" value="1" class="slider" id="brightness-slider">
-                        </li>
-                        <li class="mb-2 mt-4">
-                            <span class="fs-6 fw-bold">VERSCHIEBEN</span>
-                        </li>
-                        <li class="mt-2">
-                            <div class="directional-buttons">
-                                <button class="direction-button move-up" id="move-up"></button>
-                                <button class="direction-button move-left" id="move-left"></button>
-                                <button class="direction-button move-right" id="move-right"></button>
-                                <button class="direction-button move-down" id="move-down"></button>
-                              </div>
+                        <li class="mb-2">
+                            <div class="collapse-item ">
+                                <a class="collapse-title fs-6 fw-bold text-white">VERSCHIEBEN</a>
+                                <div class="collapse-content">
+                                    <ul class="nav flex-column align-items-center">
+                                        <li class="my-2">
+                                            <div class="directional-buttons">
+                                                <button class="direction-button move-up" id="move-up"></button>
+                                                <button class="direction-button move-left" id="move-left"></button>
+                                                <button class="direction-button move-right" id="move-right"></button>
+                                                <button class="direction-button move-down" id="move-down"></button>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -128,6 +152,7 @@
         </div>
     </div>
 
+    <script src="{{ url_for('static', filename='js/collapse.js') }}"></script>
     <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
     <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
     <script src="{{ url_for('static', filename='js/index_page.js') }}"></script>

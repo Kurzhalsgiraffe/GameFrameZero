@@ -45,51 +45,87 @@
             <div class="col-xl-2 bg-dark">
                 <div class="sticky-top flex-column min-vh-100">
                     <ul class="nav flex-column align-items-center">
-                        <li class="mb-2 mt-5">
-                            <span class="fs-6 fw-bold">OPTIONEN</span>
+                        <li class="mb-2">
+                            <div class="collapse-item ">
+                                <a class="collapse-title fs-6 fw-bold text-white">OPTIONEN</a>
+                                <div class="collapse-content">
+                                    <ul class="nav flex-column align-items-center">
+                                        <li class="mt-2">
+                                            <button class="button opt-btn my-2" id="start-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Starte die Animation auf der Matrix"><strong>START</strong></button>
+                                        </li>
+                                        <li>
+                                            <button class="button opt-btn my-2" id="stop-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Stoppe die Animation"><strong>STOP</strong></button>
+                                        </li>
+                                        <li>
+                                            <button class="button opt-btn my-2" id="edit-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Bearbeite die ausgewählte Animation"><strong>BEARBEITEN</strong></button>
+                                        </li>
+                                        <li class="mb-2">
+                                            <button class="button opt-btn my-2" id="delete-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Lösche die ausgewählte Animation"><strong>LÖSCHEN</strong></button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </li>
-                        <li>
-                            <button class="button opt-btn my-2" id="start-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Starte die Animation auf der Matrix"><strong>START</strong></button>
+                        <li class="mb-2">
+                            <div class="collapse-item ">
+                                <a class="collapse-title fs-6 fw-bold text-white">ERSTELLEN</a>
+                                <div class="collapse-content">
+                                    <ul class="nav flex-column align-items-center">
+                                        <li class="my-2">
+                                            <input class="animation-input" type="text" placeholder="NAME" id="animation-name">
+                                        </li>
+                                        <li class="mb-3">
+                                            <button class="button opt-btn" id="create-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Erstelle eine neue Animation"><strong>ERSTELLEN</strong></button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </li>
-                        <li>
-                            <button class="button opt-btn my-2" id="stop-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Stoppe die Animation"><strong>STOP</strong></button>
+                        <li class="mb-2">
+                            <div class="collapse-item ">
+                                <a class="collapse-title fs-6 fw-bold text-white">HELLIGKEIT</a>
+                                <div class="collapse-content">
+                                    <ul class="nav flex-column align-items-center">
+                                        <li class="mt-2">
+                                            <span id="brightness-value">1</span>
+                                        </li>
+                                        <li class="my-2">
+                                            <input type="range" min="1" max="80" value="1" class="slider" id="brightness-slider">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </li>
-                        <li class="mb-2 mt-5">
-                            <span class="fs-6 fw-bold">VERWALTEN</span>
-                        </li>
-                        <li>
-                            <input class="mb-2 animation-input" type="text" placeholder="NAME" id="animation-name">
-                        </li>
-                        <li>
-                            <button class="button opt-btn mt-1 mb-3" id="create-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Erstelle eine neue Animation"><strong>ERSTELLEN</strong></button>
-                        </li>
-                        <li>
-                            <button class="button opt-btn my-2" id="edit-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Bearbeite die ausgewählte Animation"><strong>BEARBEITEN</strong></button>
-                        </li>
-                        <li>
-                            <button class="button opt-btn my-2" id="delete-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Lösche die ausgewählte Animation"><strong>LÖSCHEN</strong></button>
-                        </li>
-                        <li class="mt-4">
-                            <span class="fs-6 fw-bold">HELLIGKEIT</span>
-                        </li>
-                        <li class="my-2">
-                            <span id="brightness-value">1</span>
-                        </li>
-                        <li>
-                            <input type="range" min="1" max="80" value="1" class="slider" id="brightness-slider">
+                        <li class="mb-2">
+                            <div class="collapse-item ">
+                                <a class="collapse-title fs-6 fw-bold text-white">GESCHWINDIGKEIT</a>
+                                <div class="collapse-content">
+                                    <ul class="nav flex-column align-items-center">
+                                        <li class="mt-2">
+                                            <span id="speed-value">100</span>
+                                        </li>
+                                        <li class="my-2">
+                                            <input type="range" min="1" max="200" value="100" class="slider" id="speed-slider">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </li>
                     </ul>
                 </div>
             </div>
 
             <!-- Sidebar END -->
+
             <div class="col py-3 d-flex justify-content-evenly my-auto">
                 <div class="row col-lg-8 g-4" id="tile-body"></div>
             </div>
         </div>
     </div>
    
+    <script src="{{ url_for('static', filename='js/collapse.js') }}"></script>
     <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/animationspeed.js') }}"></script>
     <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
     <script src="{{ url_for('static', filename='js/frametiles.js') }}"></script>
     <script src="{{ url_for('static', filename='js/animation_page.js') }}"></script>
