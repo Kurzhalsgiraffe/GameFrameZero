@@ -15,20 +15,20 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand fs-3 fw-bold" href="/"><i class="fa-solid fa-lightbulb mx-2"></i>GameFrame<span class="limegreen">Zero</span></a>
+            <a class="navbar-brand fs-3 fw-bold" href="#"><i class="fa-solid fa-lightbulb mx-2"></i>GameFrame<span class="limegreen">Zero</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mx-auto my-2">
                     <li class="nav-item mx-3">
-                    <a class="nav-link" href="/">ZEICHNEN</a>
+                        <a class="nav-link" id="navlink-draw" href="/">ZEICHNEN</a>
                     </li>
                     <li class="nav-item mx-3">
-                        <a class="nav-link active" href="#">BILDER</a>
+                        <a class="nav-link active" id="navlink-images" href="#">BILDER</a>
                     </li>
                     <li class="nav-item mx-3">
-                        <a class="nav-link" href="animation">ANIMATIONEN</a>
+                        <a class="nav-link" id="navlink-animations" href="/animations">ANIMATIONEN</a>
                     </li>
                 </ul>
             </div>
@@ -47,17 +47,17 @@
                     <ul class="nav flex-column align-items-center">
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white">OPTIONEN</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="options-collapse">OPTIONEN</a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li>
-                                            <button class="button opt-btn my-2" id="delete-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Lösche das Bild vom Server"><strong>LÖSCHEN</strong></button>
+                                            <button class="button opt-btn my-2 fw-bold" id="delete-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Lösche das Bild vom Server">LÖSCHEN</button>
                                         </li>
                                         <li>
-                                            <button class="button opt-btn my-2" id="edit-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Bearbeite eine Kopie des Bildes"><strong>BEARBEITEN</strong></button>
+                                            <button class="button opt-btn my-2 fw-bold" id="edit-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Bearbeite eine Kopie des Bildes">BEARBEITEN</button>
                                         </li>
                                         <li>
-                                            <button class="button opt-btn my-2" id="apply-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Zeige das Bild auf der Matrix an"><strong>ANWENDEN</strong></button>
+                                            <button class="button opt-btn my-2 fw-bold" id="apply-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Zeige das Bild auf der Matrix an">ANWENDEN</button>
                                         </li>
                                     </ul>
                                 </div>
@@ -65,7 +65,7 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white">HELLIGKEIT</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="brightness-collapse">HELLIGKEIT</a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="mt-2">
@@ -132,7 +132,7 @@
     <script src="{{ url_for('static', filename='js/collapse.js') }}"></script>
     <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
     <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/images_page.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pages/images.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
 </body>

@@ -15,20 +15,20 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand fs-3 fw-bold" href="/"><i class="fa-solid fa-lightbulb mx-2"></i>GameFrame<span class="limegreen">Zero</span></a>
+            <a class="navbar-brand fs-3 fw-bold" href="#"><i class="fa-solid fa-lightbulb mx-2"></i>GameFrame<span class="limegreen">Zero</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mx-auto my-2">
                     <li class="nav-item mx-3">
-                    <a class="nav-link" href="/">ZEICHNEN</a>
+                        <a class="nav-link" id="navlink-draw" href="/">ZEICHNEN</a>
                     </li>
                     <li class="nav-item mx-3">
-                        <a class="nav-link" href="/images">BILDER</a>
+                        <a class="nav-link" id="navlink-images" href="/images">BILDER</a>
                     </li>
                     <li class="nav-item mx-3">
-                        <a class="nav-link active" href="/animation">ANIMATIONEN</a>
+                        <a class="nav-link" id="navlink-animations" href="/animations">ANIMATIONEN</a>
                     </li>
                 </ul>
             </div>
@@ -47,11 +47,11 @@
                     <ul class="nav flex-column align-items-center">
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white">OPTIONEN</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="options-collapse">OPTIONEN</a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="my-2">
-                                            <button class="button opt-btn my-2" id="remove-animation-frame-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Entferne das ausgewählte Bild von der Animation"><strong>ENTFERNEN</strong></button>
+                                            <button class="button opt-btn my-2 fw-bold" id="remove-animation-frame-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Entferne das ausgewählte Bild von der Animation">ENTFERNEN</button>
                                         </li>
                                     </ul>
                                 </div>
@@ -59,7 +59,7 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white">ZEIT</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="time-collapse">ZEIT</a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="mt-2">
@@ -67,10 +67,10 @@
                                         </li>
                                         <li class="my-2">
                                             <input type="checkbox" id="set-time-for-all-checkbox" name="set-time-for-all-checkbox">
-                                            <label for="set-time-for-all-checkbox">ALLE ÄNDERN</label>
+                                            <label for="set-time-for-all-checkbox" id="label-change-all">ALLE ÄNDERN</label>
                                         </li>
                                         <li class="mb-2">
-                                            <button class="button opt-btn my-2" id="update-time-on-frame-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Übernehme die Zeit auf das ausgewählte Bild"><strong>ÜBERNEHMEN</strong></button>
+                                            <button class="button opt-btn my-2 fw-bold" id="update-time-on-frame-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Übernehme die Zeit auf das ausgewählte Bild">ANWENDEN</button>
                                         </li>
                                     </ul>
                                 </div>
@@ -78,7 +78,7 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white">HELLIGKEIT</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="brightness-collapse">HELLIGKEIT</a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="mt-2">
@@ -93,7 +93,7 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white">GESCHWINDIGKEIT</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="animationspeed-collapse">GESCHWINDIGKEIT</a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="mt-2">
@@ -171,10 +171,11 @@
     </div>
     
     <script src="{{ url_for('static', filename='js/collapse.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
     <script src="{{ url_for('static', filename='js/animationspeed.js') }}"></script>
     <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
     <script src="{{ url_for('static', filename='js/frametiles.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/animation_editor_page.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pages/animation_editor.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
 </body>

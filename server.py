@@ -80,12 +80,12 @@ def images_page():
     """
     return render_template("images.html")
 
-@app.route("/animation")
-def animation_page():
+@app.route("/animations")
+def animations_page():
     """
     Load animation page
     """
-    return render_template("animation.html")
+    return render_template("animations.html")
 
 @app.route("/animation/editor")
 def animation_editor_page():
