@@ -8,6 +8,7 @@ from led import LEDMatrix
 
 STANDARD_ANIMATION_TIME = 200
 SKIP_OFFSET = 10
+UI_LANGUAGE = "english"
 
 class Animation:
     """
@@ -168,6 +169,13 @@ def brightness_load():
     """
     return str(led.led_brightness)
 
+@app.route("/language/load")
+def language_load():
+    """
+    Load current language
+    """
+    return str(UI_LANGUAGE)
+
 @app.route("/speed/load")
 def speed_load():
     """
@@ -240,6 +248,15 @@ def brightness_apply(brightness):
     Apply a brightness value to the LED strip
     """
     led.update_brightness(int(brightness))
+    return {}
+
+@app.route("/language/apply/<language>", methods=["POST"])
+def language_apply(language):
+    """
+    Apply a brightness value to the LED strip
+    """
+    global UI_LANGUAGE
+    UI_LANGUAGE = language
     return {}
 
 @app.route("/speed/apply/<speed>", methods=["POST"])

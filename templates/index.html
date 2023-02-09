@@ -15,24 +15,28 @@
     <!-- Navigation -->
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
+        <div class="mx-4">
             <a class="navbar-brand fs-3 fw-bold" href="#"><i class="fa-solid fa-lightbulb mx-2"></i>GameFrame<span class="limegreen">Zero</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mx-auto my-2">
-                    <li class="nav-item mx-3">
-                        <a class="nav-link active" id="navlink-draw" href="#">ZEICHNEN</a>
-                    </li>
-                    <li class="nav-item mx-3">
-                        <a class="nav-link" id="navlink-images" href="/images">BILDER</a>
-                    </li>
-                    <li class="nav-item mx-3">
-                        <a class="nav-link" id="navlink-animations" href="/animations">ANIMATIONEN</a>
-                    </li>
-                </ul>
-            </div>
+        </div>
+        <div class="navbar-collapse">
+            <ul class="navbar-nav mx-auto my-2">
+                <li class="nav-item mx-3">
+                    <a class="nav-link active" id="navlink-draw" href="#">ZEICHNEN</a>
+                </li>
+                <li class="nav-item mx-3">
+                    <a class="nav-link" id="navlink-images" href="/images">BILDER</a>
+                </li>
+                <li class="nav-item mx-3">
+                    <a class="nav-link" id="navlink-animations" href="/animations">ANIMATIONEN</a>
+                </li>
+            </ul>
+        </div>
+        <div class="flex-cradle mx-3">
+            <div class="" id="language-slider-cradle">
+            <div id="language-option-1">EN</div>
+            <div id="language-option-2">DE</div>
+            <div id="language-slider-handle"></div>
+            </div>	
         </div>
     </nav>
 
@@ -43,8 +47,8 @@
 
             <!-- Sidebar-->
 
-            <div class="col-xl-2 bg-dark">
-                <div class="sticky-top flex-column min-vh-100">
+            <div class="col-xl-auto bg-dark">
+                <div class="sticky-top flex-column mx-3">
                     <ul class="nav flex-column align-items-center">
                         <li class="mb-2">
                             <div class="collapse-item ">
@@ -76,7 +80,7 @@
                                         <li class="mb-2">
                                             <div class="nav-link">
                                                 <div>
-                                                    <button class="button" id="colorpicker-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Pipette"><i id="pipette" class="fa-solid fa-eye-dropper"></i></button>
+                                                    <button class="button" id="colorpicker-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Pipette"><i id="pipette" class="fa-solid fa-eye-dropper mx-2"></i></button>
                                                 </div>
                                             </div>
                                         </li>
@@ -143,7 +147,7 @@
 
             <!-- Sidebar END -->
             <!-- Canvas -->
-            <div class="col py-3">
+            <div class="col my-3">
                 <div class="board">
                     <canvas width="800px" height="800px"></canvas>
                 </div>
@@ -152,6 +156,7 @@
         </div>
     </div>
 
+    <script src="{{ url_for('static', filename='js/languages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/collapse.js') }}"></script>
     <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
     <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>

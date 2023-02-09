@@ -57,6 +57,52 @@ body::-webkit-scrollbar {
     color: #32cd32 !important;
 }
 
+.flex-cradle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#language-slider-cradle  {
+    display: flex;
+    width: 80px;
+    text-align: center;
+    border-radius: 2px;
+    background: rgba(33,37,41, 0.1);
+    height: 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.4);
+}
+
+#language-option-1 {
+    width: 50%
+}
+
+#language-option-2 {
+    width: 50%
+}
+
+#language-slider-handle {
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 3px;
+    position: absolute;
+    background: rgba(33,37,41, 1);
+    top: 2px;
+    left: 2px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4);
+    transition: transform cubic-bezier(1, 0.11, 1, 1.04) 400ms
+}
+
+div {
+    line-height: 40px;
+    color: white;
+}
+
+ 
+
 /* Sidebar */
 
 .drawing-colors {
@@ -82,14 +128,14 @@ body::-webkit-scrollbar {
     border-radius: 0.5em;
     color: #ffffff;
     cursor: pointer;
-    padding: 10px;
+    padding: 5px;
     text-align: center;
     font-weight: 350;
     transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
   }
   
 .opt-btn {
-    width: 9em;
+    width: 10em;
     border: 2px solid #32cd32;
 }
 
@@ -107,6 +153,7 @@ body::-webkit-scrollbar {
 
 #favcolor {
     background-color: #343437;
+    width: 60px;
 }
 
 #colorpicker-btn {
@@ -168,12 +215,12 @@ canvas {
 }
 
 .animation-input{
-    width:9em;
-    border:2px solid #aaa;
+    text-align: center;
+    width: 10em;
+    border: 2px solid #aaa;
     border-radius:4px;
     margin:8px 0;
     outline:none;
-    padding:6px;
     box-sizing:border-box;
     transition:.3s;
 }
