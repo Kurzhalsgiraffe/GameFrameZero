@@ -1,5 +1,5 @@
 const brightness_value = document.querySelector("#brightness-value");
-const brightness_slider = document.querySelector("#brightness-slider");
+const brightness_slider = document.querySelector("#sidebar-brightness-slider");
 
 brightness_slider.addEventListener("change", ()=>{
     brightness_value.textContent = brightness_slider.value;

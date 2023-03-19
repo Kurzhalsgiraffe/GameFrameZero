@@ -1,6 +1,6 @@
 const canvas = document.querySelector("canvas");
 const delete_btn = document.querySelector("#sidebar-options-delete-btn");
-const edit_btn = document.querySelector("#edit-btn");
+const edit_btn = document.querySelector("#sidebar-options-edit-btn");
 const apply_btn = document.querySelector("#sidebar-options-apply-btn");
 const first_frame_btn = document.querySelector("#first-frame-btn");
 const fast_backwards_btn = document.querySelector("#fast-backwards-btn");

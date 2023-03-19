@@ -51,17 +51,17 @@
                     <ul class="nav flex-column align-items-center">
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-options-collapse">OPTIONEN</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-options-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li>
-                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-delete-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Lösche das Bild vom Server">LÖSCHEN</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-delete-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                         <li>
-                                            <button class="button opt-btn my-2 fw-bold" id="edit-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Bearbeite eine Kopie des Bildes">BEARBEITEN</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-edit-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                         <li>
-                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-apply-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Zeige das Bild auf der Matrix an">ANWENDEN</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-apply-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                     </ul>
                                 </div>
@@ -69,14 +69,14 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-brightness-collapse">HELLIGKEIT</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-brightness-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="mt-2">
                                             <span id="brightness-value">1</span>
                                         </li>
                                         <li class="my-2">
-                                            <input type="range" min="1" max="80" value="1" class="slider" id="brightness-slider">
+                                            <input type="range" min="1" max="80" value="1" class="slider" id="sidebar-brightness-slider">
                                         </li>
                                     </ul>
                                 </div>
@@ -132,7 +132,8 @@
             <!-- Canvasbereich END -->
         </div>
     </div>
-   
+
+    <script src="{{ url_for('static', filename='js/pages/images_lang.js') }}"></script>
     <script src="{{ url_for('static', filename='js/languages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/collapse.js') }}"></script>
     <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>

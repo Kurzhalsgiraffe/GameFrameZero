@@ -31,9 +31,9 @@ function setLanguage(lang) {
         sidebar_options_delete_btn.textContent = "DELETE";
         sidebar_options_delete_btn.title = "Clear the canvas";
         sidebar_options_apply_btn.textContent = "APPLY";
-        sidebar_options_apply_btn.title = "Apply your drawing on the LED-Matrix";
+        sidebar_options_apply_btn.title = "Apply the drawing on the LED-Matrix";
         sidebar_options_save_btn.textContent = "SAVE";
-        sidebar_options_save_btn.title = "Save your drawing to the database";
+        sidebar_options_save_btn.title = "Save the drawing to the database";
         sidebar_options_replace_btn.textContent = "REPLACE";
         sidebar_options_replace_btn.title = "Override the drawing in the database";
 
@@ -57,7 +57,7 @@ function setLanguage(lang) {
         sidebar_options_apply_btn.textContent = "ANWENDEN";
         sidebar_options_apply_btn.title = "Wende die Zeichnung auf der LED-Matrix an";
         sidebar_options_save_btn.textContent = "SPEICHERN";
-        sidebar_options_save_btn.title = "Speicher die Zeichnung auf der Datenbank";
+        sidebar_options_save_btn.title = "Speichere die Zeichnung auf der Datenbank";
         sidebar_options_replace_btn.textContent = "ERSETZEN";
         sidebar_options_replace_btn.title = "Überschreibe die bearbeitete Zeichnung in der Datenbank";
 
