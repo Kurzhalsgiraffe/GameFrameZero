@@ -52,7 +52,7 @@
                     <ul class="nav flex-column align-items-center">
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="colors-collapse">FARBEN</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-colors-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="nav-link mt-2">
@@ -73,14 +73,14 @@
                                         <li class="my-2">
                                             <div class="nav-link">
                                                 <div> 
-                                                    <input type="color" name="favcolor" id="favcolor" value="#ffffff" data-bs-toggle="tooltip" data-bs-placement="right" title="Farbauswahl">
+                                                    <input type="color" id="sidebar-colors-color-selector" value="#ffffff" data-bs-toggle="tooltip" data-bs-placement="right">
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="mb-2">
                                             <div class="nav-link">
                                                 <div>
-                                                    <button class="button" id="colorpicker-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Pipette"><i id="pipette" class="fa-solid fa-eye-dropper mx-2"></i></button>
+                                                    <button class="button" id="sidebar-colors-colorpicker-btn" data-bs-toggle="tooltip" data-bs-placement="right"><i id="colorpicker-icon" class="fa-solid fa-eye-dropper mx-2"></i></button>
                                                 </div>
                                             </div>
                                         </li>
@@ -90,20 +90,20 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="options-collapse">OPTIONEN</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-options-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="mt-2">
-                                            <button class="button opt-btn my-2 fw-bold" id="delete-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Setze das Bild zurück">LÖSCHEN</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-delete-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                         <li>
-                                            <button class="button opt-btn my-2 fw-bold" id="apply-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Zeige das Bild auf der Matrix an">ANWENDEN</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-apply-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                         <li>
-                                            <button class="button opt-btn my-2 fw-bold" id="save-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Speichere das Bild">SPEICHERN</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-save-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                         <li class="mb-2">
-                                            <button class="button opt-btn my-2 fw-bold" id="replace-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Überschreibe das bearbeitete Bild" style="display: none">ERSETZEN</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-replace-btn" data-bs-toggle="tooltip" data-bs-placement="right" style="display: none"></button>
                                         </li>
                                     </ul>
                                 </div>
@@ -111,7 +111,7 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="brightness-collapse">HELLIGKEIT</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-brightness-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="mt-2">
@@ -126,7 +126,7 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="move-collapse">VERSCHIEBEN</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-move-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="my-2">

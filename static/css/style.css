@@ -151,20 +151,20 @@ div {
     box-shadow: 0 0 40px 40px gray inset;
 }
 
-#favcolor {
+#sidebar-colors-color-selector {
     background-color: #343437;
     width: 60px;
 }
 
-#colorpicker-btn {
+#sidebar-colors-colorpicker-btn {
     border: 2px solid #32cd32;
 }
 
-#colorpicker-btn:hover {
+#sidebar-colors-colorpicker-btn:hover {
     box-shadow: 0 0 40px 40px #32cd32 inset;
 }
 
-#pipette {
+#colorpicker-icon {
     color: #ffffff;
     font-size: 1.45rem;
 }

@@ -1,11 +1,11 @@
 const canvas = document.querySelector("canvas");
 const color_cirlces = document.querySelectorAll(".color-circle");
-const favcolor_field = document.querySelector("#favcolor");
-const colorpicker_btn = document.querySelector("#colorpicker-btn");
-const delete_btn = document.querySelector("#delete-btn");
-const apply_btn = document.querySelector("#apply-btn");
-const save_btn = document.querySelector("#save-btn");
-const replace_btn = document.querySelector("#replace-btn");
+const color_selector = document.querySelector("#sidebar-colors-color-selector");
+const colorpicker_btn = document.querySelector("#sidebar-colors-colorpicker-btn");
+const delete_btn = document.querySelector("#sidebar-options-delete-btn");
+const apply_btn = document.querySelector("#sidebar-options-apply-btn");
+const save_btn = document.querySelector("#sidebar-options-save-btn");
+const replace_btn = document.querySelector("#sidebar-options-replace-btn");
 const move_up = document.querySelector("#move-up");
 const move_left = document.querySelector("#move-left");
 const move_right = document.querySelector("#move-right");
@@ -19,7 +19,7 @@ apply_btn.addEventListener("click", async () => await canvasObject.sendColorArra
 save_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/save",null));
 replace_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/replace",loadedIDToEdit));
 
-favcolor_field.addEventListener("change", () => setPickedColor(favcolor_field.value));
+color_selector.addEventListener("change", () => setPickedColor(color_selector.value));
 move_up.addEventListener("click", moveUp);
 move_left.addEventListener("click", moveLeft);
 move_right.addEventListener("click", moveRight);
@@ -82,7 +82,6 @@ function updateCell(x,y) {
     }
 }
 
-// switch the drawMode and update colorpicker-btn's background-color
 function setDrawMode(d) {
     drawMode = d;
     if (drawMode) {
@@ -104,8 +103,8 @@ function setPickedColor(color) {
     setDrawMode(true);
     removeActiveCircleColor();
     canvasObject.c.fillStyle = color;
-    favcolor_field.setAttribute("value", color);
-    favcolor_field.value = color;
+    color_selector.setAttribute("value", color);
+    color_selector.value = color;
 }
 
 // remove active class from every circle
@@ -135,7 +134,7 @@ function moveUp() {
         }
     }
     canvasObject.drawColorArrayToCanvas();
-    canvasObject.c.fillStyle = favcolor_field.value;
+    canvasObject.c.fillStyle = color_selector.value;
 }
 
 // move all pixels to the left by one column
@@ -160,7 +159,7 @@ function moveLeft() {
     }
     canvasObject.colorArray = newArr;
     canvasObject.drawColorArrayToCanvas();
-    canvasObject.c.fillStyle = favcolor_field.value;
+    canvasObject.c.fillStyle = color_selector.value;
 }
 
 // move all pixels to the right by one column
@@ -185,7 +184,7 @@ function moveRight() {
     }
     canvasObject.colorArray = newArr;
     canvasObject.drawColorArrayToCanvas();
-    canvasObject.c.fillStyle = favcolor_field.value;
+    canvasObject.c.fillStyle = color_selector.value;
 }
 
 // move all pixels down by one row
@@ -198,7 +197,7 @@ function moveDown() {
         }
     }
     canvasObject.drawColorArrayToCanvas();
-    canvasObject.c.fillStyle = favcolor_field.value;
+    canvasObject.c.fillStyle = color_selector.value;
 }
 
 
