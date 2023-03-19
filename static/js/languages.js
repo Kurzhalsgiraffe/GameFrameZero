@@ -1,3 +1,4 @@
+const language_slider_handle = document.querySelector("#language-slider-handle");
 let lang;
 
 language_slider_handle.addEventListener("click", toggleLanguage);
@@ -9,7 +10,18 @@ function toggleLanguage() {
       lang = "en";
     }
     setLanguage(lang)
+    changeLanguageSlider(lang)
     setServerLanguage(lang)
+}
+
+function changeLanguageSlider(lang) {
+    if (lang == "en") {
+        language_slider_handle.style.transform = "translateX(40px)";
+        document.documentElement.lang = "en";
+    } else if (lang == "de") {       
+        language_slider_handle.style.transform = "translateX(0px)";
+        document.documentElement.lang = "de";
+    }
 }
 
 async function loadLanguage() {
