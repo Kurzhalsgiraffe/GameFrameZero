@@ -1,35 +1,20 @@
 const language_slider_handle = document.querySelector("#language-slider-handle");
+const navlink_draw = document.querySelector("#navlink-draw");
+const navlink_images = document.querySelector("#navlink-images");
+const navlink_animations = document.querySelector("#navlink-animations");
 
 let lang;
 
 language_slider_handle.addEventListener("click", toggleLanguage);
 
 function toggleLanguage() {
-    if (lang == "english") {
-      lang = "deutsch";
+    if (lang == "en") {
+      lang = "de";
     } else {
-      lang = "english";
+      lang = "en";
     }
     setLanguage(lang)
-    applyLanguage(lang)
-}
-
-async function setLanguage(lang) {
-    console.log(lang)
-    if (lang == "english") {
-        language_slider_handle.style.transform = "translateX(40px)";
-    } else if (lang == "deutsch") {
-        language_slider_handle.style.transform = "translateX(0px)";
-    }
-}
-
-async function applyLanguage(language) {
-    let response = await fetch("/language/apply/"+language, {
-        method: "POST",
-    });
-    if (response.status != 200) {
-        console.log("failed to set the language");
-    }
+    setServerLanguage(lang)
 }
 
 async function loadLanguage() {
@@ -41,6 +26,33 @@ async function loadLanguage() {
         console.log("failed to load language from server");
     }
     return lang;
+}
+
+async function setLanguage(lang) {
+    console.log(lang)
+    if (lang == "en") {
+        language_slider_handle.style.transform = "translateX(40px)";
+        document.documentElement.lang = "en"
+        navlink_draw.textContent = "DRAW";
+        navlink_images.textContent = "IMAGES";
+        navlink_animations.textContent = "ANIMATIONS";
+       
+    } else if (lang == "de") {       
+        language_slider_handle.style.transform = "translateX(0px)";
+        document.documentElement.lang = "de"
+        navlink_draw.textContent = "ZEICHNEN";
+        navlink_images.textContent = "BILDER";
+        navlink_animations.textContent = "ANIMATIONEN";
+    }
+}
+
+async function setServerLanguage(language) {
+    let response = await fetch("/language/apply/"+language, {
+        method: "POST",
+    });
+    if (response.status != 200) {
+        console.log("failed to set the language");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", async function() {

@@ -8,7 +8,7 @@ from led import LEDMatrix
 
 STANDARD_ANIMATION_TIME = 200
 SKIP_OFFSET = 10
-UI_LANGUAGE = "english"
+UI_LANGUAGE = "en"
 
 class Animation:
     """
