@@ -1,9 +1,9 @@
-const start_animation_btn = document.querySelector("#start-animation-btn");
-const stop_animation_btn = document.querySelector("#stop-animation-btn");
-const create_animation_btn = document.querySelector("#create-animation-btn");
-const edit_animation_btn = document.querySelector("#edit-animation-btn");
-const delete_animation_btn = document.querySelector("#delete-animation-btn");
-const animation_name = document.querySelector("#animation-name");
+const start_animation_btn = document.querySelector("#sidebar-options-start-animation-btn");
+const stop_animation_btn = document.querySelector("#sidebar-options-stop-animation-btn");
+const edit_animation_btn = document.querySelector("#sidebar-options-edit-animation-btn");
+const delete_animation_btn = document.querySelector("#sidebar-options-delete-animation-btn");
+const create_animation_btn = document.querySelector("#sidebar-create-animation-btn");
+const animation_name = document.querySelector("#sidebar-create-animation-name");
 
 start_animation_btn.addEventListener("click", startAnimation);
 stop_animation_btn.addEventListener("click", stopAnimation);

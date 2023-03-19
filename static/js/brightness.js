@@ -1,4 +1,4 @@
-const brightness_value = document.querySelector("#brightness-value");
+const brightness_value = document.querySelector("#sidebar-brightness-value");
 const brightness_slider = document.querySelector("#sidebar-brightness-slider");
 
 brightness_slider.addEventListener("change", ()=>{

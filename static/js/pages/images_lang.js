@@ -10,7 +10,6 @@ const sidebar_options_apply_btn = document.querySelector("#sidebar-options-apply
 const sidebar_brightness_collapse = document.querySelector("#sidebar-brightness-collapse");
 
 function setLanguage(lang) {
-    console.log(lang)
     if (lang == "en") {
         navlink_draw.textContent = "DRAW";
         navlink_images.textContent = "IMAGES";

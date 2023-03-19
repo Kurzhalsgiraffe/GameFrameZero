@@ -51,20 +51,20 @@
                     <ul class="nav flex-column align-items-center">
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-options-collapse">OPTIONEN</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-options-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="mt-2">
-                                            <button class="button opt-btn my-2 fw-bold" id="start-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Starte die Animation auf der Matrix">START</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-start-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                         <li>
-                                            <button class="button opt-btn my-2 fw-bold" id="stop-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Stoppe die Animation">STOP</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-stop-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                         <li>
-                                            <button class="button opt-btn my-2 fw-bold" id="edit-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Bearbeite die ausgewählte Animation">BEARBEITEN</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-edit-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                         <li class="mb-2">
-                                            <button class="button opt-btn my-2 fw-bold" id="delete-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Lösche die ausgewählte Animation">LÖSCHEN</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-delete-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                     </ul>
                                 </div>
@@ -72,14 +72,14 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="create-animation-collapse">NEUE ANIMATION</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-create-animation-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="my-2">
-                                            <input class="animation-input" type="text" placeholder="NAME" id="animation-name">
+                                            <input class="animation-input" type="text" placeholder="NAME" id="sidebar-create-animation-name">
                                         </li>
                                         <li class="mb-3">
-                                            <button class="button opt-btn fw-bold" id="create-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Erstelle eine neue Animation">ERSTELLEN</button>
+                                            <button class="button opt-btn fw-bold" id="sidebar-create-animation-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                     </ul>
                                 </div>
@@ -87,11 +87,11 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-brightness-collapse">HELLIGKEIT</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-brightness-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="mt-2">
-                                            <span id="brightness-value">1</span>
+                                            <span id="sidebar-brightness-value">1</span>
                                         </li>
                                         <li class="my-2">
                                             <input type="range" min="1" max="80" value="1" class="slider" id="sidebar-brightness-slider">
@@ -102,7 +102,7 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="animationspeed-collapse">GESCHWINDIGKEIT</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-animationspeed-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="mt-2">
@@ -127,6 +127,7 @@
         </div>
     </div>
    
+    <script src="{{ url_for('static', filename='js/pages/animations_lang.js') }}"></script>
     <script src="{{ url_for('static', filename='js/languages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/collapse.js') }}"></script>
     <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>
