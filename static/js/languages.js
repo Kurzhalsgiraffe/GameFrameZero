@@ -47,4 +47,5 @@ async function setServerLanguage(language) {
 document.addEventListener("DOMContentLoaded", async function() {
     lang = await loadLanguage();
     setLanguage(lang);
+    changeLanguageSlider(lang)
 });
