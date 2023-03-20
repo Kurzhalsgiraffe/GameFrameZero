@@ -1,8 +1,8 @@
 STANDARD_ANIMATION_TIME = 200
 
 const canv = document.querySelector("canvas");
-const remove_animation_frame_btn = document.querySelector("#remove-animation-frame-btn");
-const update_time_on_frame_btn = document.querySelector("#update-time-on-frame-btn");
+const remove_animation_frame_btn = document.querySelector("#sidebar-options-remove-animation-frame-btn");
+const update_time_on_frame_btn = document.querySelector("#sidebar-time-update-time-on-frame-btn");
 const first_frame_btn = document.querySelector("#first-frame-btn");
 const fast_backwards_btn = document.querySelector("#fast-backwards-btn");
 const prev_frame_btn = document.querySelector("#prev-frame-btn");
@@ -10,8 +10,8 @@ const next_frame_btn = document.querySelector("#next-frame-btn");
 const fast_forwards_btn = document.querySelector("#fast-forwards-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
 const frameNumber = document.getElementById("framenumber");
-const animation_time_all_checkbox = document.querySelector("#set-time-for-all-checkbox");
-const animation_time = document.querySelector("#animation-time");
+const animation_time_all_checkbox = document.querySelector("#sidebar-time-set-time-for-all-checkbox");
+const animation_time = document.querySelector("#sidebar-time-input");
 const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
 
 let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[], gridColor='rgba(0, 0, 0, 1.0)');

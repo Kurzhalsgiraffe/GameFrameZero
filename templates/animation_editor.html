@@ -51,11 +51,11 @@
                     <ul class="nav flex-column align-items-center">
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-options-collapse">OPTIONEN</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-options-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="my-2">
-                                            <button class="button opt-btn my-2 fw-bold" id="remove-animation-frame-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Entferne das ausgewählte Bild von der Animation">ENTFERNEN</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-options-remove-animation-frame-btn" data-bs-toggle="tooltip" data-bs-placement="right"></button>
                                         </li>
                                     </ul>
                                 </div>
@@ -63,18 +63,18 @@
                         </li>
                         <li class="mb-2">
                             <div class="collapse-item ">
-                                <a class="collapse-title fs-6 fw-bold text-white" id="time-collapse">ZEIT</a>
+                                <a class="collapse-title fs-6 fw-bold text-white" id="sidebar-time-collapse"></a>
                                 <div class="collapse-content">
                                     <ul class="nav flex-column align-items-center">
                                         <li class="mt-2">
-                                            <input class="animation-input" type="number" placeholder="ZEIT (ms)" id="animation-time">
+                                            <input class="animation-input" type="number" id="sidebar-time-input">
                                         </li>
                                         <li class="my-2">
-                                            <input type="checkbox" id="set-time-for-all-checkbox" name="set-time-for-all-checkbox">
-                                            <label for="set-time-for-all-checkbox" id="label-change-all">ALLE ÄNDERN</label>
+                                            <input type="checkbox" id="sidebar-time-set-time-for-all-checkbox" name="sidebar-time-set-time-for-all-checkbox">
+                                            <label for="sidebar-time-set-time-for-all-checkbox" id="sidebar-time-label-change-all"></label>
                                         </li>
                                         <li class="mb-2">
-                                            <button class="button opt-btn my-2 fw-bold" id="update-time-on-frame-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Übernehme die Zeit auf das ausgewählte Bild">ANWENDEN</button>
+                                            <button class="button opt-btn my-2 fw-bold" id="sidebar-time-update-time-on-frame-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Übernehme die Zeit auf das ausgewählte Bild">ANWENDEN</button>
                                         </li>
                                     </ul>
                                 </div>
@@ -104,7 +104,7 @@
                                             <span id="speed-value">100</span>
                                         </li>
                                         <li class="my-2">
-                                            <input type="range" min="1" max="20" value="10" class="slider" id="speed-slider">
+                                            <input type="range" min="1" max="20" value="10" class="slider" id="sidebar-animationspeed-slider">
                                         </li>
                                     </ul>
                                 </div>
@@ -173,7 +173,8 @@
             <!-- Canvasbereich END -->
         </div>
     </div>
-    
+
+    <script src="{{ url_for('static', filename='js/pages/animation_editor_lang.js') }}"></script>
     <script src="{{ url_for('static', filename='js/languages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/collapse.js') }}"></script>
     <script src="{{ url_for('static', filename='js/brightness.js') }}"></script>

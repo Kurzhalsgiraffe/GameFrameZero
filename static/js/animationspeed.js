@@ -1,5 +1,5 @@
 const speed_value = document.querySelector("#speed-value");
-const speed_slider = document.querySelector("#speed-slider");
+const speed_slider = document.querySelector("#sidebar-animationspeed-slider");
 
 speed_slider.addEventListener("change", ()=>{
     speed_value.textContent = speed_slider.value/10;
