@@ -33,10 +33,10 @@ async function loadAndShow(id=null,pos=null) {
     await selectorCanvasObject.loadColorArrayFromServer(id,pos);
     currentPos = selectorCanvasObject.currentPos;
     if (selectorCanvasObject.colorArray.length === 0) {
+        frameNumber.textContent = "-";
         selectorCanvasObject.initializeColorArray();
-        frameNumber.textContent = "KEIN BILD";
     } else {
-        frameNumber.textContent = "BILD " + currentPos;
+        frameNumber.textContent = currentPos;
     }
     selectorCanvasObject.drawColorArrayToCanvas();
     selectorCanvasObject.drawGrid();
@@ -155,9 +155,15 @@ async function addContentToTiles(image_ids, positions, image_times) {
 
         tile.setAttribute("draggable", "true");
         image_id_tag.classList.add("card-title");
-        image_id_tag.innerHTML = `BILD ${image_id}`;
         time_tag.classList.add("card-title");
-        time_tag.innerHTML = `${time/1000} Sekunden`;
+
+        if (document.documentElement.lang == "en") {
+            image_id_tag.innerHTML = `IMAGE ${image_id}`;
+            time_tag.innerHTML = `${time/1000} Seconds`;
+        } else if (document.documentElement.lang == "de") {
+            image_id_tag.innerHTML = `BILD ${image_id}`;
+            time_tag.innerHTML = `${time/1000} Sekunden`;
+        }
 
         cardbody.appendChild(image_id_tag);
         cardbody.appendChild(time_tag);

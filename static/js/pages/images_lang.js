@@ -9,6 +9,8 @@ const sidebar_options_apply_btn = document.querySelector("#sidebar-options-apply
 
 const sidebar_brightness_collapse = document.querySelector("#sidebar-brightness-collapse");
 
+const framenumber_label = document.querySelector("#framenumber-label");
+
 function setLanguage(lang) {
     if (lang == "en") {
         navlink_draw.textContent = "DRAW";
@@ -25,6 +27,8 @@ function setLanguage(lang) {
 
         sidebar_brightness_collapse.textContent = "BRIGHTNESS";
 
+        framenumber_label.textContent = "IMAGE: "
+
     } else if (lang == "de") {       
         navlink_draw.textContent = "ZEICHNEN";
         navlink_images.textContent = "BILDER";
@@ -39,5 +43,7 @@ function setLanguage(lang) {
         sidebar_options_apply_btn.title = "Wende die Zeichnung auf der LED-Matrix an";
 
         sidebar_brightness_collapse.textContent = "HELLIGKEIT";
+
+        framenumber_label.textContent = "BILD: "
     }
 }

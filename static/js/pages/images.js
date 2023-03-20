@@ -26,10 +26,10 @@ async function loadAndShow(id=null, pos=null) {
     await canvasObject.loadColorArrayFromServer(id, pos);
     currentPos = canvasObject.currentPos;
     if (canvasObject.colorArray.length === 0) {
+        frameNumber.textContent = "-";
         canvasObject.initializeColorArray();
-        frameNumber.textContent = "KEIN BILD";
     } else {
-        frameNumber.textContent = "BILD " + currentPos;
+        frameNumber.textContent = currentPos;
     }
     canvasObject.drawColorArrayToCanvas();
     canvasObject.drawGrid();

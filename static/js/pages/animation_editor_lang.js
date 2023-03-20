@@ -14,6 +14,10 @@ const sidebar_brightness_collapse = document.querySelector("#sidebar-brightness-
 
 const sidebar_animationspeed_collapse = document.querySelector("#sidebar-animationspeed-collapse");
 
+const amimation_frame_selection = document.querySelector("#amimation-frame-selection");
+const framenumber_label = document.querySelector("#framenumber-label");
+const add_to_animation_label = document.querySelector("#add-to-animation-label");
+
 function setLanguage(lang) {
     if (lang == "en") {
         navlink_draw.textContent = "DRAW";
@@ -33,6 +37,10 @@ function setLanguage(lang) {
 
         sidebar_animationspeed_collapse.textContent = "SPEED";
 
+        amimation_frame_selection.textContent = "SELECTION";
+        framenumber_label.textContent = "IMAGE: ";
+        add_to_animation_label.textContent = "ADD";
+
     } else if (lang == "de") {
         navlink_draw.textContent = "ZEICHNEN";
         navlink_images.textContent = "BILDER";
@@ -50,5 +58,9 @@ function setLanguage(lang) {
         sidebar_brightness_collapse.textContent = "HELLIGKEIT";
 
         sidebar_animationspeed_collapse.textContent = "GESCHWINDIGKEIT";
+
+        amimation_frame_selection.textContent = "AUSWAHL";
+        framenumber_label.textContent = "BILD: ";
+        add_to_animation_label.textContent = "HINZUFÜGEN";
     }
 }
