@@ -1,6 +1,7 @@
 """Flask Server"""
 
 import time
+import json
 from flask import Flask, request, jsonify, render_template
 from waitress import serve
 from databaseaccess import Dao
@@ -8,7 +9,6 @@ from led import LEDMatrix
 
 STANDARD_ANIMATION_TIME = 200
 SKIP_OFFSET = 10
-UI_LANGUAGE = "de"
 
 class Animation:
     """
@@ -174,7 +174,8 @@ def language_load():
     """
     Load current language
     """
-    return str(UI_LANGUAGE)
+    settings = read_settings()
+    return str(settings["language"])
 
 @app.route("/speed/load")
 def speed_load():
@@ -248,6 +249,7 @@ def brightness_apply(brightness):
     Apply the brightness value to the LED strip
     """
     led.update_brightness(int(brightness))
+    write_settings("brightness",brightness)
     return {}
 
 @app.route("/language/apply/<language>", methods=["POST"])
@@ -255,8 +257,7 @@ def language_apply(language):
     """
     Apply language
     """
-    global UI_LANGUAGE
-    UI_LANGUAGE = language
+    write_settings("language",language)
     return {}
 
 @app.route("/speed/apply/<speed>", methods=["POST"])
@@ -364,6 +365,18 @@ def animation_frame_remove():
 
 ## ----- FUNCTIONS ----- ##
 
+def write_settings(key, value):
+    settings = read_settings()
+    settings[key] = value
+
+    with open('settings.json', 'w', encoding="utf-8") as file:
+        json.dump(settings, file)
+
+def read_settings():
+    with open('settings.json', 'r', encoding="utf-8") as file:
+        settings = json.load(file)
+    return settings
+
 def color_array_to_binary(color_array):
     """
     Calculate bytearray from color_array
@@ -413,6 +426,10 @@ def startup_image(image_id):
 if __name__ == "__main__":
     database.vacuum()
     startup_image(1)
+
+    settings = read_settings()
+    led.update_brightness(settings["brightness"])
+
     if __debug__:
         app.run(debug=True, host="0.0.0.0")
     else:
