@@ -49,8 +49,8 @@ class Dao:
             conn, cursor = self.get_db_connection()
 
             sql = """CREATE TABLE IF NOT EXISTS images (
-                image_id integer PRIMARY KEY AUTOINCREMENT,
-                image_data blob NOT NULL)"""
+                image_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                image_data BLOB NOT NULL)"""
             cursor.execute(sql)
 
             sql = """CREATE TABLE IF NOT EXISTS animations (
