@@ -7,6 +7,8 @@ from waitress import serve
 from databaseaccess import Dao
 from led import LEDMatrix
 
+STANDARD_ANIMATION_TIME = 200 # If changed, also change in JS!
+
 class Animation:
     """
     This Class provides all the needed Methods to do animations
@@ -301,8 +303,7 @@ def animation_frame_add(animation_id, image_id):
     else:
         next_pos = 1
 
-    standard_animation_time = read_settings()["standard_animation_time"]
-    database.add_image_to_animation(animation_id, image_id, next_pos, standard_animation_time)
+    database.add_image_to_animation(animation_id, image_id, next_pos, STANDARD_ANIMATION_TIME)
     return {}
 
 @app.route("/animation/frame/updatetime", methods=["POST"])
