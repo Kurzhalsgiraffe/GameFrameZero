@@ -7,9 +7,6 @@ from waitress import serve
 from databaseaccess import Dao
 from led import LEDMatrix
 
-STANDARD_ANIMATION_TIME = 200
-SKIP_OFFSET = 10
-
 class Animation:
     """
     This Class provides all the needed Methods to do animations
@@ -139,17 +136,19 @@ def load_single():
     image_id = request.args.get('image_id', type = int)
     pos = request.args.get('pos', type = str)
 
+    skip_offset = read_settings()["skip_offset"]
+
     if pos:
         if pos == "first":
             image_id = database.get_first_image_id()
         elif pos == "fastbackwards":
-            image_id = database.get_ffw_image_id(image_id,SKIP_OFFSET)
+            image_id = database.get_ffw_image_id(image_id,skip_offset)
         elif pos == "prev":
             image_id = database.get_previous_image_id(image_id)
         elif pos == "next":
             image_id = database.get_next_image_id(image_id)
         elif pos == "fastforwards":
-            image_id = database.get_fbw_image_id(image_id,SKIP_OFFSET)
+            image_id = database.get_fbw_image_id(image_id,skip_offset)
         elif pos == "last":
             image_id = database.get_last_image_id()
 
@@ -174,8 +173,7 @@ def language_load():
     """
     Load current language
     """
-    settings = read_settings()
-    return str(settings["language"])
+    return str(read_settings()["language"])
 
 @app.route("/speed/load")
 def speed_load():
@@ -303,7 +301,8 @@ def animation_frame_add(animation_id, image_id):
     else:
         next_pos = 1
 
-    database.add_image_to_animation(animation_id, image_id, next_pos, STANDARD_ANIMATION_TIME)
+    standard_animation_time = read_settings()["standard_animation_time"]
+    database.add_image_to_animation(animation_id, image_id, next_pos, standard_animation_time)
     return {}
 
 @app.route("/animation/frame/updatetime", methods=["POST"])
@@ -427,8 +426,7 @@ if __name__ == "__main__":
     database.vacuum()
     startup_image(1)
 
-    settings = read_settings()
-    led.update_brightness(settings["brightness"])
+    led.update_brightness(read_settings()["brightness"])
 
     if __debug__:
         app.run(debug=True, host="0.0.0.0")
