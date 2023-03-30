@@ -39,7 +39,7 @@ function setLanguage(lang) {
         sidebar_options_delete_btn.title = "Lösche die Zeichnung aus der Datenbank";
         sidebar_options_edit_btn.textContent = "BEARBEITEN";
         sidebar_options_edit_btn.title = "Bearbeite eine Kopie der Zeichnung";
-        sidebar_options_apply_btn.textContent = "APPLY";
+        sidebar_options_apply_btn.textContent = "ANWENDEN";
         sidebar_options_apply_btn.title = "Wende die Zeichnung auf der LED-Matrix an";
 
         sidebar_brightness_collapse.textContent = "HELLIGKEIT";

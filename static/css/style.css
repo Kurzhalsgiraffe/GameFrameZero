@@ -63,7 +63,7 @@ body::-webkit-scrollbar {
     align-items: center;
 }
 
-#language-slider-cradle  {
+#language-switch-cradle  {
     display: flex;
     width: 80px;
     text-align: center;
@@ -83,7 +83,7 @@ body::-webkit-scrollbar {
     width: 50%
 }
 
-#language-slider-handle {
+#language-switch-handle {
     cursor: pointer;
     width: 36px;
     height: 36px;
@@ -240,7 +240,7 @@ input[type=checkbox] {
 }
 
 .collapse-item {
-    width: 100%;
+    width: 230px;
     display: block;
     background-color: rgba(0, 0, 0, 0.15);
 }
@@ -250,7 +250,6 @@ input[type=checkbox] {
     position: relative;
     text-decoration: none;
     padding: 20px;
-    width: 230px;
     outline: none;
     transition: 0.4s;
 }
