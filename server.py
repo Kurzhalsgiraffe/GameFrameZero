@@ -1,9 +1,9 @@
 """Flask Server"""
 
 import time
-import json
 from flask import Flask, request, jsonify, render_template
 from waitress import serve
+from utils import read_settings, write_settings, color_array_to_binary, binary_to_color_array
 from databaseaccess import Dao
 from led import LEDMatrix
 
@@ -16,13 +16,15 @@ class Animation:
     def __init__(self):
         self.running = False
         self.stopped = True
-        self.speed = 1.0
+        self.speed = read_settings("speed")
 
     def set_speed(self, speed):
         """
         Set the percentage of the animation speed
         """
-        self.speed = float(speed)
+        speed = float(speed)
+        self.speed = speed
+        write_settings("speed",speed)
 
     def stop(self):
         """
@@ -138,7 +140,7 @@ def load_single():
     image_id = request.args.get('image_id', type = int)
     pos = request.args.get('pos', type = str)
 
-    skip_offset = read_settings()["skip_offset"]
+    skip_offset = read_settings("skip_offset")
 
     if pos:
         if pos == "first":
@@ -175,7 +177,7 @@ def language_load():
     """
     Load current language
     """
-    return str(read_settings()["language"])
+    return str(read_settings("language"))
 
 @app.route("/speed/load")
 def speed_load():
@@ -365,38 +367,6 @@ def animation_frame_remove():
 
 ## ----- FUNCTIONS ----- ##
 
-def write_settings(key, value):
-    settings = read_settings()
-    settings[key] = value
-
-    with open('settings.json', 'w', encoding="utf-8") as file:
-        json.dump(settings, file)
-
-def read_settings():
-    with open('settings.json', 'r', encoding="utf-8") as file:
-        settings = json.load(file)
-    return settings
-
-def color_array_to_binary(color_array):
-    """
-    Calculate bytearray from color_array
-    """
-    byte_array = bytearray()
-    for color in color_array:
-        byte_array.append(int(color[1:3], 16))
-        byte_array.append(int(color[3:5], 16))
-        byte_array.append(int(color[5:7], 16))
-    return byte_array
-
-def binary_to_color_array(binary):
-    """
-    Calculate color_array from bytearray
-    """
-    color_array = []
-    for i in range(0,768,3):
-        color_array.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
-    return color_array
-
 def load_animation_list_by_id(animation_id):
     """
     Load all informations of this animation
@@ -426,8 +396,6 @@ def startup_image(image_id):
 if __name__ == "__main__":
     database.vacuum()
     startup_image(1)
-
-    led.update_brightness(read_settings()["brightness"])
 
     if __debug__:
         app.run(debug=True, host="0.0.0.0")
