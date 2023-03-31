@@ -1,7 +1,7 @@
-const language_slider_handle = document.querySelector("#language-switch");
+const language_switch_handle = document.querySelector("#language-switch");
 let lang;
 
-language_slider_handle.addEventListener("click", toggleLanguage);
+language_switch_handle.addEventListener("click", toggleLanguage);
 
 function toggleLanguage() {
     if (lang == "en") {
@@ -16,10 +16,10 @@ function toggleLanguage() {
 
 function changeLanguageSlider(lang) {
     if (lang == "en") {
-        language_slider_handle.style.transform = "translateX(40px)";
+        language_switch_handle.style.transform = "translateX(40px)";
         document.documentElement.lang = "en";
     } else if (lang == "de") {       
-        language_slider_handle.style.transform = "translateX(0px)";
+        language_switch_handle.style.transform = "translateX(0px)";
         document.documentElement.lang = "de";
     }
 }
