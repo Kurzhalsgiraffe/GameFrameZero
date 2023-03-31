@@ -1,4 +1,4 @@
-const language_slider_handle = document.querySelector("#language-switch-handle");
+const language_slider_handle = document.querySelector("#language-switch");
 let lang;
 
 language_slider_handle.addEventListener("click", toggleLanguage);

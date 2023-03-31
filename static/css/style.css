@@ -75,15 +75,11 @@ body::-webkit-scrollbar {
     box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.4);
 }
 
-#language-option-1 {
+.switch-option {
     width: 50%
 }
 
-#language-option-2 {
-    width: 50%
-}
-
-#language-switch-handle {
+.switch-handle {
     cursor: pointer;
     width: 36px;
     height: 36px;
