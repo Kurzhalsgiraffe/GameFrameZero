@@ -17,12 +17,13 @@ class LEDMatrix:
         self.led_invert = False        # True to invert the signal (NPN transistor level shift)
         self.led_channel = 0           # set to '1' for GPIOs 13, 19, 41, 45 or 53
         self.led_brightness = read_settings("brightness")
+        self.power = read_settings("power")
 
         if not __debug__:
             self.strip = PixelStrip(self.led_count, self.led_pin, self.led_freq_hz, self.led_dma,
                                     self.led_invert, self.led_brightness, self.led_channel)
             self.strip.begin()
-            self.set_all_pixels(Color(0,0,255))
+            self.toggle_power(self.power)
 
     # Set all Pixels to same Color
     def set_all_pixels(self, color):
@@ -56,4 +57,15 @@ class LEDMatrix:
 
         if not __debug__:
             self.strip.setBrightness(self.led_brightness)
+            self.strip.show()
+
+    def toggle_power(self, power):
+        """
+        Toggle power
+        """
+        if not __debug__:
+            if power == "on":
+                self.strip.setBrightness(self.led_brightness)
+            elif power == "off":
+                self.strip.setBrightness(0)
             self.strip.show()

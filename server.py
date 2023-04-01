@@ -257,8 +257,8 @@ def brightness_apply(brightness):
     """
     Apply the brightness value to the LED strip
     """
-    led.update_brightness(int(brightness))
     write_settings("brightness", brightness)
+    led.update_brightness(int(brightness))
     return {}
 
 @app.route("/language/apply/<language>", methods=["POST"])
@@ -283,6 +283,7 @@ def power_apply(power):
     Apply power status to the LED-Matrix
     """
     write_settings("power", power)
+    led.toggle_power(power)
     return {}
 
 @app.route("/animation/start/<animation_id>", methods=["POST"])
