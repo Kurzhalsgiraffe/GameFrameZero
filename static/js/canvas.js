@@ -70,11 +70,11 @@ class CanvasObject {
     async loadColorArrayFromServer(id=null,pos=null) {
         let response
         if (id!=null && pos!=null) {
-            response = await fetch("/load/single?image_id="+id+"&pos="+pos);
+            response = await fetch("/image/load/single?image_id="+id+"&pos="+pos);
         } else if(id!=null && pos==null) {
-            response = await fetch("/load/single?image_id="+id);
+            response = await fetch("/image/load/single?image_id="+id);
         } else if(id==null && pos!=null) {
-            response = await fetch("/load/single?pos="+pos);
+            response = await fetch("/image/load/single?pos="+pos);
         }
         
         let res = await response.json();

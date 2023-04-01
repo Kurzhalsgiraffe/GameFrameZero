@@ -10,11 +10,11 @@ function toggleLanguage() {
       lang = "en";
     }
     setLanguage(lang)
-    changeLanguageSlider(lang)
+    moveLanguageSlider(lang)
     setServerLanguage(lang)
 }
 
-function changeLanguageSlider(lang) {
+function moveLanguageSlider(lang) {
     if (lang == "en") {
         language_switch_handle.style.transform = "translateX(40px)";
         document.documentElement.lang = "en";
@@ -47,5 +47,5 @@ async function setServerLanguage(language) {
 document.addEventListener("DOMContentLoaded", async function() {
     lang = await loadLanguage();
     setLanguage(lang);
-    changeLanguageSlider(lang)
+    moveLanguageSlider(lang)
 });

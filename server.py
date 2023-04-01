@@ -132,8 +132,8 @@ def animation_load_all():
         return jsonify(data)
     return {},400
 
-@app.route("/load/single")
-def load_single():
+@app.route("/image/load/single")
+def image_load_single():
     """
     Calculate image_id based on current image_id and pos, and return image and new image_id
     """
@@ -186,6 +186,13 @@ def speed_load():
     """
     return str(animation.speed)
 
+@app.route("/power/load")
+def power_load():
+    """
+    Load current power status
+    """
+    return str(read_settings("power"))
+
 ## ----- POST ----- ##
 
 @app.route("/apply", methods=["POST"])
@@ -228,8 +235,8 @@ def replace():
         return {}
     return {},400
 
-@app.route("/load/multiple", methods=["POST"])
-def load_multiple():
+@app.route("/image/load/multiple", methods=["POST"])
+def image_load_multiple():
     """
     Load multiple binarys by image_id
     """
@@ -251,15 +258,15 @@ def brightness_apply(brightness):
     Apply the brightness value to the LED strip
     """
     led.update_brightness(int(brightness))
-    write_settings("brightness",brightness)
+    write_settings("brightness", brightness)
     return {}
 
 @app.route("/language/apply/<language>", methods=["POST"])
 def language_apply(language):
     """
-    Apply language
+    Apply language to the UI
     """
-    write_settings("language",language)
+    write_settings("language", language)
     return {}
 
 @app.route("/speed/apply/<speed>", methods=["POST"])
@@ -268,6 +275,14 @@ def speed_apply(speed):
     Apply a speed value to the animation
     """
     animation.set_speed(float(speed))
+    return {}
+
+@app.route("/power/apply/<power>", methods=["POST"])
+def power_apply(power):
+    """
+    Apply power status to the LED-Matrix
+    """
+    write_settings("power", power)
     return {}
 
 @app.route("/animation/start/<animation_id>", methods=["POST"])

@@ -14,6 +14,9 @@ const sidebar_brightness_collapse = document.querySelector("#sidebar-brightness-
 
 const sidebar_animationspeed_collapse = document.querySelector("#sidebar-animationspeed-collapse");
 
+const power_switch_on = document.querySelector("#power-switch-on");
+const power_switch_off = document.querySelector("#power-switch-off");
+
 const amimation_frame_selection = document.querySelector("#amimation-frame-selection");
 const framenumber_label = document.querySelector("#framenumber-label");
 const add_to_animation_label = document.querySelector("#add-to-animation-label");
@@ -37,6 +40,9 @@ function setLanguage(lang) {
 
         sidebar_animationspeed_collapse.textContent = "SPEED";
 
+        power_switch_on.textContent = "ON";
+        power_switch_off.textContent = "OFF";
+
         amimation_frame_selection.textContent = "SELECTION";
         framenumber_label.textContent = "IMAGE: ";
         add_to_animation_label.textContent = "ADD";
@@ -58,6 +64,9 @@ function setLanguage(lang) {
         sidebar_brightness_collapse.textContent = "HELLIGKEIT";
 
         sidebar_animationspeed_collapse.textContent = "GESCHWINDIGKEIT";
+
+        power_switch_on.textContent = "AN";
+        power_switch_off.textContent = "AUS";
 
         amimation_frame_selection.textContent = "AUSWAHL";
         framenumber_label.textContent = "BILD: ";

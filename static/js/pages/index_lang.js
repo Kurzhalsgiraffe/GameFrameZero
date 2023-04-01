@@ -16,6 +16,9 @@ const sidebar_brightness_collapse = document.querySelector("#sidebar-brightness-
 
 const sidebar_move_collapse = document.querySelector("#sidebar-move-collapse");
 
+const power_switch_on = document.querySelector("#power-switch-on");
+const power_switch_off = document.querySelector("#power-switch-off");
+
 function setLanguage(lang) {
     if (lang == "en") {
         navlink_draw.textContent = "DRAW";
@@ -41,6 +44,9 @@ function setLanguage(lang) {
 
         sidebar_move_collapse.textContent = "MOVE";
 
+        power_switch_on.textContent = "ON";
+        power_switch_off.textContent = "OFF";
+
     } else if (lang == "de") {       
         navlink_draw.textContent = "ZEICHNEN";
         navlink_images.textContent = "BILDER";
@@ -63,5 +69,8 @@ function setLanguage(lang) {
         sidebar_brightness_collapse.textContent = "HELLIGKEIT";
 
         sidebar_move_collapse.textContent = "VERSCHIEBEN";
+
+        power_switch_on.textContent = "AN";
+        power_switch_off.textContent = "AUS";
     }
 }
