@@ -15,9 +15,9 @@ let isMouseDownCanvas;
 let drawMode = true;
 let loadedIDToEdit = null;
 
-apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/apply",null));
-save_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/save",null));
-replace_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/replace",loadedIDToEdit));
+apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/image/apply",null));
+save_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/image/save",null));
+replace_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/image/replace",loadedIDToEdit));
 
 color_selector.addEventListener("change", () => setPickedColor(color_selector.value));
 move_up.addEventListener("click", moveUp);

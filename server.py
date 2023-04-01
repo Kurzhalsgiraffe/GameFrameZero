@@ -195,7 +195,7 @@ def power_load():
 
 ## ----- POST ----- ##
 
-@app.route("/apply", methods=["POST"])
+@app.route("/image/apply", methods=["POST"])
 def apply():
     """
     Apply an image to the frame.
@@ -204,13 +204,14 @@ def apply():
 
     if image_id:
         binary = database.load_single_binary(image_id)
+        write_settings("last_applied_image_id", image_id)
     else:
         color_array = request.json
         binary = color_array_to_binary(color_array)
     led.update_frame(binary)
     return {}
 
-@app.route("/save", methods=["POST"])
+@app.route("/image/save", methods=["POST"])
 def save():
     """
     Save a new image to the database
@@ -220,7 +221,7 @@ def save():
     database.save_binary(binary)
     return {}
 
-@app.route("/replace", methods=["POST"])
+@app.route("/image/replace", methods=["POST"])
 def replace():
     """
     Replace an image by a new image
@@ -411,7 +412,7 @@ def startup_image(image_id):
 
 if __name__ == "__main__":
     database.vacuum()
-    startup_image(1)
+    startup_image(read_settings("last_applied_image_id"))
 
     if __debug__:
         app.run(debug=True, host="0.0.0.0")

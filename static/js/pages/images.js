@@ -36,7 +36,7 @@ async function loadAndShow(id=null, pos=null) {
 }
 
 async function applyColorArray(image_id) {
-    let response = await fetch("/apply?image_id="+image_id, {
+    let response = await fetch("/image/apply?image_id="+image_id, {
         method: "POST",
     });
     if (response.status != 200) {
