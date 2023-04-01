@@ -258,7 +258,7 @@ def brightness_apply(brightness):
     """
     Apply the brightness value to the LED strip
     """
-    write_settings("brightness", brightness)
+    write_settings("brightness", int(brightness))
     led.update_brightness(int(brightness))
     return {}
 
