@@ -1,49 +1,40 @@
 """Flask Server"""
 
 import time
+import utils
 from flask import Flask, request, jsonify, render_template
 from waitress import serve
-from utils import read_settings, write_settings, color_array_to_binary, binary_to_color_array
+
 from databaseaccess import Dao
 from led import LEDMatrix
 
 STANDARD_ANIMATION_TIME = 200 # If changed, also change in JS!
 
 class Animation:
-    """
-    This Class provides all the needed Methods to do animations
-    """
+    """ managing animations """
     def __init__(self):
         self.running = False
         self.stopped = True
-        self.speed = read_settings("speed")
+        self.speed = utils.read_settings("speed")
 
     def set_speed(self, speed):
-        """
-        Set the percentage of the animation speed
-        """
+        """ Set the percentage of the animation speed """
         speed = float(speed)
         self.speed = speed
-        write_settings("speed",speed)
+        utils.write_settings("speed",speed)
 
     def stop(self):
-        """
-        Stop the animation
-        """
+        """ Stop the animation """
         while self.stopped is False:
             self.running = False
 
     def start(self,animation_id):
-        """
-        Start the animation
-        """
+        """ Start the animation """
         self.stop()
         self.animation_loop(animation_id)
 
     def animation_loop(self,animation_id):
-        """
-        Load all Animation details and images, and loop them
-        """
+        """ Load all Animation details and images, and loop them """
         animation_list = []
         data = load_animation_list_by_id(animation_id)
         if data:
@@ -71,36 +62,27 @@ database = Dao("database.sqlite")
 
 @app.route("/")
 def index_page():
-    """
-    Load index page"""
+    """ Load index page """
     return render_template("index.html")
 
 @app.route("/images")
 def images_page():
-    """
-    Load images page
-    """
+    """ Load images page """
     return render_template("images.html")
 
 @app.route("/animations")
 def animations_page():
-    """
-    Load animation page
-    """
+    """ Load animation page """
     return render_template("animations.html")
 
 @app.route("/animation/editor")
 def animation_editor_page():
-    """
-    Load animation editor page
-    """
+    """ Load animation editor page """
     return render_template("animation_editor.html")
 
 @app.route("/animation/load/<animation_id>")
 def animation_load(animation_id):
-    """
-    Load all informations of this animation
-    """
+    """ Load all informations of this animation """
     data = load_animation_list_by_id(animation_id)
     if data:
         return jsonify(data)
@@ -108,9 +90,7 @@ def animation_load(animation_id):
 
 @app.route("/animation/load/all")
 def animation_load_all():
-    """
-    Load all animation_ids, animation_names and the image_id of their first image
-    """
+    """ Load all animation_ids, animation_names and the image_id of their first image """
     animation_ids = []
     animation_names = []
     data = sorted(database.get_all_animations(), key=lambda x: x[0])
@@ -134,13 +114,11 @@ def animation_load_all():
 
 @app.route("/image/load/single")
 def image_load_single():
-    """
-    Calculate image_id based on current image_id and pos, and return image and new image_id
-    """
+    """  Calculate image_id based on current image_id and pos, and return image and new image_id """
     image_id = request.args.get('image_id', type = int)
     pos = request.args.get('pos', type = str)
 
-    skip_offset = read_settings("skip_offset")
+    skip_offset = utils.read_settings("skip_offset")
 
     if pos:
         if pos == "first":
@@ -159,7 +137,7 @@ def image_load_single():
     binary = database.load_single_binary(image_id)
     if binary:
         data = {
-            "colorArray": binary_to_color_array(binary),
+            "colorArray": utils.binary_to_color_array(binary),
             "imageID": image_id
         }
         return jsonify(data)
@@ -167,69 +145,55 @@ def image_load_single():
 
 @app.route("/brightness/load")
 def brightness_load():
-    """
-    Load current LED brightness value
-    """
-    return str(led.led_brightness)
+    """ Load current LED brightness value """
+    return str(utils.read_settings("brightness"))
 
 @app.route("/language/load")
 def language_load():
-    """
-    Load current language
-    """
-    return str(read_settings("language"))
+    """ Load current language """
+    return str(utils.read_settings("language"))
 
 @app.route("/speed/load")
 def speed_load():
-    """
-    Load current animation speed value
-    """
-    return str(animation.speed)
+    """ Load current animation speed value """
+    return str(utils.read_settings("speed"))
 
 @app.route("/power/load")
 def power_load():
-    """
-    Load current power status
-    """
-    return str(read_settings("power"))
+    """ Load current power status """
+    return str(utils.read_settings("power"))
 
 ## ----- POST ----- ##
 
 @app.route("/image/apply", methods=["POST"])
 def apply():
-    """
-    Apply an image to the frame.
-    """
+    """ Apply an image to the frame """
     image_id = request.args.get('image_id', type = int)
 
     if image_id:
         binary = database.load_single_binary(image_id)
-        write_settings("last_applied_image_id", image_id)
+        utils.write_settings("last_applied_image_id", image_id)
     else:
         color_array = request.json
-        binary = color_array_to_binary(color_array)
+        binary = utils.color_array_to_binary(color_array)
     led.update_frame(binary)
     return {}
 
 @app.route("/image/save", methods=["POST"])
 def save():
-    """
-    Save a new image to the database
-    """
+    """ Save a new image to the database """
     color_array = request.json
-    binary = color_array_to_binary(color_array)
+    binary = utils.color_array_to_binary(color_array)
     database.save_binary(binary)
     return {}
 
 @app.route("/image/replace", methods=["POST"])
 def replace():
-    """
-    Replace an image by a new image
-    """
+    """ Replace an image by a new image """
     image_id = request.args.get('image_id', type = int)
 
     color_array = request.json
-    binary = color_array_to_binary(color_array)
+    binary = utils.color_array_to_binary(color_array)
 
     if image_id:
         database.replace_binary(image_id,binary)
@@ -238,16 +202,14 @@ def replace():
 
 @app.route("/image/load/multiple", methods=["POST"])
 def image_load_multiple():
-    """
-    Load multiple binarys by image_id
-    """
+    """ Load multiple binarys by image_id """
     image_ids = request.json
     if image_ids:
         binarys = database.load_multiple_binarys(image_ids)
         data = []
         for i in binarys:
             if i:
-                data.append((i[0], binary_to_color_array(bytearray(i[1]))))
+                data.append((i[0], utils.binary_to_color_array(bytearray(i[1]))))
             else:
                 data.append(None)
         return jsonify(data)
@@ -255,67 +217,52 @@ def image_load_multiple():
 
 @app.route("/brightness/apply/<brightness>", methods=["POST"])
 def brightness_apply(brightness):
-    """
-    Apply the brightness value to the LED strip
-    """
-    write_settings("brightness", int(brightness))
-    led.update_brightness(int(brightness))
+    """ Apply the brightness value to the LED strip """
+    utils.write_settings("brightness", int(brightness))
+    if utils.read_settings("power") == "on":
+        led.update_brightness(int(brightness))
     return {}
 
 @app.route("/language/apply/<language>", methods=["POST"])
 def language_apply(language):
-    """
-    Apply language to the UI
-    """
-    write_settings("language", language)
+    """ Apply language to the UI """
+    utils.write_settings("language", language)
     return {}
 
 @app.route("/speed/apply/<speed>", methods=["POST"])
 def speed_apply(speed):
-    """
-    Apply a speed value to the animation
-    """
+    """ Apply a speed value to the animation """
     animation.set_speed(float(speed))
     return {}
 
 @app.route("/power/apply/<power>", methods=["POST"])
 def power_apply(power):
-    """
-    Apply power status to the LED-Matrix
-    """
-    write_settings("power", power)
+    """ Apply power status to the LED-Matrix """
+    utils.write_settings("power", power)
     led.toggle_power(power)
     return {}
 
 @app.route("/animation/start/<animation_id>", methods=["POST"])
 def animation_start(animation_id):
-    """
-    Start a animation, stop the currently running if nessessary
-    """
+    """ Start a animation, stop the currently running if nessessary """
     animation.start(animation_id)
     return {}
 
 @app.route("/animation/stop", methods=["POST"])
 def animation_stop():
-    """
-    Stop the currently running animation
-    """
+    """ Stop the currently running animation """
     animation.stop()
     return {}
 
 @app.route("/animation/create/<name>", methods=["POST"])
 def animation_create(name):
-    """
-    Create a new animation
-    """
+    """ Create a new animation """
     database.create_animation(name)
     return {}
 
 @app.route("/animation/frame/add/<animation_id>/<image_id>", methods=["POST"])
 def animation_frame_add(animation_id, image_id):
-    """
-    Add a frame to an animation
-    """
+    """ Add a frame to an animation """
     last_pos = database.get_last_position_by_animation_id(animation_id)
     if last_pos:
         next_pos = last_pos + 1
@@ -327,9 +274,7 @@ def animation_frame_add(animation_id, image_id):
 
 @app.route("/animation/frame/updatetime", methods=["POST"])
 def animation_frame_updatetime():
-    """
-    Update the sleep time of an animation frame
-    """
+    """ Update the sleep time of an animation frame """
     animation_id = request.args.get('animation_id', type = int)
     position = request.args.get('position', type = str)
     sleep_time = request.args.get('time', type = int)
@@ -342,9 +287,7 @@ def animation_frame_updatetime():
 
 @app.route("/animation/frame/switchpositions", methods=["POST"])
 def animation_frame_switchpositions():
-    """
-    Switch positions of two images in an animation
-    """
+    """ Switch positions of two images in an animation """
     animation_id = request.args.get('animation_id', type = int)
     source_id = request.args.get('source_id', type = int)
     target_id = request.args.get('target_id', type = int)
@@ -356,26 +299,20 @@ def animation_frame_switchpositions():
 
 @app.route("/delete/<image_id>", methods=["DELETE"])
 def delete(image_id):
-    """
-    Delete image from database
-    """
+    """ Delete image from database """
     database.delete_binary(int(image_id))
     return {}
 
 @app.route("/animation/delete/<animation_id>", methods=["DELETE"])
 def animation_delete(animation_id):
-    """
-    Delete animation and remove all images from the intermediate table
-    """
+    """ Delete animation and remove all images from the intermediate table """
     database.delete_animation(animation_id)
     database.remove_all_images_from_animation(animation_id)
     return {}
 
 @app.route("/animation/frame/remove", methods=["DELETE"])
 def animation_frame_remove():
-    """
-    Remove frame from animation
-    """
+    """ Remove frame from animation """
     animation_id = request.args.get('animation_id', type = int)
     position = request.args.get('pos', type = int)
 
@@ -385,9 +322,7 @@ def animation_frame_remove():
 ## ----- FUNCTIONS ----- ##
 
 def load_animation_list_by_id(animation_id):
-    """
-    Load all informations of this animation
-    """
+    """ Load all informations of this animation """
     animation_frames = database.get_animation_by_id(animation_id)
     data = {
             "imageIDs": [],
@@ -404,15 +339,13 @@ def load_animation_list_by_id(animation_id):
     return data
 
 def startup_image(image_id):
-    """
-    Show image on startup
-    """
+    """ Show image on startup """
     binary = database.load_single_binary(image_id)
     led.update_frame(binary)
 
 if __name__ == "__main__":
     database.vacuum()
-    startup_image(read_settings("last_applied_image_id"))
+    startup_image(utils.read_settings("last_applied_image_id"))
 
     if __debug__:
         app.run(debug=True, host="0.0.0.0")
