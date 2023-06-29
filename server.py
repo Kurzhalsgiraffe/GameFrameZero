@@ -219,8 +219,11 @@ def image_load_multiple():
 def brightness_apply(brightness):
     """ Apply the brightness value to the LED strip """
     utils.write_settings("brightness", int(brightness))
+
     if utils.read_settings("power") == "on":
         led.update_brightness(int(brightness))
+    else:
+        led.led_brightness = brightness
     return {}
 
 @app.route("/language/apply/<language>", methods=["POST"])
