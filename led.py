@@ -21,7 +21,6 @@ class LEDMatrix:
             self.strip = PixelStrip(self.led_count, self.led_pin, self.led_freq_hz, self.led_dma,
                                     self.led_invert, self.led_brightness, self.led_channel)
             self.strip.begin()
-            self.toggle_power(self.power)
 
     # Set all Pixels to same Color
     def set_all_pixels(self, color):

@@ -349,8 +349,10 @@ def startup_image(image_id):
     led.update_frame(binary)
 
 if __name__ == "__main__":
-    database.vacuum()
     startup_image(utils.read_settings("last_applied_image_id"))
+
+    if utils.read_settings("auto vacuum") == True:
+        database.vacuum()
 
     if __debug__:
         app.run(debug=True, host="0.0.0.0")

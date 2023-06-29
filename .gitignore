@@ -1,10 +1,1 @@
 __pycache__/
-
-settings.json
-
-*.log
-local_settings.py
-db.sqlite
-db.sqlite3
-database.sqlite
-database.sqlite3
