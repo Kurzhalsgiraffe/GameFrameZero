@@ -238,8 +238,13 @@ def speed_apply(speed):
 @app.route("/power/apply/<power>", methods=["POST"])
 def power_apply(power):
     """ Apply power status to the LED-Matrix """
+    if power == "on":
+        brightness = int(utils.read_settings("brightness"))
+        led.update_brightness(brightness)
+    elif power == "off":
+        led.update_brightness(0)
+
     utils.write_settings("power", power)
-    led.toggle_power(power)
     return {}
 
 @app.route("/animation/start/<animation_id>", methods=["POST"])
