@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, render_template
 from waitress import serve
 
 from databaseaccess import Dao
-from led import LEDMatrix
+from led_hardware import LEDMatrix
 
 STANDARD_ANIMATION_TIME = 200 # If changed, also change in JS!
 
@@ -54,7 +54,7 @@ class Animation:
             self.stopped = True
 
 app = Flask(__name__)
-led = LEDMatrix()
+led = LEDMatrix(brightness=utils.read_settings("brightness"))
 animation = Animation()
 database = Dao("database.sqlite")
 
