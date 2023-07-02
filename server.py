@@ -21,37 +21,41 @@ class Animation:
         """ Set the percentage of the animation speed """
         speed = float(speed)
         self.speed = speed
-        utils.write_settings("speed",speed)
+        utils.write_settings("speed", speed)
 
+    def get_animationlist(self, animation_id):
+        animationlist = []
+        data = database.get_animationlist_by_id(animation_id)
+        if data:
+            binarys = database.load_multiple_binarys(data["imageIDs"])
+
+            for binary, sleep_time in zip(binarys, data["times"]):
+                animationlist.append([binary[1], sleep_time/1000])
+        return animationlist
+
+    def animation_loop(self, animation_id):
+        """ Load all Animation details and images, and loop them """
+        animationlist = self.get_animationlist(animation_id)
+        if animationlist:
+            self.running = True
+            self.stopped = False
+
+            while self.running:
+                for binary, sleep_time in animationlist:
+                    if self.running:
+                        led.update_frame(binary)
+                        time.sleep(sleep_time*(1/(self.speed)))
+            self.stopped = True
+    
     def stop(self):
         """ Stop the animation """
         while self.stopped is False:
             self.running = False
 
-    def start(self,animation_id):
-        """ Start the animation """
+    def start(self, animation_id):
+        """ Stop current animation and start animation by id """
         self.stop()
         self.animation_loop(animation_id)
-
-    def animation_loop(self,animation_id):
-        """ Load all Animation details and images, and loop them """
-        animation_list = []
-        data = load_animation_list_by_id(animation_id)
-        if data:
-            self.running = True
-            self.stopped = False
-
-            binarys = database.load_multiple_binarys(data["imageIDs"])
-
-            for binary, sleep_time in zip(binarys, data["times"]):
-                animation_list.append([binary[1], sleep_time/1000])
-
-            while self.running:
-                for binary, sleep_time in animation_list:
-                    if self.running:
-                        led.update_frame(binary)
-                        time.sleep(sleep_time*(1/(self.speed)))
-            self.stopped = True
 
 app = Flask(__name__)
 led = LEDMatrix(brightness=utils.read_settings("brightness"))
@@ -83,7 +87,7 @@ def animation_editor_page():
 @app.route("/animation/load/<animation_id>")
 def animation_load(animation_id):
     """ Load all informations of this animation """
-    data = load_animation_list_by_id(animation_id)
+    data = database.get_animationlist_by_id(animation_id)
     if data:
         return jsonify(data)
     return {},400
@@ -325,23 +329,6 @@ def animation_frame_remove():
     return {}
 
 ## ----- FUNCTIONS ----- ##
-
-def load_animation_list_by_id(animation_id):
-    """ Load all informations of this animation """
-    animation_frames = database.get_animation_by_id(animation_id)
-    data = {
-            "imageIDs": [],
-            "positions": [],
-            "times": []
-    }
-
-    if animation_frames:
-        for i in animation_frames:
-            data["imageIDs"].append(i[1])
-            data["positions"].append(i[2])
-            data["times"].append(i[3])
-
-    return data
 
 def startup_image(image_id):
     """ Show image on startup """

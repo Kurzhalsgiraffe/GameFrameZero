@@ -409,16 +409,24 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def get_animation_by_id(self, animation_id):
+    def get_animationlist_by_id(self, animation_id):
         """
         This Method will load all informations of this animation
         """
+        animationlist = {"imageIDs": [], "positions": [], "times": []}
+
         try:
             conn, cursor = self.get_db_connection()
             sql = "SELECT * FROM images_to_animations where animation_id = ? ORDER BY pos"
             data = cursor.execute(sql, (animation_id,)).fetchall()
             conn.close()
-            return data
+            
+            if data:
+                for i in data:
+                    animationlist["imageIDs"].append(i[1])
+                    animationlist["positions"].append(i[2])
+                    animationlist["times"].append(i[3])
+            return animationlist
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
