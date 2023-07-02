@@ -70,6 +70,11 @@ def power_load():
     """ Load current power status """
     return str(frame_manager.read_settings("power"))
 
+@app.route("/animationtime/load")
+def animationtime_load():
+    """ Load default animation time value """
+    return str(frame_manager.read_settings("default_animation_time"))
+
 ## ----- POST ----- ##
 
 @app.route("/image/apply_color_array", methods=["POST"])
@@ -124,7 +129,7 @@ def language_apply(language):
 @app.route("/speed/apply/<speed>", methods=["POST"])
 def speed_apply(speed):
     """ Apply a speed value to the animation """
-    manager.animation.set_speed(float(speed))
+    manager.set_animation_speed(float(speed))
     return {}
 
 @app.route("/power/apply/<power>", methods=["POST"])
@@ -136,15 +141,15 @@ def power_apply(power):
 @app.route("/animation/start/<animation_id>", methods=["POST"])
 def animation_start(animation_id):
     """ Start a animation, stop the currently running if nessessary """
-    manager.animation.stop()
-    t = Thread(target=manager.animation.start_animation, args=(animation_id,))
+    manager.stop_animation()
+    t = Thread(target=manager.start_animation, args=(animation_id,))
     t.start()
     return {}
 
 @app.route("/animation/stop", methods=["POST"])
 def animation_stop():
     """ Stop the currently running animation """
-    manager.animation.stop()
+    manager.stop_animation()
     return {}
 
 @app.route("/animation/create/<name>", methods=["POST"])

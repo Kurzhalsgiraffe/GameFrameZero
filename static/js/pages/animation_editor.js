@@ -1,5 +1,3 @@
-STANDARD_ANIMATION_TIME = 200
-
 const canv = document.querySelector("canvas");
 const remove_animation_frame_btn = document.querySelector("#sidebar-options-remove-animation-frame-btn");
 const update_time_on_frame_btn = document.querySelector("#sidebar-time-update-time-on-frame-btn");
@@ -81,13 +79,25 @@ async function UpdateTime() {
     }
 }
 
+async function loadDefaultAnimationTime() {
+    let response = await fetch("/animationtime/load");
+    if (response.status == 200) {
+        res = await response.text();
+        console.log(typeof(res))
+        return parseInt(res)
+    } else {
+        console.log("failed to load default animationtime value from server");
+    }
+}
+
 async function addFrameToAnimation() {
     let response = await fetch("/animation/frame/add/"+animation_id+"/"+currentPos, {
         method: "POST"
     });
     if (response.status == 200) {
+        let default_animation_time = await loadDefaultAnimationTime()
         pos = parseInt(getLastTileID()) + 1;
-        initializeSingleAnimationTile(pos, currentPos, STANDARD_ANIMATION_TIME)
+        initializeSingleAnimationTile(pos, currentPos, default_animation_time)
     } else {
         console.log("failed to add frame number " + currentPos + " to the Animation");
     }

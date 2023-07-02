@@ -4,57 +4,14 @@ import time
 from database_access import Dao
 from led_hardware import LEDMatrix
 
-STANDARD_ANIMATION_TIME = 200 # If changed, also change in JS!
-
-class Animation:
-    """ managing animations """
-    def __init__(self, database, led):
-        self.database = database
-        self.led = led
-        self.running = False
-        self.stopped = True
-        self.speed = read_settings("speed")
-
-    def set_speed(self, speed):
-        """ Set the percentage of the animation speed """
-        speed = float(speed)
-        self.speed = speed
-        write_settings("speed", speed)
-
-    def get_animationlist(self, animation_id):
-        animationlist = []
-        data = self.database.get_animationlist_by_id(animation_id)
-        if data:
-            binarys = self.database.load_multiple_binarys(data["imageIDs"])
-
-            for binary, sleep_time in zip(binarys, data["times"]):
-                animationlist.append([binary[1], sleep_time/1000])
-        return animationlist
-
-    def start_animation(self, animation_id):
-        """ Start animation by id """
-        animationlist = self.get_animationlist(animation_id)
-        if animationlist:
-            self.running = True
-            self.stopped = False
-
-            while self.running:
-                for binary, sleep_time in animationlist:
-                    if self.running:
-                        self.led.update_frame(binary)
-                        time.sleep(sleep_time*(1/(self.speed)))
-            self.stopped = True
-
-    def stop(self):
-        """ Stop the animation """
-        while self.stopped is False:
-            self.running = False
-
 class FrameManager:
     def __init__(self):
         self.database = Dao("database.sqlite")
         self.led = LEDMatrix(brightness=read_settings("brightness"))
-        self.animation = Animation(self.database, self.led)
+        self.animation_running = False
+        self.animation_stopped = True
+        self.animation_speed = read_settings("speed")
+        self.default_animation_time = read_settings("default_animation_time")
 
     def apply_color_array(self, color_array):
         binary = color_array_to_binary(color_array)
@@ -144,7 +101,7 @@ class FrameManager:
         else:
             next_pos = 1
 
-        self.database.add_image_to_animation(animation_id, image_id, next_pos, STANDARD_ANIMATION_TIME)
+        self.database.add_image_to_animation(animation_id, image_id, next_pos, self.default_animation_time)
 
     def update_time_for_animationframe(self, animation_id, position, time):
         if position == "all":
@@ -170,6 +127,40 @@ class FrameManager:
 
     def get_animationlist_by_id(self, animation_id):
         return self.database.get_animationlist_by_id(animation_id)
+    
+    def load_animation(self, animation_id):
+        animationlist = []
+        data = self.get_animationlist_by_id(animation_id)
+        if data:
+            binarys = self.database.load_multiple_binarys(data["imageIDs"])
+
+            for binary, sleep_time in zip(binarys, data["times"]):
+                animationlist.append([binary[1], sleep_time/1000])
+        return animationlist
+
+    def start_animation(self, animation_id):
+        """ Start animation by id """
+        animationlist = self.load_animation(animation_id)
+        if animationlist:
+            self.animation_running = True
+            self.animation_stopped = False
+
+            while self.animation_running:
+                for binary, sleep_time in animationlist:
+                    if self.animation_running:
+                        self.led.update_frame(binary)
+                        time.sleep(sleep_time*(1/(self.animation_speed)))
+            self.animation_stopped = True
+
+    def stop_animation(self):
+        """ Stop the animation """
+        while self.animation_stopped is False:
+            self.animation_running = False
+    
+    def set_animation_speed(self, speed):
+        """ Set the percentage of the animation speed """
+        self.animation_speed = float(speed)
+        write_settings("speed", self.animation_speed)
 
 
 ## ----- FUNCTIONS ----- ##
