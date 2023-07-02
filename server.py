@@ -1,8 +1,8 @@
-"""Flask Server"""
-
+"""Flask Server: This is the main program"""
 import time
 import utils
 from flask import Flask, request, jsonify, render_template
+from threading import Thread
 from waitress import serve
 
 from databaseaccess import Dao
@@ -33,8 +33,8 @@ class Animation:
                 animationlist.append([binary[1], sleep_time/1000])
         return animationlist
 
-    def animation_loop(self, animation_id):
-        """ Load all Animation details and images, and loop them """
+    def start_animation(self, animation_id):
+        """ Start animation by id """
         animationlist = self.get_animationlist(animation_id)
         if animationlist:
             self.running = True
@@ -46,16 +46,11 @@ class Animation:
                         led.update_frame(binary)
                         time.sleep(sleep_time*(1/(self.speed)))
             self.stopped = True
-    
+
     def stop(self):
         """ Stop the animation """
         while self.stopped is False:
             self.running = False
-
-    def start(self, animation_id):
-        """ Stop current animation and start animation by id """
-        self.stop()
-        self.animation_loop(animation_id)
 
 app = Flask(__name__)
 led = LEDMatrix(brightness=utils.read_settings("brightness"))
@@ -254,7 +249,9 @@ def power_apply(power):
 @app.route("/animation/start/<animation_id>", methods=["POST"])
 def animation_start(animation_id):
     """ Start a animation, stop the currently running if nessessary """
-    animation.start(animation_id)
+    animation.stop()
+    t = Thread(target=animation.start_animation, args=(animation_id))
+    t.start()
     return {}
 
 @app.route("/animation/stop", methods=["POST"])
