@@ -14,7 +14,7 @@ var currentPos = 1;
 
 delete_btn.addEventListener("click", async () => await deleteColorArrayFromServer(currentPos));
 edit_btn.addEventListener("click", editSavedColorArray);
-apply_btn.addEventListener("click", async () => await applyColorArray(currentPos));
+apply_btn.addEventListener("click", async () => await applyColorArrayByID(currentPos));
 first_frame_btn.addEventListener("click", async () => await loadAndShow(null, "first"));
 fast_backwards_btn.addEventListener("click", async () => await loadAndShow(currentPos, "fastbackwards"));
 prev_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "prev"));
@@ -35,8 +35,8 @@ async function loadAndShow(id=null, pos=null) {
     canvasObject.drawGrid();
 }
 
-async function applyColorArray(image_id) {
-    let response = await fetch("/image/apply?image_id="+image_id, {
+async function applyColorArrayByID(image_id) {
+    let response = await fetch("/image/apply_id?image_id="+image_id, {
         method: "POST",
     });
     if (response.status != 200) {

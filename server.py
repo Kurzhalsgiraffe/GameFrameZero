@@ -164,18 +164,22 @@ def power_load():
 
 ## ----- POST ----- ##
 
-@app.route("/image/apply", methods=["POST"])
-def apply():
-    """ Apply an image to the frame """
+@app.route("/image/apply_color_array", methods=["POST"])
+def apply_color_array():
+    """ Apply color array from json request to the frame """
+    color_array = request.json
+    binary = utils.color_array_to_binary(color_array)
+    led.update_frame(binary)
+    return {}
+
+@app.route("/image/apply_id", methods=["POST"])
+def apply_id():
+    """ Apply image by id to the frame """
     image_id = request.args.get('image_id', type = int)
 
-    if image_id:
-        binary = database.load_single_binary(image_id)
-        utils.write_settings("last_applied_image_id", image_id)
-    else:
-        color_array = request.json
-        binary = utils.color_array_to_binary(color_array)
+    binary = database.load_single_binary(image_id)
     led.update_frame(binary)
+    utils.write_settings("last_applied_image_id", image_id)
     return {}
 
 @app.route("/image/save", methods=["POST"])

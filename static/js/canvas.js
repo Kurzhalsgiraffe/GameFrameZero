@@ -91,11 +91,21 @@ class CanvasObject {
         }
     }
 
-    async sendColorArrayToServer(route=null, image_id=null) {
-        if (image_id) {
-            route = route+"?image_id="+image_id
-        }
+    async sendColorArrayToServer(route) {
         let response = await fetch(route, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(this.colorArray)
+        });
+        if (response.status != 200) {
+            console.log("failed to send colorArray to server");
+        }
+    }
+
+    async replaceColorArrayOnServer(image_id=null) {
+        let response = await fetch("/image/replace?image_id="+image_id, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
