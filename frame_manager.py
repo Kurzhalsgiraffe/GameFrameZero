@@ -181,7 +181,7 @@ class FrameManager:
         self.database.vacuum()
 
     def get_animationlist_by_id(self, animation_id):
-        self.database.get_animationlist_by_id(animation_id)
+        return self.database.get_animationlist_by_id(animation_id)
 
 
 
