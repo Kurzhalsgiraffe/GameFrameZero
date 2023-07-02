@@ -137,7 +137,7 @@ def power_apply(power):
 def animation_start(animation_id):
     """ Start a animation, stop the currently running if nessessary """
     manager.animation.stop()
-    t = Thread(target=manager.animation.start_animation, args=(animation_id))
+    t = Thread(target=manager.animation.start_animation, args=(animation_id,))
     t.start()
     return {}
 
