@@ -83,7 +83,6 @@ async function loadDefaultAnimationTime() {
     let response = await fetch("/animationtime/load");
     if (response.status == 200) {
         res = await response.text();
-        console.log(typeof(res))
         return parseInt(res)
     } else {
         console.log("failed to load default animationtime value from server");
@@ -91,7 +90,7 @@ async function loadDefaultAnimationTime() {
 }
 
 async function addFrameToAnimation() {
-    let response = await fetch("/animation/frame/add/"+animation_id+"/"+currentPos, {
+    let response = await fetch("/animation/frame/add?animation_id="+animation_id+"&image_id="+currentPos, {        
         method: "POST"
     });
     if (response.status == 200) {

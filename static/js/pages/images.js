@@ -45,7 +45,7 @@ async function applyColorArrayByID(image_id) {
 }
 
 async function deleteColorArrayFromServer(id) {
-    let response = await fetch("/delete/"+id, {
+    let response = await fetch("/image/delete/"+id, {
         method: "DELETE"
     });
     if (response.status == 200) {

@@ -103,7 +103,7 @@ def replace():
     """ Replace an image by a new image """
     image_id = request.args.get('image_id', type = int)
     color_array = request.json
-    if image_id and color_array:            # TODO: Dont know if its nessesary to check for color_array too
+    if image_id and color_array:
         manager.replace_color_array(image_id, color_array)
         return {}
     return {},400
@@ -158,8 +158,10 @@ def animation_create(name):
     manager.create_animation(name)
     return {}
 
-@app.route("/animation/frame/add/<animation_id>/<image_id>", methods=["POST"]) # TODO: add response stuff here
-def animation_frame_add(animation_id, image_id):
+@app.route("/animation/frame/add", methods=["POST"])
+def animation_frame_add():
+    animation_id = request.args.get('animation_id', type = int)
+    image_id = request.args.get('image_id', type = int)
     """ Add a frame to an animation """
     manager.add_animation_frame(animation_id, image_id)
     return {}
@@ -184,7 +186,7 @@ def animation_frame_switchpositions():
 
 ## ----- DELETE ----- ##
 
-@app.route("/delete/<image_id>", methods=["DELETE"])  # TODO: RENAME
+@app.route("/image/delete/<image_id>", methods=["DELETE"])
 def delete(image_id):
     """ delete image by id"""
     manager.delete_image(image_id)
@@ -203,6 +205,8 @@ def animation_frame_remove():
     position = request.args.get('pos', type = int)
     manager.remove_animation_frame(animation_id, position)
     return {}
+
+## ----- MAIN ----- ##
 
 if __name__ == "__main__":
     last_applied_image_id = frame_manager.read_settings("last_applied_image_id")
