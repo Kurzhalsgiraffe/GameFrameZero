@@ -34,28 +34,21 @@ def animation_editor_page():
 def animation_load(animation_id):
     """ Load all informations of this animation """
     data = manager.get_animationlist_by_id(animation_id)
-    if data:
-        return jsonify(data)
-    return {},400
+    return jsonify(data)
 
 @app.route("/animation/load/all")
 def animation_load_all():
     """ Load all animation_ids, animation_names and the image_id of their first image """
     data = manager.load_animation_info_all()
-    if data:
-        return jsonify(data)
-    return {},400
+    return jsonify(data)
 
 @app.route("/image/load/single")
 def image_load_single():
     """  Calculate image_id based on current image_id and pos, and return image and new image_id """
     current_image_id = request.args.get('image_id', type = int)
     pos = request.args.get('pos', type = str)
-
     data = manager.load_single_frame(current_image_id, pos)
-    if data:
-        return jsonify(data)
-    return {},400
+    return jsonify(data)
 
 @app.route("/brightness/load")
 def brightness_load():
@@ -114,10 +107,7 @@ def replace():
 def image_load_multiple():
     """ Load multiple binarys by image_id """
     image_ids = request.json
-    data = manager.load_multiple_binaries(image_ids)
-    if data:
-        return jsonify(data)
-    return {},400
+    return jsonify(manager.load_multiple_binaries(image_ids))
 
 @app.route("/brightness/apply/<brightness>", methods=["POST"])
 def brightness_apply(brightness):

@@ -307,7 +307,7 @@ class Dao:
             sql = "SELECT * FROM animations"
             data = cursor.execute(sql).fetchall()
             conn.close()
-            return data
+            return sorted(data, key=lambda x: x[0])
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())

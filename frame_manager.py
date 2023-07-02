@@ -66,28 +66,19 @@ class FrameManager:
         write_settings("last_applied_image_id", image_id)
 
     def load_animation_info_all(self):
-        animation_ids = []
-        animation_names = []
-        data = sorted(self.database.get_all_animations(), key=lambda x: x[0])
-        if data:
-            for i in data:
-                animation_ids.append(i[0])
-                if i[1]=="null":
-                    animation_names.append("Animation "+str(i[0]))
-                else:
-                    animation_names.append(i[1])
+        data = {"animationIDs": [], "animationNames": [], "thumbnailIDs": []}
 
-            thumbnail_ids = self.database.get_all_animation_thumbnail_ids(animation_ids)
-
-            data = {
-                    "animationIDs": animation_ids,
-                    "animationNames": animation_names,
-                    "thumbnailIDs": thumbnail_ids
-                }
-            return data
-        return None
+        info = self.database.get_all_animations()
+        if info:
+            for i in info:
+                data["animationIDs"].append(i[0])
+                data["animationNames"].append(i[1] if i[1] != "null" else "Animation " + str(i[0]))
+            data["thumbnailIDs"] = self.database.get_all_animation_thumbnail_ids(data["animationIDs"])
+        return data
     
     def load_single_frame(self, image_id, pos):
+        data = {"colorArray": [], "imageID": 0}
+
         skip_offset = read_settings("skip_offset")
 
         if pos:
@@ -106,12 +97,9 @@ class FrameManager:
 
         binary = self.database.load_single_binary(image_id)
         if binary:
-            data = {
-                "colorArray": binary_to_color_array(binary),
-                "imageID": image_id
-            }
-            return data
-        return None
+            data["colorArray"] = binary_to_color_array(binary)
+            data["imageID"] = image_id
+        return data
     
     def save_color_array(self, color_array):
         binary = color_array_to_binary(color_array)
@@ -184,19 +172,10 @@ class FrameManager:
         return self.database.get_animationlist_by_id(animation_id)
 
 
-
-
-
-
-
-
-
-# FUNCTIONS
+## ----- FUNCTIONS ----- ##
 
 def write_settings(key, value):
-    """
-    Write the key value pair the settings file
-    """
+    """ Write the key value pair the settings file """
     with open('settings.json', 'r', encoding="utf-8") as file:
         settings = json.load(file)
         settings[key] = value
@@ -205,9 +184,7 @@ def write_settings(key, value):
         json.dump(settings, file)
 
 def read_settings(key):
-    """
-    Read the value to the key from the settings file
-    """
+    """ Read the value to the key from the settings file """
     with open('settings.json', 'r', encoding="utf-8") as file:
         settings = json.load(file)
     if key in settings:
@@ -215,9 +192,7 @@ def read_settings(key):
     return None
 
 def color_array_to_binary(color_array):
-    """
-    Calculate bytearray from color_array
-    """
+    """ Calculate bytearray from color_array """
     byte_array = bytearray()
     for color in color_array:
         byte_array.append(int(color[1:3], 16))
@@ -226,9 +201,7 @@ def color_array_to_binary(color_array):
     return byte_array
 
 def binary_to_color_array(binary):
-    """
-    Calculate color_array from bytearray
-    """
+    """ Calculate color_array from bytearray """
     color_array = []
     for i in range(0,768,3):
         color_array.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
