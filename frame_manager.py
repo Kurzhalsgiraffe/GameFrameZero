@@ -4,25 +4,72 @@ import time
 from database_access import Dao
 from led_hardware import LEDMatrix
 
+class Config:
+    def __init__(self, config_file):
+        self.config_file = config_file
+        self.defaults = {
+            "brightness": 1,
+            "database_file": "database.sqlite",
+            "default_animation_time": 200,
+            "language": "de",
+            "last_applied_image_id": 1,
+            "power": "on",
+            "skip_offset": 10,
+            "speed": 1.0,
+            "vacuum_on_start": False,
+        }
+
+    def read_config_file(self):
+        with open(self.config_file, 'r', encoding="utf-8") as file:
+            config = json.load(file)
+        return config
+    
+    def write_config_file(self, config):
+        with open(self.config_file, 'w+', encoding="utf-8") as file:
+            json.dump(config, file, indent=4)
+
+    def get_config(self, key):
+        """ Read the value to the key from the settings file """
+        config = self.read_config_file()
+        if key in config:
+            return config[key]
+        elif key in self.defaults:
+            value = self.defaults[key]
+            self.update_config(key, value)
+            return value
+        return None
+
+    def update_config(self, key, value):
+        """ Write the key value pair the settings file """
+        config = self.read_config_file()
+        config[key] = value
+        self.write_config_file(config)
+
+
 class FrameManager:
     def __init__(self):
-        self.database = Dao("database.sqlite")
-        self.led = LEDMatrix(brightness=read_settings("brightness"))
+        self.config = Config('settings.json')
+        self.database = Dao(self.config.get_config("database_file"))
+        self.led = LEDMatrix(brightness=self.config.get_config("brightness"))
+        self.default_animation_time = self.config.get_config("default_animation_time")
+        self.animation_speed = self.config.get_config("speed")
         self.animation_running = False
         self.animation_stopped = True
-        self.animation_speed = read_settings("speed")
-        self.default_animation_time = read_settings("default_animation_time")
+        self.vacuum_database()
 
     def apply_color_array(self, color_array):
-        binary = color_array_to_binary(color_array)
+        """ apply the given color_array """
+        binary = self.color_array_to_binary(color_array)
         self.led.update_frame(binary)
 
     def apply_image_id(self, image_id):
+        """ apply the image with the given image_id """
         binary = self.database.load_single_binary(image_id)
         self.led.update_frame(binary)
-        write_settings("last_applied_image_id", image_id)
+        self.config.update_config("last_applied_image_id", image_id)
 
     def load_animation_info_all(self):
+        """ load ids, names and thumbnail ids of all animations """
         data = {"animationIDs": [], "animationNames": [], "thumbnailIDs": []}
 
         info = self.database.get_all_animations()
@@ -33,11 +80,10 @@ class FrameManager:
             data["thumbnailIDs"] = self.database.get_all_animation_thumbnail_ids(data["animationIDs"])
         return data
     
-    def load_single_frame(self, image_id, pos):
+    def load_single_image(self, image_id, pos):
+        """ load a single image. if pos is given, the relative position from the image_id will be selected"""
         data = {"colorArray": [], "imageID": 0}
-
-        skip_offset = read_settings("skip_offset")
-
+        skip_offset = self.config.get_config("skip_offset")
         if pos:
             if pos == "first":
                 image_id = self.database.get_first_image_id()
@@ -54,47 +100,59 @@ class FrameManager:
 
         binary = self.database.load_single_binary(image_id)
         if binary:
-            data["colorArray"] = binary_to_color_array(binary)
+            data["colorArray"] = self.binary_to_color_array(binary)
             data["imageID"] = image_id
         return data
     
     def save_color_array(self, color_array):
-        binary = color_array_to_binary(color_array)
+        """ save the color_array to the database """
+        binary = self.color_array_to_binary(color_array)
         self.database.save_binary(binary)
 
     def replace_color_array(self, image_id, color_array):
-        binary = color_array_to_binary(color_array)
+        """ replace the existing image on the given image_id with the new color_array """
+        binary = self.color_array_to_binary(color_array)
         self.database.replace_binary(image_id,binary)
 
     def load_multiple_binaries(self, image_ids):
+        """ load the binaries for the given image_ids """
         data = []
         if image_ids:
             binarys = self.database.load_multiple_binarys(image_ids)
             for i in binarys:
                 if i:
-                    data.append((i[0], binary_to_color_array(bytearray(i[1]))))
+                    data.append((i[0], self.binary_to_color_array(bytearray(i[1]))))
                 else:
                     data.append(None)
         return data
 
     def apply_brightness(self, brightness):
-        if read_settings("power") == "on":
+        """ apply the brightness settings """
+        if self.config.get_config("power") == "on":
             self.led.update_brightness(int(brightness))
-        write_settings("brightness", int(brightness))
+        self.config.update_config("brightness", int(brightness))
 
     def apply_power(self, power):
+        """ apply the power settings """
         if power == "on":
-            brightness = int(read_settings("brightness"))
+            brightness = int(self.config.get_config("brightness"))
             self.led.update_brightness(brightness)
         elif power == "off":
             self.led.update_brightness(0)
+        self.config.update_config("power", power)
 
-        write_settings("power", power)
+    def vacuum_database(self):
+        """ perform a vacuum on the database if configured"""
+        if self.config.get_config("vacuum_on_start"):
+            self.database.vacuum()
+
+# ---- ANIMATION ----
 
     def create_animation(self, name):
         self.database.create_animation(name)
 
-    def add_animation_frame(self, animation_id, image_id):
+    def add_animationframe(self, animation_id, image_id):
+        """ add a frame to the animation """
         last_pos = self.database.get_last_position_by_animation_id(animation_id)
         if last_pos:
             next_pos = last_pos + 1
@@ -104,33 +162,38 @@ class FrameManager:
         self.database.add_image_to_animation(animation_id, image_id, next_pos, self.default_animation_time)
 
     def update_time_for_animationframe(self, animation_id, position, time):
+        """ update the time for the animationframe at the given position """
         if position == "all":
             self.database.update_animation_time_of_all_frames(animation_id, time)
         else:
             self.database.update_animation_time_of_single_frame(animation_id, position, time)
 
     def switch_animation_positions(self, animation_id, source_id, target_id):
+        """ switch positions of frames in the animation """
         self.database.switch_animation_positions(animation_id, source_id, target_id)
 
     def delete_image(self, image_id):
+        """ delete image by id """
         self.database.delete_binary(int(image_id))
 
     def delete_animation(self, animation_id):
+        """ delete animation by id """
         self.database.delete_animation(animation_id)
         self.database.remove_all_images_from_animation(animation_id)
 
     def remove_animation_frame(self, animation_id, position):
+        """ remove the animation frame at the given position """
         self.database.remove_image_from_animation(animation_id, position)
-
-    def vacuum_database(self):
-        self.database.vacuum()
-
-    def get_animationlist_by_id(self, animation_id):
-        return self.database.get_animationlist_by_id(animation_id)
     
+    def set_animation_speed(self, speed):
+        """ set the animation speed multiplicator"""
+        self.animation_speed = float(speed)
+        self.config.update_config("speed", self.animation_speed)
+
     def load_animation(self, animation_id):
+        """ generate animationlist to loop through """
         animationlist = []
-        data = self.get_animationlist_by_id(animation_id)
+        data = self.database.load_animation_info_single(animation_id)
         if data:
             binarys = self.database.load_multiple_binarys(data["imageIDs"])
 
@@ -139,7 +202,7 @@ class FrameManager:
         return animationlist
 
     def start_animation(self, animation_id):
-        """ Start animation by id """
+        """ start animation by id """
         animationlist = self.load_animation(animation_id)
         if animationlist:
             self.animation_running = True
@@ -156,44 +219,19 @@ class FrameManager:
         """ Stop the animation """
         while self.animation_stopped is False:
             self.animation_running = False
-    
-    def set_animation_speed(self, speed):
-        """ Set the percentage of the animation speed """
-        self.animation_speed = float(speed)
-        write_settings("speed", self.animation_speed)
 
+    def binary_to_color_array(self, binary):
+        """ convert bytearray to color_array """
+        color_array = []
+        for i in range(0,768,3):
+            color_array.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
+        return color_array
 
-## ----- FUNCTIONS ----- ##
-
-def write_settings(key, value):
-    """ Write the key value pair the settings file """
-    with open('settings.json', 'r', encoding="utf-8") as file:
-        settings = json.load(file)
-        settings[key] = value
-
-    with open('settings.json', 'w', encoding="utf-8") as file:
-        json.dump(settings, file)
-
-def read_settings(key):
-    """ Read the value to the key from the settings file """
-    with open('settings.json', 'r', encoding="utf-8") as file:
-        settings = json.load(file)
-    if key in settings:
-        return settings[key]
-    return None
-
-def color_array_to_binary(color_array):
-    """ Calculate bytearray from color_array """
-    byte_array = bytearray()
-    for color in color_array:
-        byte_array.append(int(color[1:3], 16))
-        byte_array.append(int(color[3:5], 16))
-        byte_array.append(int(color[5:7], 16))
-    return byte_array
-
-def binary_to_color_array(binary):
-    """ Calculate color_array from bytearray """
-    color_array = []
-    for i in range(0,768,3):
-        color_array.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
-    return color_array
+    def color_array_to_binary(self, color_array):
+        """ convert color_array to bytearray """
+        byte_array = bytearray()
+        for color in color_array:
+            byte_array.append(int(color[1:3], 16))
+            byte_array.append(int(color[3:5], 16))
+            byte_array.append(int(color[5:7], 16))
+        return byte_array

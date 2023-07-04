@@ -1,1 +1,11 @@
-{"language": "de", "brightness": 1, "speed": 1.0, "power": "on", "last_applied_image_id": 2, "skip_offset": 10, "auto vacuum": false, "default_animation_time": 200}
+{
+    "brightness": 1,
+    "database_file": "database.sqlite",
+    "default_animation_time": 200,
+    "language": "de",
+    "last_applied_image_id": 1,
+    "power": "on",
+    "skip_offset": 10,
+    "speed": 1.0,
+    "vacuum_on_start": false
+}

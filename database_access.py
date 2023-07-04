@@ -409,7 +409,7 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def get_animationlist_by_id(self, animation_id):
+    def load_animation_info_single(self, animation_id):
         """
         This Method will load all informations of this animation
         """
