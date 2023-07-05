@@ -12,11 +12,11 @@ edit_animation_btn.addEventListener("click", editAnimation);
 delete_animation_btn.addEventListener("click", deleteAnimation);
 
 async function startAnimation() {
-    let id;
+    let animation_id;
     let response;
     if (activeTile) {
-        id = activeTile.id.slice(5,);
-        response = await fetch("/animation/start/"+id, {
+        animation_id = activeTile.id.slice(5,);
+        response = await fetch("/animation/start?animation_id="+animation_id, {
             method: "POST"
         });
         if (response.status != 200) {
@@ -39,7 +39,7 @@ async function createAnimation() {
     if (!name) {
         name = null;
     }
-    let response = await fetch("/animation/create/"+name, {
+    let response = await fetch("/animation/create?name="+name, {
         method: "POST"
     });
     if (response.status == 200) {
@@ -59,10 +59,10 @@ async function editAnimation() {
 }
 
 async function deleteAnimation() {
-    let id;
+    let animation_id;
     if (activeTile) {
-        id = activeTile.id.slice(5,)
-        let response = await fetch("/animation/delete/"+id, {
+        animation_id = activeTile.id.slice(5,)
+        let response = await fetch("/animation/delete?animation_id="+animation_id, {
             method: "DELETE"
         });
         if (response.status == 200) {

@@ -126,13 +126,13 @@ class FrameManager:
                     data.append(None)
         return data
 
-    def apply_brightness(self, brightness):
+    def set_brightness(self, brightness):
         """ apply the brightness settings """
         if self.config.get_config("power") == "on":
             self.led.update_brightness(int(brightness))
         self.config.update_config("brightness", int(brightness))
 
-    def apply_power(self, power):
+    def set_power(self, power):
         """ apply the power settings """
         if power == "on":
             brightness = int(self.config.get_config("brightness"))

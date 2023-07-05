@@ -103,7 +103,7 @@ async function addFrameToAnimation() {
 }
 
 async function loadAnimationListFromServer() {
-    let response = await fetch("/animation/load/"+animation_id);
+    let response = await fetch("/animation/load?animation_id="+animation_id);
     let res = await response.json();
     if (response.status == 200) {
         return [res.imageIDs, res.positions, res.times];

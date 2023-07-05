@@ -26,8 +26,9 @@ def animations_page():
 def animation_editor_page():
     return render_template("animation_editor.html")
 
-@app.route("/animation/load/<animation_id>")
-def animation_load(animation_id):
+@app.route("/animation/load")
+def animation_load():
+    animation_id = request.args.get('animation_id', type = int)
     data = manager.database.load_animation_info_single(animation_id)
     return jsonify(data)
 
@@ -97,28 +98,33 @@ def image_load_multiple():
     image_ids = request.json
     return jsonify(manager.load_multiple_binaries(image_ids))
 
-@app.route("/brightness/apply/<brightness>", methods=["POST"])
-def brightness_apply(brightness):
-    manager.apply_brightness(brightness)
+@app.route("/brightness/set", methods=["POST"])
+def set_brightness():
+    brightness = request.args.get('brightness', type = int)
+    manager.set_brightness(brightness)
     return {}
 
-@app.route("/language/apply/<language>", methods=["POST"])
-def language_apply(language):
+@app.route("/language/set", methods=["POST"])
+def set_language():
+    language = request.args.get('language', type = str)
     manager.config.update_config("language", language)
     return {}
 
-@app.route("/speed/apply/<speed>", methods=["POST"])
-def speed_apply(speed):
-    manager.set_animation_speed(float(speed))
+@app.route("/speed/set", methods=["POST"])
+def set_speed():
+    speed = request.args.get('speed', type = float)
+    manager.set_animation_speed(speed)
     return {}
 
-@app.route("/power/apply/<power>", methods=["POST"])
-def power_apply(power):
-    manager.apply_power(power)
+@app.route("/power/set", methods=["POST"])
+def set_power():
+    power = request.args.get('power', type = str)
+    manager.set_power(power)
     return {}
 
-@app.route("/animation/start/<animation_id>", methods=["POST"])
-def animation_start(animation_id):
+@app.route("/animation/start", methods=["POST"])
+def animation_start():
+    animation_id = request.args.get('animation_id', type = int)
     manager.stop_animation()
     t = Thread(target=manager.start_animation, args=(animation_id,))
     t.start()
@@ -129,8 +135,9 @@ def animation_stop():
     manager.stop_animation()
     return {}
 
-@app.route("/animation/create/<name>", methods=["POST"])
-def animation_create(name):
+@app.route("/animation/create", methods=["POST"])
+def animation_create():
+    name = request.args.get('name', type = str)
     manager.create_animation(name)
     return {}
 
@@ -159,13 +166,15 @@ def animation_frame_switchpositions():
 
 ## ----- DELETE ----- ##
 
-@app.route("/image/delete/<image_id>", methods=["DELETE"])
-def delete(image_id):
+@app.route("/image/delete", methods=["DELETE"])
+def delete():
+    image_id = request.args.get('image_id', type = int)
     manager.delete_image(image_id)
     return {}
 
-@app.route("/animation/delete/<animation_id>", methods=["DELETE"])
-def animation_delete(animation_id):
+@app.route("/animation/delete", methods=["DELETE"])
+def animation_delete():
+    animation_id = request.args.get('animation_id', type = int)
     manager.delete_animation(animation_id)
     return {}
 

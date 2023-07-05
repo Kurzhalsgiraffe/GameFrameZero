@@ -3,15 +3,15 @@ const brightness_slider = document.querySelector("#sidebar-brightness-slider");
 
 brightness_slider.addEventListener("change", ()=>{
     brightness_value.textContent = brightness_slider.value;
-    applyBrightness(brightness_slider.value);
+    setBrightness(brightness_slider.value);
 });
 
 brightness_slider.addEventListener("input", function() {
     brightness_value.textContent = brightness_slider.value;
 });
 
-async function applyBrightness(brightness) {
-    let response = await fetch("/brightness/apply/"+brightness, {
+async function setBrightness(brightness) {
+    let response = await fetch("/brightness/set?brightness="+brightness, {
         method: "POST",
     });
     if (response.status != 200) {

@@ -10,7 +10,7 @@ function togglePower() {
       power = "on";
     }
     movePowerSlider(power)
-    applyPowerStatus(power)
+    setPowerStatus(power)
 }
 
 function movePowerSlider(power) {
@@ -32,8 +32,8 @@ async function loadPowerStatus() {
     return power;
 }
 
-async function applyPowerStatus(power) {
-    let response = await fetch("/power/apply/"+power, {
+async function setPowerStatus(power) {
+    let response = await fetch("/power/set?power="+power, {
         method: "POST",
     });
     if (response.status != 200) {

@@ -3,15 +3,15 @@ const speed_slider = document.querySelector("#sidebar-animationspeed-slider");
 
 speed_slider.addEventListener("change", ()=>{
     speed_value.textContent = speed_slider.value/10;
-    applySpeed(speed_slider.value);
+    setSpeed(speed_slider.value);
 });
 
 speed_slider.addEventListener("input", function() {
     speed_value.textContent = speed_slider.value/10;
 });
 
-async function applySpeed(speed) {
-    let response = await fetch("/speed/apply/"+(speed/10), {
+async function setSpeed(speed) {
+    let response = await fetch("/speed/set?speed="+(speed/10), {
         method: "POST",
     });
     if (response.status != 200) {

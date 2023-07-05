@@ -36,7 +36,7 @@ async function loadLanguage() {
 }
 
 async function setServerLanguage(language) {
-    let response = await fetch("/language/apply/"+language, {
+    let response = await fetch("/language/set?language="+language, {
         method: "POST",
     });
     if (response.status != 200) {
