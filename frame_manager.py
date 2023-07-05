@@ -217,7 +217,7 @@ class FrameManager:
 
     def stop_animation(self):
         """ Stop the animation """
-        while self.animation_stopped is False:
+        while not self.animation_stopped:
             self.animation_running = False
 
     def binary_to_color_array(self, binary):

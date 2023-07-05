@@ -69,12 +69,14 @@ def animationtime_load():
 @app.route("/image/apply_color_array", methods=["POST"])
 def apply_color_array():
     color_array = request.json
+    manager.stop_animation()
     manager.apply_color_array(color_array)
     return {}
 
 @app.route("/image/apply_id", methods=["POST"])
 def apply_id():
     image_id = request.args.get('image_id', type = int)
+    manager.stop_animation()
     manager.apply_image_id(image_id)
     return {}
 
