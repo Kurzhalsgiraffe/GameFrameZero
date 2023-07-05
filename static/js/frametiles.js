@@ -16,7 +16,7 @@ async function loadMultipleArraysFromServer(ids) {
         let res = await response.json();
         return res;
     } else {
-        console.log("failed to load Arrays from server");
+        console.log("failed to load Color Arrays from server");
     }
 }
 
@@ -94,7 +94,6 @@ function clearTileBody() {
 function removeTileFromBody(frame) {
     let id = parseInt(frame.id.slice(5,));
     tile_body.removeChild(frame);
-    decreaseFrameIDs(id);
 }
 
 function getLastTileID() {
@@ -103,19 +102,5 @@ function getLastTileID() {
         return lastChild.id.slice(5,);
     } else {
         return 0;
-    }
-}
-
-function decreaseFrameIDs(id) {
-    for (let i = id; i <= tile_body.children.length; i++) {
-        let wrap = document.querySelector("#wrap-"+(i+1));
-        let tile = wrap.firstChild;
-        let canvas = tile.children[0];
-        let cardbody = tile.children[1];
-
-        wrap.setAttribute("id", "wrap-"+i);
-        tile.setAttribute("id", "tile-"+i);
-        canvas.setAttribute("id", "canvas-"+i);
-        cardbody.setAttribute("id", "card-body-"+i);
     }
 }
