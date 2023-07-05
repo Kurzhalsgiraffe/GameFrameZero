@@ -45,7 +45,7 @@ async function RemoveFrameFromAnimation() {
     let response;
     if (activeTile != null) {
         active_frame_id = activeTile.id.slice(5,);
-        response = await fetch("/animation/frame/remove?animation_id="+animation_id+"&pos="+active_frame_id, {
+        response = await fetch("/animation/removeframe?animation_id="+animation_id+"&pos="+active_frame_id, {
             method: "DELETE"
         });
         if (response.status == 200) {
@@ -68,7 +68,7 @@ async function UpdateTime() {
     }
 
     if (time.length>0 && position != null) {
-        response = await fetch("/animation/frame/updatetime?animation_id="+animation_id+"&position="+position+"&time="+time, {
+        response = await fetch("/animation/updatetime?animation_id="+animation_id+"&position="+position+"&time="+time, {
             method: "POST"
         }); 
         if (response.status == 200) {
@@ -90,20 +90,20 @@ async function loadDefaultAnimationTime() {
 }
 
 async function addFrameToAnimation() {
-    let response = await fetch("/animation/frame/add?animation_id="+animation_id+"&image_id="+currentPos, {        
+    let response = await fetch("/animation/addframe?animation_id="+animation_id+"&image_id="+currentPos, {        
         method: "POST"
     });
     if (response.status == 200) {
-        let default_animation_time = await loadDefaultAnimationTime()
+        let default_animationtime = await loadDefaultAnimationTime()
         pos = parseInt(getLastTileID()) + 1;
-        initializeSingleAnimationTile(pos, currentPos, default_animation_time)
+        initializeSingleAnimationTile(pos, currentPos, default_animationtime)
     } else {
         console.log("failed to add frame number " + currentPos + " to the Animation");
     }
 }
 
 async function loadAnimationListFromServer() {
-    let response = await fetch("/animation/load?animation_id="+animation_id);
+    let response = await fetch("/animation/info/load/single?animation_id="+animation_id);
     let res = await response.json();
     if (response.status == 200) {
         return [res.imageIDs, res.positions, res.times];
@@ -116,7 +116,7 @@ async function switchFramePositions(target_id) {
     let response;
     let source_id = dragStartPosition
     if (dragStartPosition != target_id) {
-        response = await fetch("/animation/frame/switchpositions?animation_id="+animation_id+"&source_id="+source_id+"&target_id="+target_id, {
+        response = await fetch("/animation/switchframepositions?animation_id="+animation_id+"&source_id="+source_id+"&target_id="+target_id, {
             method: "POST"
         });
         if (response.status == 200) {

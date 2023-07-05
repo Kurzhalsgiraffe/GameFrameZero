@@ -10,7 +10,7 @@ class Config:
         self.defaults = {
             "brightness": 1,
             "database_file": "database.sqlite",
-            "default_animation_time": 200,
+            "default_animationtime": 200,
             "language": "de",
             "last_applied_image_id": 1,
             "power": "on",
@@ -51,7 +51,7 @@ class FrameManager:
         self.config = Config('settings.json')
         self.database = Dao(self.config.get_config("database_file"))
         self.led = LEDMatrix(brightness=self.config.get_config("brightness"))
-        self.default_animation_time = self.config.get_config("default_animation_time")
+        self.default_animationtime = self.config.get_config("default_animationtime")
         self.animation_speed = self.config.get_config("speed")
         self.animation_running = False
         self.animation_stopped = True
@@ -159,7 +159,7 @@ class FrameManager:
         else:
             next_pos = 1
 
-        self.database.add_image_to_animation(animation_id, image_id, next_pos, self.default_animation_time)
+        self.database.add_image_to_animation(animation_id, image_id, next_pos, self.default_animationtime)
 
     def update_time_for_animationframe(self, animation_id, position, time):
         """ update the time for the animationframe at the given position """

@@ -74,7 +74,7 @@ async function deleteAnimation() {
 }
 
 async function loadAllAnimationsFromServer() {
-    let response = await fetch("/animation/load/all");
+    let response = await fetch("/animation/info/load/all");
     let res = await response.json();
     if (response.status == 200) {
         return [res.animationIDs, res.animationNames, res.thumbnailIDs];

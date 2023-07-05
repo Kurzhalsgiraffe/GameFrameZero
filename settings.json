@@ -1,11 +1,11 @@
 {
     "brightness": 1,
     "database_file": "database.sqlite",
-    "default_animation_time": 200,
     "language": "de",
     "last_applied_image_id": 1,
     "power": "on",
     "skip_offset": 10,
     "speed": 1.0,
-    "vacuum_on_start": false
+    "vacuum_on_start": false,
+    "default_animationtime": 200
 }

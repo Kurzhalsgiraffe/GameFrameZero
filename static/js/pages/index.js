@@ -15,7 +15,7 @@ let isMouseDownCanvas;
 let drawMode = true;
 let loadedIDToEdit = null;
 
-apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/image/apply_color_array"));
+apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/image/apply/colorarray"));
 save_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/image/save"));
 replace_btn.addEventListener("click", async () => await canvasObject.replaceColorArrayOnServer(loadedIDToEdit));
 
@@ -199,7 +199,6 @@ function moveDown() {
     canvasObject.drawColorArrayToCanvas();
     canvasObject.c.fillStyle = color_selector.value;
 }
-
 
 document.addEventListener("DOMContentLoaded", async function() {
     canvasObject.initializeColorArray();
