@@ -8,7 +8,7 @@ const prev_frame_btn = document.querySelector("#prev-frame-btn");
 const next_frame_btn = document.querySelector("#next-frame-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
 const fast_forwards_btn = document.querySelector("#fast-forwards-btn");
-const frameNumber = document.getElementById("framenumber");
+const frameName = document.getElementById("image-name");
 var canvasObject = new CanvasObject(canvas, FRAME_SIZE=800, PIXEL_SIZE=50, colorArray=[]);
 var currentPos = 1;
 
@@ -26,10 +26,10 @@ async function loadAndShow(id=null, pos=null) {
     await canvasObject.loadColorArrayFromServer(id, pos);
     currentPos = canvasObject.currentPos;
     if (canvasObject.colorArray.length === 0) {
-        frameNumber.textContent = "-";
+        frameName.textContent = "-";
         canvasObject.initializeColorArray();
     } else {
-        frameNumber.textContent = currentPos;
+        frameName.textContent = canvasObject.imageName;
     }
     canvasObject.drawColorArrayToCanvas();
     canvasObject.drawGrid();

@@ -7,7 +7,7 @@ const prev_frame_btn = document.querySelector("#prev-frame-btn");
 const next_frame_btn = document.querySelector("#next-frame-btn");
 const fast_forwards_btn = document.querySelector("#fast-forwards-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
-const frameNumber = document.getElementById("framenumber");
+const frameName = document.getElementById("image-name");
 const animation_time_all_checkbox = document.querySelector("#sidebar-time-set-time-for-all-checkbox");
 const animation_time = document.querySelector("#sidebar-time-input");
 const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
@@ -31,10 +31,10 @@ async function loadAndShow(id=null,pos=null) {
     await selectorCanvasObject.loadColorArrayFromServer(id,pos);
     currentPos = selectorCanvasObject.currentPos;
     if (selectorCanvasObject.colorArray.length === 0) {
-        frameNumber.textContent = "-";
+        frameName.textContent = "-";
         selectorCanvasObject.initializeColorArray();
     } else {
-        frameNumber.textContent = currentPos;
+        frameName.textContent = selectorCanvasObject.imageName;
     }
     selectorCanvasObject.drawColorArrayToCanvas();
     selectorCanvasObject.drawGrid();
@@ -89,14 +89,25 @@ async function loadDefaultAnimationTime() {
     }
 }
 
+async function getImageNameById(image_id) {
+    let response = await fetch("/image/getname?image_id="+image_id);
+    if (response.status == 200) {
+        res = await response.text();
+        return res
+    } else {
+        console.log("failed to load image name from server");
+    }
+}
+
 async function addFrameToAnimation() {
     let response = await fetch("/animation/addframe?animation_id="+animation_id+"&image_id="+currentPos, {        
         method: "POST"
     });
     if (response.status == 200) {
         let default_animationtime = await loadDefaultAnimationTime()
+        let image_name = await getImageNameById(currentPos);
         pos = parseInt(getLastTileID()) + 1;
-        initializeSingleAnimationTile(pos, currentPos, default_animationtime)
+        initializeSingleAnimationTile(pos, currentPos, image_name, default_animationtime);
     } else {
         console.log("failed to add frame number " + currentPos + " to the Animation");
     }
@@ -106,7 +117,7 @@ async function loadAnimationListFromServer() {
     let response = await fetch("/animation/info/load/single?animation_id="+animation_id);
     let res = await response.json();
     if (response.status == 200) {
-        return [res.imageIDs, res.positions, res.times];
+        return [res.imageIDs, res.imageNames, res.positions, res.times];
     } else {
         console.log("failed to load AnimationList from server");
     }
@@ -150,31 +161,31 @@ async function attachHandlers(ids) {
     }
 }
 
-async function addContentToTiles(image_ids, positions, image_times) {
-    for (let x=0; x<image_ids.length; x++) {
-        let image_id = image_ids[x]
+async function addContentToTiles(image_names, positions, image_times) {
+    for (let x=0; x<image_names.length; x++) {
+        let image_name = image_names[x]
         let pos = positions[x]
         let time = image_times[x]
 
         let cardbody = document.querySelector("#card-body-"+pos);
         let tile = document.querySelector("#tile-"+pos);
 
-        const image_id_tag = document.createElement("h4");
+        const image_name_tag = document.createElement("h4");
         const time_tag = document.createElement("h5");
 
         tile.setAttribute("draggable", "true");
-        image_id_tag.classList.add("card-title");
+        image_name_tag.classList.add("card-title");
         time_tag.classList.add("card-title");
 
+        image_name_tag.innerHTML = `${image_name}`;
+
         if (document.documentElement.lang == "en") {
-            image_id_tag.innerHTML = `IMAGE ${image_id}`;
             time_tag.innerHTML = `${time/1000} Seconds`;
         } else if (document.documentElement.lang == "de") {
-            image_id_tag.innerHTML = `BILD ${image_id}`;
             time_tag.innerHTML = `${time/1000} Sekunden`;
         }
 
-        cardbody.appendChild(image_id_tag);
+        cardbody.appendChild(image_name_tag);
         cardbody.appendChild(time_tag);
     }
 }
@@ -184,20 +195,22 @@ async function initializeAnimationTiles() {
 
     let animation_list = await loadAnimationListFromServer();
     let image_ids = animation_list[0];
-    let positions = animation_list[1];
-    let times = animation_list[2];
+    let image_names = animation_list[1];
+    let positions = animation_list[2];
+    let times = animation_list[3];
 
     await createCanvasTiles(positions, image_ids);
-    await addContentToTiles(image_ids, positions, times);
+    await addContentToTiles(image_names, positions, times);
     await attachHandlers(positions);
 }
 
-async function initializeSingleAnimationTile(position, image_id, time) {
-    let positions = [position]
-    let image_ids = [image_id]
-    let times = [time]
+async function initializeSingleAnimationTile(position, image_id, image_name, time) {
+    let positions = [position];
+    let image_ids = [image_id];
+    let image_names = [image_name];
+    let times = [time];
     await createCanvasTiles(positions, image_ids);
-    await addContentToTiles(image_ids, positions, times);
+    await addContentToTiles(image_names, positions, times);
     await attachHandlers(positions);
 }
 

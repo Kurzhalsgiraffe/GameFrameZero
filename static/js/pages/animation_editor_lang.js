@@ -18,7 +18,6 @@ const power_switch_on = document.querySelector("#power-switch-on");
 const power_switch_off = document.querySelector("#power-switch-off");
 
 const amimation_frame_selection = document.querySelector("#amimation-frame-selection");
-const framenumber_label = document.querySelector("#framenumber-label");
 const add_to_animation_label = document.querySelector("#add-to-animation-label");
 
 function setLanguage(lang) {
@@ -44,7 +43,6 @@ function setLanguage(lang) {
         power_switch_off.textContent = "OFF";
 
         amimation_frame_selection.textContent = "SELECTION";
-        framenumber_label.textContent = "IMAGE: ";
         add_to_animation_label.textContent = "ADD";
 
     } else if (lang == "de") {
@@ -69,7 +67,6 @@ function setLanguage(lang) {
         power_switch_off.textContent = "AUS";
 
         amimation_frame_selection.textContent = "AUSWAHL";
-        framenumber_label.textContent = "BILD: ";
         add_to_animation_label.textContent = "HINZUFÜGEN";
     }
 }

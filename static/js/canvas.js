@@ -5,6 +5,7 @@ class CanvasObject {
         this.gridColor = gridColor;
         this.colorArray = colorArray;
         this.currentPos = 1;
+        this.imageName = "";
         this.setColorArray(colorArray);
         
         if (canvas != null) {
@@ -81,10 +82,12 @@ class CanvasObject {
         if (response.status == 200) {
             if (res.colorArray) {
                 this.colorArray = res.colorArray;
-                this.currentPos = res.imageID;  
+                this.currentPos = res.imageID;
+                this.imageName = res.imageName;
             } else {
                 this.colorArray = []
                 this.currentPos = 0
+                this.imageName = ""
             }       
         } else {
             console.log("failed to load colorArray from server");

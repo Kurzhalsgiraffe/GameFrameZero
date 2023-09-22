@@ -12,8 +12,6 @@ const sidebar_brightness_collapse = document.querySelector("#sidebar-brightness-
 const power_switch_on = document.querySelector("#power-switch-on");
 const power_switch_off = document.querySelector("#power-switch-off");
 
-const framenumber_label = document.querySelector("#framenumber-label");
-
 function setLanguage(lang) {
     if (lang == "en") {
         navlink_draw.textContent = "DRAW";
@@ -33,8 +31,6 @@ function setLanguage(lang) {
         power_switch_on.textContent = "ON";
         power_switch_off.textContent = "OFF";
 
-        framenumber_label.textContent = "IMAGE: "
-
     } else if (lang == "de") {       
         navlink_draw.textContent = "ZEICHNEN";
         navlink_images.textContent = "BILDER";
@@ -52,7 +48,5 @@ function setLanguage(lang) {
 
         power_switch_on.textContent = "AN";
         power_switch_off.textContent = "AUS";
-
-        framenumber_label.textContent = "BILD: "
     }
 }

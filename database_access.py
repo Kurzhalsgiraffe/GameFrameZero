@@ -50,12 +50,15 @@ class Dao:
 
             sql = """CREATE TABLE IF NOT EXISTS images (
                 image_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                image_data BLOB NOT NULL)"""
+                image_name TEXT NOT NULL,
+                image_data BLOB NOT NULL
+                )"""
             cursor.execute(sql)
 
             sql = """CREATE TABLE IF NOT EXISTS animations (
                 animation_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                animation_name TEXT NOT NULL)"""
+                animation_name TEXT NOT NULL
+                )"""
             cursor.execute(sql)
 
             sql = """CREATE TABLE IF NOT EXISTS images_to_animations (
@@ -65,7 +68,8 @@ class Dao:
                 sleep_time INTEGER NOT NULL,
                 PRIMARY KEY (animation_id, pos),
                 FOREIGN KEY (animation_id) REFERENCES animations(animation_id),
-                FOREIGN KEY (image_id) REFERENCES images(image_id))"""
+                FOREIGN KEY (image_id) REFERENCES images(image_id)
+                )"""
             cursor.execute(sql)
             conn.close()
 
@@ -74,7 +78,7 @@ class Dao:
 
     # -----  IMAGES TABLE  -----#
 
-    def load_single_binary(self, image_id):
+    def load_single_binary_by_id(self, image_id):
         """
         This Method will load a single image from the Database by image_id
         """
@@ -84,13 +88,13 @@ class Dao:
             sql = "SELECT * FROM images WHERE image_id=?"
             data = cursor.execute(sql,(image_id,)).fetchall()
             conn.close()
-            return bytearray(data[0][1])
+            return bytearray(data[0][2])
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
             return None
 
-    def load_multiple_binarys(self, image_ids):
+    def load_multiple_binaries_by_ids(self, image_ids):
         """
         This Method will load multiple images from the Database by image_ids
         """
@@ -101,10 +105,10 @@ class Dao:
             sql = f"SELECT * FROM images WHERE image_id IN ({','.join('?'*len(image_ids))})"
             data = cursor.execute(sql, image_ids).fetchall()
 
-            for i in image_ids:
-                for j in data:
-                    if j[0] == i:
-                        arr.append(j)
+            for image_id in image_ids:
+                for d in data:
+                    if d[0] == image_id:
+                        arr.append(d)
                         break
                 else:
                     arr.append(None)
@@ -115,38 +119,38 @@ class Dao:
             error_handler(err,traceback.format_exc())
             return None
 
-    def save_binary(self, binary):
+    def save_image(self, binary, image_name):
         """
         This Method will save an image to the Database
         """
         try:
             conn, cursor = self.get_db_connection()
 
-            sql = "INSERT INTO images VALUES (NULL,?)"
-            cursor.execute(sql, (binary,))
+            sql = "INSERT INTO images VALUES (NULL,?,?)"
+            cursor.execute(sql, (image_name, binary))
             conn.commit()
             conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def replace_binary(self, image_id, binary):
+    def replace_binary_by_id(self, image_id, image_name, binary):
         """
         This Method will replace an image in the Database
         """
         try:
             conn, cursor = self.get_db_connection()
 
-            self.delete_binary(image_id)
-            sql = "INSERT INTO images VALUES (?,?)"
-            cursor.execute(sql, (image_id, binary))
+            self.delete_binary_by_id(image_id)
+            sql = "INSERT INTO images VALUES (?,?,?)"
+            cursor.execute(sql, (image_id, image_name, binary))
             conn.commit()
             conn.close()
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def delete_binary(self, image_id):
+    def delete_binary_by_id(self, image_id):
         """
         This Method will delete an image from the Database by image_id
         """
@@ -160,6 +164,22 @@ class Dao:
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
+
+    def get_image_name_by_id(self, image_id):
+        """
+        This Method will return the name of the image with image_id
+        """
+        try:
+            conn, cursor = self.get_db_connection()
+
+            sql = "SELECT image_name FROM images WHERE image_id=?"
+            data = cursor.execute(sql,(image_id,)).fetchone()
+            conn.close()
+            return data[0]
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
+            return None
 
     def get_first_image_id(self):
         """
@@ -298,7 +318,7 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def get_all_animations(self):
+    def load_animation_info_all(self):
         """
         This Method will load all informations from the animations table
         """
@@ -413,7 +433,7 @@ class Dao:
         """
         This Method will load all informations of this animation
         """
-        animationlist = {"imageIDs": [], "positions": [], "times": []}
+        animationlist = {"imageIDs": [], "imageNames": [], "positions": [], "times": []}
 
         try:
             conn, cursor = self.get_db_connection()
@@ -424,6 +444,7 @@ class Dao:
             if data:
                 for i in data:
                     animationlist["imageIDs"].append(i[1])
+                    animationlist["imageNames"].append(self.get_image_name_by_id(i[1])) # Could be done faster!!!
                     animationlist["positions"].append(i[2])
                     animationlist["times"].append(i[3])
             return animationlist

@@ -86,7 +86,7 @@ def image_load_single():
 @app.route("/image/load/multiple", methods=["POST"])
 def image_load_multiple():
     image_ids = request.json
-    return jsonify(manager.load_multiple_binaries(image_ids))
+    return jsonify(manager.load_multiple_binaries_by_ids(image_ids))
 
 @app.route("/image/apply/colorarray", methods=["POST"])
 def apply_color_array():
@@ -105,7 +105,7 @@ def apply_image_id():
 @app.route("/image/save", methods=["POST"])
 def save():
     color_array = request.json
-    manager.save_color_array(color_array)
+    manager.save_image(color_array, "image_name")
     return {}
 
 @app.route("/image/replace", methods=["POST"])
@@ -122,6 +122,12 @@ def delete():
     image_id = request.args.get('image_id', type = int)
     manager.delete_image(image_id)
     return {}
+
+@app.route("/image/getname")
+def get_name():
+    image_id = request.args.get('image_id', type = int)
+    image_name = manager.get_image_name_by_id(image_id)
+    return image_name
 
 ## ----- ANIMATION ----- ##
 

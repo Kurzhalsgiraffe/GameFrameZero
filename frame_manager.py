@@ -64,7 +64,7 @@ class FrameManager:
 
     def apply_image_id(self, image_id):
         """ apply the image with the given image_id """
-        binary = self.database.load_single_binary(image_id)
+        binary = self.database.load_single_binary_by_id(image_id)
         self.led.update_frame(binary)
         self.config.update_config("last_applied_image_id", image_id)
 
@@ -72,7 +72,7 @@ class FrameManager:
         """ load ids, names and thumbnail ids of all animations """
         data = {"animationIDs": [], "animationNames": [], "thumbnailIDs": []}
 
-        info = self.database.get_all_animations()
+        info = self.database.load_animation_info_all()
         if info:
             for i in info:
                 data["animationIDs"].append(i[0])
@@ -82,7 +82,7 @@ class FrameManager:
     
     def load_single_image(self, image_id, pos):
         """ load a single image. if pos is given, the relative position from the image_id will be selected"""
-        data = {"colorArray": [], "imageID": 0}
+        data = {"imageID": 0, "imageName": "", "colorArray": []}
         skip_offset = self.config.get_config("skip_offset")
         if pos:
             if pos == "first":
@@ -98,30 +98,35 @@ class FrameManager:
             elif pos == "last":
                 image_id = self.database.get_last_image_id()
 
-        binary = self.database.load_single_binary(image_id)
+        binary = self.database.load_single_binary_by_id(image_id)
         if binary:
-            data["colorArray"] = self.binary_to_color_array(binary)
             data["imageID"] = image_id
+            data["imageName"] = self.database.get_image_name_by_id(image_id)
+            data["colorArray"] = self.binary_to_color_array(binary)
         return data
     
-    def save_color_array(self, color_array):
+    def get_image_name_by_id(self, image_id):
+        return self.database.get_image_name_by_id(image_id)
+    
+    def save_image(self, color_array, image_name):
         """ save the color_array to the database """
         binary = self.color_array_to_binary(color_array)
-        self.database.save_binary(binary)
+        self.database.save_image(binary, image_name)
 
     def replace_color_array(self, image_id, color_array):
         """ replace the existing image on the given image_id with the new color_array """
         binary = self.color_array_to_binary(color_array)
-        self.database.replace_binary(image_id,binary)
+        image_name = self.database.get_image_name_by_id(image_id)
+        self.database.replace_binary_by_id(image_id, image_name, binary)
 
-    def load_multiple_binaries(self, image_ids):
+    def load_multiple_binaries_by_ids(self, image_ids):
         """ load the binaries for the given image_ids """
         data = []
         if image_ids:
-            binarys = self.database.load_multiple_binarys(image_ids)
-            for i in binarys:
+            binaries = self.database.load_multiple_binaries_by_ids(image_ids)
+            for i in binaries:
                 if i:
-                    data.append((i[0], self.binary_to_color_array(bytearray(i[1]))))
+                    data.append((i[0], self.binary_to_color_array(bytearray(i[2]))))
                 else:
                     data.append(None)
         return data
@@ -174,7 +179,7 @@ class FrameManager:
 
     def delete_image(self, image_id):
         """ delete image by id """
-        self.database.delete_binary(int(image_id))
+        self.database.delete_binary_by_id(int(image_id))
 
     def delete_animation(self, animation_id):
         """ delete animation by id """
@@ -195,9 +200,9 @@ class FrameManager:
         animationlist = []
         data = self.database.load_animation_info_single(animation_id)
         if data:
-            binarys = self.database.load_multiple_binarys(data["imageIDs"])
+            binaries = self.database.load_multiple_binaries_by_ids(data["imageIDs"])
 
-            for binary, sleep_time in zip(binarys, data["times"]):
+            for binary, sleep_time in zip(binaries, data["times"]):
                 animationlist.append([binary[1], sleep_time/1000])
         return animationlist
 
