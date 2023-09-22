@@ -113,10 +113,14 @@ class FrameManager:
         binary = self.color_array_to_binary(color_array)
         self.database.save_image(binary, image_name)
 
+    def rename_image(self, image_id, image_name):
+        """ rename the image """
+        self.database.rename_image_by_id(image_id, image_name)
+
     def replace_color_array(self, image_id, color_array):
         """ replace the existing image on the given image_id with the new color_array """
         binary = self.color_array_to_binary(color_array)
-        image_name = self.database.get_image_name_by_id(image_id)
+        image_name = self.get_image_name_by_id(image_id)
         self.database.replace_binary_by_id(image_id, image_name, binary)
 
     def load_multiple_binaries_by_ids(self, image_ids):

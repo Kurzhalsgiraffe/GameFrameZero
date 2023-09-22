@@ -105,7 +105,8 @@ def apply_image_id():
 @app.route("/image/save", methods=["POST"])
 def save():
     color_array = request.json
-    manager.save_image(color_array, "image_name")
+    image_name = request.args.get('image_name', type = str)
+    manager.save_image(color_array, image_name)
     return {}
 
 @app.route("/image/replace", methods=["POST"])
@@ -121,6 +122,13 @@ def replace():
 def delete():
     image_id = request.args.get('image_id', type = int)
     manager.delete_image(image_id)
+    return {}
+
+@app.route("/image/rename", methods=["POST"])
+def rename():
+    image_id = request.args.get('image_id', type = int)
+    image_name = request.args.get('new_name', type = str)
+    manager.rename_image(image_id, image_name)
     return {}
 
 @app.route("/image/getname")

@@ -165,6 +165,21 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
+    def rename_image_by_id(self, image_id, image_name):
+        """
+        Rename the image
+        """
+        try:
+            conn, cursor = self.get_db_connection()
+
+            sql = "UPDATE images SET image_name=? WHERE image_id=?"
+            cursor.execute(sql,(image_name, image_id))
+            conn.commit()
+            conn.close()
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
+
     def get_image_name_by_id(self, image_id):
         """
         This Method will return the name of the image with image_id

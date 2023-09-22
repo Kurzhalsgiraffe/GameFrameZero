@@ -127,20 +127,20 @@
                 </div>
             </div>
 
-
-
-
             <!-- Sidebar END -->
                 <div class="d-flex flex-column col">
                     <div class="d-flex justify-content-center my-5">
                         <div class="row col-lg-8 g-4" id="tile-body"></div>
                     </div>
                     <div class="d-flex fs-3 fw-bold justify-content-center mt-4" id="amimation-frame-selection"></div>
-                    <div class="d-flex justify-content-center mt-4">
+                    <div class="d-flex justify-content-center my-3">
                         <canvas width="480px" height="480px"></canvas>
                     </div>
-                    <div class="d-flex justify-content-center my-2">
-                        <div class="d-inline-flex">
+                    <div class="d-flex justify-content-center">
+                        <span class="mx-2 my-auto fs-5 fw-bold image-name-field"><a id="image-name"></a></span>
+                    </div>
+                    <div class="d-flex justify-content-center my-3">
+                        <div class="mx-2">
                             <button class="button pic-btn" id="first-frame-btn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-bar-left" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M11.854 3.646a.5.5 0 0 1 0 .708L8.207 8l3.647 3.646a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708 0zM4.5 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 1 0v-13a.5.5 0 0 0-.5-.5z"/>
@@ -152,13 +152,14 @@
                                     <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
                                   </svg>
                             </button>
-                            <button class="button pic-btn mx-2" id="prev-frame-btn">
+                            <button class="button pic-btn" id="prev-frame-btn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
                                 </svg>
                             </button>
-                            <span class="mx-2 my-auto fs-5 fw-bold"><a id="image-name"></a></span>
-                            <button class="button pic-btn mx-2" id="next-frame-btn">
+                        </div>
+                        <div class="mx-2">
+                            <button class="button pic-btn" id="next-frame-btn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
                                 </svg>
@@ -174,10 +175,10 @@
                                     <path fill-rule="evenodd" d="M4.146 3.646a.5.5 0 0 0 0 .708L7.793 8l-3.647 3.646a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708 0zM11.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z"/>
                                   </svg>
                             </button>
-                        </div>                                  
+                        </div>
                     </div>
-                    <div class="d-flex justify-content-center my-2">
-                        <button class="button opt-btn my-2" id="add-to-animation-btn"><strong id="add-to-animation-label"></strong></button>
+                    <div class="d-flex justify-content-center mb-4">
+                        <button class="button opt-btn" id="add-to-animation-btn"><strong id="add-to-animation-label"></strong></button>
                     </div>
                 </div>
             

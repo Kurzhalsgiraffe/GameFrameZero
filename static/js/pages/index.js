@@ -4,6 +4,7 @@ const color_selector = document.querySelector("#sidebar-colors-color-selector");
 const colorpicker_btn = document.querySelector("#sidebar-colors-colorpicker-btn");
 const delete_btn = document.querySelector("#sidebar-options-delete-btn");
 const apply_btn = document.querySelector("#sidebar-options-apply-btn");
+const save_image_inpt = document.querySelector("#sidebar-options-save-image-name");
 const save_btn = document.querySelector("#sidebar-options-save-btn");
 const replace_btn = document.querySelector("#sidebar-options-replace-btn");
 const move_up = document.querySelector("#move-up");
@@ -16,7 +17,7 @@ let drawMode = true;
 let loadedIDToEdit = null;
 
 apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/image/apply/colorarray"));
-save_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/image/save"));
+save_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/image/save?image_name="+((save_image_inpt.value) ? save_image_inpt.value : null)));
 replace_btn.addEventListener("click", async () => await canvasObject.replaceColorArrayOnServer(loadedIDToEdit));
 
 color_selector.addEventListener("change", () => setPickedColor(color_selector.value));

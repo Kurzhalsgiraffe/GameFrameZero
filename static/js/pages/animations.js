@@ -35,11 +35,7 @@ async function stopAnimation() {
 }
 
 async function createAnimation() {
-    let name = animation_name.value;
-    if (!name) {
-        name = null;
-    }
-    let response = await fetch("/animation/create?name="+name, {
+    let response = await fetch("/animation/create?name="+((animation_name.value) ? animation_name.value : null), {
         method: "POST"
     });
     if (response.status == 200) {
@@ -47,7 +43,6 @@ async function createAnimation() {
     } else {
         console.log("failed to create Animation");
     }
-    
 }
 
 async function editAnimation() {

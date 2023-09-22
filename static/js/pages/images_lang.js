@@ -6,6 +6,7 @@ const sidebar_options_collapse = document.querySelector("#sidebar-options-collap
 const sidebar_options_delete_btn = document.querySelector("#sidebar-options-delete-btn");
 const sidebar_options_edit_btn = document.querySelector("#sidebar-options-edit-btn");
 const sidebar_options_apply_btn = document.querySelector("#sidebar-options-apply-btn");
+const sidebar_options_rename_btn = document.querySelector("#sidebar-options-rename-btn");
 
 const sidebar_brightness_collapse = document.querySelector("#sidebar-brightness-collapse");
 
@@ -25,6 +26,8 @@ function setLanguage(lang) {
         sidebar_options_edit_btn.title = "Edit a copy of the drawing";
         sidebar_options_apply_btn.textContent = "APPLY";
         sidebar_options_apply_btn.title = "Apply the drawing on the LED-Matrix";
+        sidebar_options_rename_btn.textContent = "RENAME"
+        sidebar_options_rename_btn.title = "Rename the image";
 
         sidebar_brightness_collapse.textContent = "BRIGHTNESS";
 
@@ -43,6 +46,9 @@ function setLanguage(lang) {
         sidebar_options_edit_btn.title = "Bearbeite eine Kopie der Zeichnung";
         sidebar_options_apply_btn.textContent = "ANWENDEN";
         sidebar_options_apply_btn.title = "Wende die Zeichnung auf der LED-Matrix an";
+
+        sidebar_options_rename_btn.textContent = "UMBENENNEN"
+        sidebar_options_rename_btn.title = "Bild umbenennen";
 
         sidebar_brightness_collapse.textContent = "HELLIGKEIT";
 

@@ -275,3 +275,9 @@ input[type=checkbox] {
     overflow: hidden;
     transition: max-height 0.2s ease-out;
 }
+
+.image-name-field {
+    min-width: 100px;
+    display: inline-block;
+    text-align: center;
+}
