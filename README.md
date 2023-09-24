@@ -22,7 +22,27 @@ git clone https://github.com/Kurzhalsgiraffe/GameFrameZero
 Make sure to install it with sudo, if you want to run the Server as root
 ````
 sudo apt install python3-pip
-sudo pip3 install -r requirements.txt
+sudo apt install python3-opencv
+sudo pip3 install flask
+sudo pip3 install rpi-ws281x
+sudo pip3 install waitress
+````
+After installing the libraries, check if they are installed correctly by running python on the raspberry pi,
+importing the libraries and checking the versions:
+````
+>>> import cv2
+>>> import flask
+>>> import numpy
+>>> import rpi_ws281x
+
+>>> cv2.__version__
+'4.5.1'
+>>> flask.__version__
+'2.2.2'
+>>> numpy.__version__
+'1.19.5'
+>>> rpi-ws281x.__version__
+'4.3.4'
 ````
 
 ## Setup the Autostart
