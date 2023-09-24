@@ -2,6 +2,8 @@ const start_animation_btn = document.querySelector("#sidebar-options-start-anima
 const stop_animation_btn = document.querySelector("#sidebar-options-stop-animation-btn");
 const edit_animation_btn = document.querySelector("#sidebar-options-edit-animation-btn");
 const delete_animation_btn = document.querySelector("#sidebar-options-delete-animation-btn");
+const rename_animation_inpt = document.querySelector("#sidebar-options-rename-animation-name");
+const rename_animation_btn = document.querySelector("#sidebar-options-rename-animation-btn");
 const create_animation_btn = document.querySelector("#sidebar-create-animation-btn");
 const animation_name = document.querySelector("#sidebar-create-animation-name");
 
@@ -10,13 +12,12 @@ stop_animation_btn.addEventListener("click", stopAnimation);
 create_animation_btn.addEventListener("click", createAnimation);
 edit_animation_btn.addEventListener("click", editAnimation);
 delete_animation_btn.addEventListener("click", deleteAnimation);
+rename_animation_btn.addEventListener("click", renameAnimation);
 
 async function startAnimation() {
-    let animation_id;
-    let response;
     if (activeTile) {
-        animation_id = activeTile.id.slice(5,);
-        response = await fetch("/animation/start?animation_id="+animation_id, {
+        let animation_id = activeTile.id.slice(5,);
+        let response = await fetch("/animation/start?animation_id="+animation_id, {
             method: "POST"
         });
         if (response.status != 200) {
@@ -46,17 +47,15 @@ async function createAnimation() {
 }
 
 async function editAnimation() {
-    let id;
     if (activeTile != null) {
-        id = activeTile.id.slice(5,);
-        window.location.replace("/animation/editor?id="+id);
+        let animation_id = activeTile.id.slice(5,);
+        window.location.replace("/animation/editor?id="+animation_id);
     }
 }
 
 async function deleteAnimation() {
-    let animation_id;
     if (activeTile) {
-        animation_id = activeTile.id.slice(5,)
+        let animation_id = activeTile.id.slice(5,)
         let response = await fetch("/animation/delete?animation_id="+animation_id, {
             method: "DELETE"
         });
@@ -64,6 +63,23 @@ async function deleteAnimation() {
             removeTileFromBody(activeTile.parentElement);
         } else {
             console.log("failed to create Animation");
+        }
+    }
+}
+
+async function renameAnimation() {
+    let name = ((rename_animation_inpt.value) ? rename_animation_inpt.value : null)
+    if (activeTile && name != null) {
+        let animation_id = activeTile.id.slice(5,)
+        let response = await fetch("/animation/rename?animation_id="+animation_id+"&new_name="+name, {
+            method: "POST",
+        });
+        if (response.status != 200) {
+            console.log("failed to rename Animation");
+        } else {
+            let cardbody = document.querySelector("#card-body-"+animation_id);
+            let htag = cardbody.querySelector("h5");
+            htag.textContent = name
         }
     }
 }
@@ -78,13 +94,14 @@ async function loadAllAnimationsFromServer() {
     }
 }
 
-async function addContentToThumbnails(ids, names) {
-    for (let x=0; x<ids.length; x++) {
+async function addContentToThumbnails(animation_ids, names) {
+    for (let x=0; x<animation_ids.length; x++) {
         text = names[x]
-        let id = ids[x]
-        const htag = document.createElement("h5");
-        let cardbody = document.querySelector("#card-body-"+id);
+        let animation_id = animation_ids[x]
 
+        let cardbody = document.querySelector("#card-body-"+animation_id);
+
+        const htag = document.createElement("h5");
         htag.classList.add("card-title");
         htag.innerHTML = `${text}`;
 

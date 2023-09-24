@@ -6,7 +6,7 @@ const sidebar_options_collapse = document.querySelector("#sidebar-options-collap
 const sidebar_options_delete_btn = document.querySelector("#sidebar-options-delete-btn");
 const sidebar_options_edit_btn = document.querySelector("#sidebar-options-edit-btn");
 const sidebar_options_apply_btn = document.querySelector("#sidebar-options-apply-btn");
-const sidebar_options_rename_btn = document.querySelector("#sidebar-options-rename-btn");
+const sidebar_options_rename_btn = document.querySelector("#sidebar-options-rename-image-btn");
 
 const sidebar_brightness_collapse = document.querySelector("#sidebar-brightness-collapse");
 

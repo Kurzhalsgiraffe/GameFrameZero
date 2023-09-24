@@ -117,6 +117,10 @@ class FrameManager:
         """ rename the image """
         self.database.rename_image_by_id(image_id, image_name)
 
+    def rename_animation(self, animation_id, animation_name):
+        """ rename the animation """
+        self.database.rename_animation_by_id(animation_id, animation_name)
+
     def replace_color_array(self, image_id, color_array):
         """ replace the existing image on the given image_id with the new color_array """
         binary = self.color_array_to_binary(color_array)

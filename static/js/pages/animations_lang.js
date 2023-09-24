@@ -7,6 +7,7 @@ const sidebar_options_start_animation_btn = document.querySelector("#sidebar-opt
 const sidebar_options_stop_animation_btn = document.querySelector("#sidebar-options-stop-animation-btn");
 const sidebar_options_edit_animation_btn = document.querySelector("#sidebar-options-edit-animation-btn");
 const sidebar_options_delete_animation_btn = document.querySelector("#sidebar-options-delete-animation-btn");
+const sidebar_options_rename_btn = document.querySelector("#sidebar-options-rename-animation-btn");
 
 const sidebar_create_animation_collapse = document.querySelector("#sidebar-create-animation-collapse");
 const sidebar_create_animation_btn = document.querySelector("#sidebar-create-animation-btn");
@@ -33,6 +34,8 @@ function setLanguage(lang) {
         sidebar_options_edit_animation_btn.title = "Edit the selected animation";
         sidebar_options_delete_animation_btn.textContent = "DELETE";
         sidebar_options_delete_animation_btn.title = "Delete the selected animation";
+        sidebar_options_rename_btn.textContent = "RENAME"
+        sidebar_options_rename_btn.title = "Rename the selected animation";
 
         sidebar_create_animation_collapse.textContent = "NEW ANIMATION";
         sidebar_create_animation_btn.textContent = "CREATE";
@@ -52,13 +55,15 @@ function setLanguage(lang) {
 
         sidebar_options_collapse.textContent = "OPTIONEN";
         sidebar_options_start_animation_btn.textContent = "START";
-        sidebar_options_start_animation_btn.title = "Starte Animation auf der LED-Matrix";
+        sidebar_options_start_animation_btn.title = "Starte die ausgewählte Animation auf der LED-Matrix";
         sidebar_options_stop_animation_btn.textContent = "STOP";
-        sidebar_options_stop_animation_btn.title = "Stoppe Animation auf der LED-Matrix";
+        sidebar_options_stop_animation_btn.title = "Stoppe die laufende Animation auf der LED-Matrix";
         sidebar_options_edit_animation_btn.textContent = "BEARBEITEN";
-        sidebar_options_edit_animation_btn.title = "Bearbeite die ausgewählte Animation";
+        sidebar_options_edit_animation_btn.title = "Ausgewählte Animation bearbeiten";
         sidebar_options_delete_animation_btn.textContent = "LÖSCHEN";
-        sidebar_options_delete_animation_btn.title = "Lösche die ausgewählte Animation";
+        sidebar_options_delete_animation_btn.title = "Ausgewählte Animation löschen";
+        sidebar_options_rename_btn.textContent = "UMBENENNEN"
+        sidebar_options_rename_btn.title = "Ausgewählte Animation umbenennen";
 
         sidebar_create_animation_collapse.textContent = "NEUE ANIMATION";
         sidebar_create_animation_btn.textContent = "ERSTELLEN";

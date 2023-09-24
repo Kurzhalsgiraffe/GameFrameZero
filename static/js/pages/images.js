@@ -3,7 +3,7 @@ const delete_btn = document.querySelector("#sidebar-options-delete-btn");
 const edit_btn = document.querySelector("#sidebar-options-edit-btn");
 const apply_btn = document.querySelector("#sidebar-options-apply-btn");
 const rename_image_inpt = document.querySelector("#sidebar-options-rename-image-name");
-const rename_btn = document.querySelector("#sidebar-options-rename-btn");
+const rename_image_btn = document.querySelector("#sidebar-options-rename-image-btn");
 const first_frame_btn = document.querySelector("#first-frame-btn");
 const fast_backwards_btn = document.querySelector("#fast-backwards-btn");
 const prev_frame_btn = document.querySelector("#prev-frame-btn");
@@ -17,7 +17,7 @@ var currentPos = 1;
 delete_btn.addEventListener("click", async () => await deleteColorArrayFromServer(currentPos));
 edit_btn.addEventListener("click", editSavedColorArray);
 apply_btn.addEventListener("click", async () => await applyColorArrayByID(currentPos));
-rename_btn.addEventListener("click", async () => await renameSavedColorArray(currentPos));
+rename_image_btn.addEventListener("click", async () => await renameSavedColorArray(currentPos));
 first_frame_btn.addEventListener("click", async () => await loadAndShow(null, "first"));
 fast_backwards_btn.addEventListener("click", async () => await loadAndShow(currentPos, "fastbackwards"));
 prev_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "prev"));
@@ -47,15 +47,17 @@ async function applyColorArrayByID(image_id) {
     }
 }
 
-async function renameSavedColorArray(image_id) { // RELOAD???
+async function renameSavedColorArray(image_id) {
     let name = ((rename_image_inpt.value) ? rename_image_inpt.value : null)
-    let response = await fetch("/image/rename?image_id="+image_id+"&new_name="+name, {
-        method: "POST",
-    });
-    if (response.status != 200) {
-        console.log("failed to rename colorArray");
-    } else {
-        frameName.textContent = name
+    if (name != null) {
+        let response = await fetch("/image/rename?image_id="+image_id+"&new_name="+name, {
+            method: "POST",
+        });
+        if (response.status != 200) {
+            console.log("failed to rename colorArray");
+        } else {
+            frameName.textContent = name
+        }
     }
 }
 

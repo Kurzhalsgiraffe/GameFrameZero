@@ -103,14 +103,14 @@ def apply_image_id():
     return {}
 
 @app.route("/image/save", methods=["POST"])
-def save():
+def save_image():
     color_array = request.json
     image_name = request.args.get('image_name', type = str)
     manager.save_image(color_array, image_name)
     return {}
 
 @app.route("/image/replace", methods=["POST"])
-def replace():
+def replace_image():
     image_id = request.args.get('image_id', type = int)
     color_array = request.json
     if image_id and color_array:
@@ -119,20 +119,20 @@ def replace():
     return {},400
 
 @app.route("/image/delete", methods=["DELETE"])
-def delete():
+def delete_image():
     image_id = request.args.get('image_id', type = int)
     manager.delete_image(image_id)
     return {}
 
 @app.route("/image/rename", methods=["POST"])
-def rename():
+def rename_image():
     image_id = request.args.get('image_id', type = int)
     image_name = request.args.get('new_name', type = str)
     manager.rename_image(image_id, image_name)
     return {}
 
 @app.route("/image/getname")
-def get_name():
+def get_image_name():
     image_id = request.args.get('image_id', type = int)
     image_name = manager.get_image_name_by_id(image_id)
     return image_name
@@ -196,6 +196,13 @@ def animation_frame_switchpositions():
 def animation_delete():
     animation_id = request.args.get('animation_id', type = int)
     manager.delete_animation(animation_id)
+    return {}
+
+@app.route("/animation/rename", methods=["POST"])
+def animation_rename():
+    animation_id = request.args.get('animation_id', type = int)
+    animation_name = request.args.get('new_name', type = str)
+    manager.rename_animation(animation_id, animation_name)
     return {}
 
 @app.route("/animation/removeframe", methods=["DELETE"])

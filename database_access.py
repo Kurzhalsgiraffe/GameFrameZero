@@ -180,6 +180,21 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
+    def rename_animation_by_id(self, animation_id, animation_name):
+        """
+        Rename the animation
+        """
+        try:
+            conn, cursor = self.get_db_connection()
+
+            sql = "UPDATE animations SET animation_name=? WHERE animation_id=?"
+            cursor.execute(sql,(animation_name, animation_id))
+            conn.commit()
+            conn.close()
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
+
     def get_image_name_by_id(self, image_id):
         """
         This Method will return the name of the image with image_id
