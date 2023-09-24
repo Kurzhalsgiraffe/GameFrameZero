@@ -5,7 +5,7 @@ from database_access import Dao
 from led_hardware import LEDMatrix
 
 class Config:
-    def __init__(self, config_file):
+    def __init__(self, config_file:str) -> None:
         self.config_file = config_file
         self.defaults = {
             "brightness": 1,
@@ -20,16 +20,18 @@ class Config:
         }
 
     def read_config_file(self):
+        """Read in the JSON config file"""
         with open(self.config_file, 'r', encoding="utf-8") as file:
             config = json.load(file)
         return config
     
-    def write_config_file(self, config):
+    def write_config_file(self, config) -> None:
+        """Write to the JSON config file"""
         with open(self.config_file, 'w+', encoding="utf-8") as file:
             json.dump(config, file, indent=4)
 
-    def get_config(self, key):
-        """ Read the value to the key from the settings file """
+    def get_config(self, key:str):
+        """Read the value to the key from the config file"""
         config = self.read_config_file()
         if key in config:
             return config[key]
@@ -39,8 +41,8 @@ class Config:
             return value
         return None
 
-    def update_config(self, key, value):
-        """ Write the key value pair the settings file """
+    def update_config(self, key:str, value) -> None:
+        """Write the key value pair the config file"""
         config = self.read_config_file()
         config[key] = value
         self.write_config_file(config)
@@ -57,19 +59,19 @@ class FrameManager:
         self.animation_stopped = True
         self.vacuum_database()
 
-    def apply_color_array(self, color_array):
-        """ apply the given color_array """
+    def apply_color_array(self, color_array:list):
+        """Apply the color_array to the LED-Matrix"""
         binary = self.color_array_to_binary(color_array)
         self.led.update_frame(binary)
 
-    def apply_image_id(self, image_id):
-        """ apply the image with the given image_id """
+    def apply_image_id(self, image_id:int) -> None:
+        """Apply the image with the given image_id to the LED-Matrix"""
         binary = self.database.load_single_binary_by_id(image_id)
         self.led.update_frame(binary)
         self.config.update_config("last_applied_image_id", image_id)
 
-    def load_animation_info_all(self):
-        """ load ids, names and thumbnail ids of all animations """
+    def load_animation_info_all(self) -> dict[str, list]:
+        """Load informations of all animations"""
         data = {"animationIDs": [], "animationNames": [], "thumbnailIDs": []}
 
         info = self.database.load_animation_info_all()
@@ -79,9 +81,9 @@ class FrameManager:
                 data["animationNames"].append(i[1] if i[1] != "null" else "Animation " + str(i[0]))
             data["thumbnailIDs"] = self.database.get_all_animation_thumbnail_ids(data["animationIDs"])
         return data
-    
-    def load_single_image(self, image_id, pos):
-        """ load a single image. if pos is given, the relative position from the image_id will be selected"""
+
+    def load_single_image(self, image_id:int, pos:str) -> dict:
+        """Load a single image. If pos is given, the image at the relative position from the current image_id will be loaded."""
         data = {"imageID": 0, "imageName": "", "colorArray": []}
         skip_offset = self.config.get_config("skip_offset")
         if pos:
@@ -105,30 +107,31 @@ class FrameManager:
             data["colorArray"] = self.binary_to_color_array(binary)
         return data
     
-    def get_image_name_by_id(self, image_id):
+    def get_image_name_by_id(self, image_id:int):
+        """Get the image_name by image_id"""
         return self.database.get_image_name_by_id(image_id)
-    
-    def save_image(self, color_array, image_name):
-        """ save the color_array to the database """
+
+    def save_image(self, color_array:list, image_name:str) -> None:
+        """Save the color_array to the database"""
         binary = self.color_array_to_binary(color_array)
         self.database.save_image(binary, image_name)
 
-    def rename_image(self, image_id, image_name):
-        """ rename the image """
+    def rename_image(self, image_id:int, image_name:str) -> None:
+        """Rename the image"""
         self.database.rename_image_by_id(image_id, image_name)
 
-    def rename_animation(self, animation_id, animation_name):
-        """ rename the animation """
+    def rename_animation(self, animation_id:int, animation_name:str) -> None:
+        """Rename the animation"""
         self.database.rename_animation_by_id(animation_id, animation_name)
 
-    def replace_color_array(self, image_id, color_array):
-        """ replace the existing image on the given image_id with the new color_array """
+    def replace_color_array(self, image_id:int, color_array:list):
+        """Replace the existing image on the given image_id with the new color_array"""
         binary = self.color_array_to_binary(color_array)
         image_name = self.get_image_name_by_id(image_id)
         self.database.replace_binary_by_id(image_id, image_name, binary)
 
-    def load_multiple_binaries_by_ids(self, image_ids):
-        """ load the binaries for the given image_ids """
+    def load_multiple_binaries_by_ids(self, image_ids:list) -> list:
+        """Load the binaries of the given image_ids"""
         data = []
         if image_ids:
             binaries = self.database.load_multiple_binaries_by_ids(image_ids)
@@ -139,14 +142,14 @@ class FrameManager:
                     data.append(None)
         return data
 
-    def set_brightness(self, brightness):
-        """ apply the brightness settings """
+    def set_brightness(self, brightness:int) -> None:
+        """Apply the brightness value"""
         if self.config.get_config("power") == "on":
-            self.led.update_brightness(int(brightness))
-        self.config.update_config("brightness", int(brightness))
+            self.led.update_brightness(brightness)
+        self.config.update_config("brightness", brightness)
 
-    def set_power(self, power):
-        """ apply the power settings """
+    def set_power(self, power:str) -> None:
+        """Apply the power settings"""
         if power == "on":
             brightness = int(self.config.get_config("brightness"))
             self.led.update_brightness(brightness)
@@ -154,57 +157,56 @@ class FrameManager:
             self.led.update_brightness(0)
         self.config.update_config("power", power)
 
-    def vacuum_database(self):
+    def vacuum_database(self) -> None:
         """ perform a vacuum on the database if configured"""
         if self.config.get_config("vacuum_on_start"):
             self.database.vacuum()
 
 # ---- ANIMATION ----
 
-    def create_animation(self, name):
+    def create_animation(self, name:str) -> None:
         self.database.create_animation(name)
 
-    def add_animationframe(self, animation_id, image_id):
-        """ add a frame to the animation """
+    def add_animationframe(self, animation_id:int, image_id:int) -> None:
+        """Add a frame to the animation"""
         last_pos = self.database.get_last_position_by_animation_id(animation_id)
         if last_pos:
             next_pos = last_pos + 1
         else:
             next_pos = 1
-
         self.database.add_image_to_animation(animation_id, image_id, next_pos, self.default_animationtime)
 
-    def update_time_for_animationframe(self, animation_id, position, time):
-        """ update the time for the animationframe at the given position """
+    def update_time_for_animationframe(self, animation_id:int, position:str, time:int) -> None:
+        """Update the time for the animationframe at the given position"""
         if position == "all":
             self.database.update_animation_time_of_all_frames(animation_id, time)
         else:
             self.database.update_animation_time_of_single_frame(animation_id, position, time)
 
-    def switch_animation_positions(self, animation_id, source_id, target_id):
-        """ switch positions of frames in the animation """
+    def switch_animation_positions(self, animation_id:int, source_id:int, target_id:int) -> None:
+        """Switch positions of images in the animation"""
         self.database.switch_animation_positions(animation_id, source_id, target_id)
 
-    def delete_image(self, image_id):
-        """ delete image by id """
-        self.database.delete_binary_by_id(int(image_id))
+    def delete_image(self, image_id:int) -> None:
+        """Delete image by image_id"""
+        self.database.delete_binary_by_id(image_id)
 
-    def delete_animation(self, animation_id):
-        """ delete animation by id """
+    def delete_animation(self, animation_id:int) -> None:
+        """Delete animation by animation_id"""
         self.database.delete_animation(animation_id)
         self.database.remove_all_images_from_animation(animation_id)
 
-    def remove_animation_frame(self, animation_id, position):
-        """ remove the animation frame at the given position """
+    def remove_animation_frame(self, animation_id:int, position:int) -> None:
+        """Remove the animation frame at the given position"""
         self.database.remove_image_from_animation(animation_id, position)
     
-    def set_animation_speed(self, speed):
-        """ set the animation speed multiplicator"""
-        self.animation_speed = float(speed)
+    def set_animation_speed(self, animation_speed:float) -> None:
+        """Set the animation speed multiplicator"""
+        self.animation_speed = animation_speed
         self.config.update_config("speed", self.animation_speed)
 
-    def load_animation(self, animation_id):
-        """ generate animationlist to loop through """
+    def load_animation(self, animation_id:int) -> list:
+        """Generate animationlist to loop through"""
         animationlist = []
         data = self.database.load_animation_info_single(animation_id)
         if data:
@@ -214,8 +216,8 @@ class FrameManager:
                 animationlist.append([binary[1], sleep_time/1000])
         return animationlist
 
-    def start_animation(self, animation_id):
-        """ start animation by id """
+    def start_animation(self, animation_id:int) -> None:
+        """Start animation by id"""
         animationlist = self.load_animation(animation_id)
         if animationlist:
             self.animation_running = True
@@ -228,23 +230,25 @@ class FrameManager:
                         time.sleep(sleep_time*(1/(self.animation_speed)))
             self.animation_stopped = True
 
-    def stop_animation(self):
-        """ Stop the animation """
+    def stop_animation(self) -> None:
+        """Stop the animation"""
         while not self.animation_stopped:
             self.animation_running = False
 
-    def binary_to_color_array(self, binary):
-        """ convert bytearray to color_array """
+# ---- GENERAL METHODS ----
+
+    def binary_to_color_array(self, binary:bytearray) -> list:
+        """Transforms binary image to array of hexadecimal values"""
         color_array = []
         for i in range(0,768,3):
             color_array.append(f"#{(binary[i]*16**4+binary[i+1]*16**2+binary[i+2]):06x}")
         return color_array
 
-    def color_array_to_binary(self, color_array):
-        """ convert color_array to bytearray """
-        byte_array = bytearray()
+    def color_array_to_binary(self, color_array:list) -> bytearray:
+        """Transforms array of hexadecimal values to binary image"""
+        binary = bytearray()
         for color in color_array:
-            byte_array.append(int(color[1:3], 16))
-            byte_array.append(int(color[3:5], 16))
-            byte_array.append(int(color[5:7], 16))
-        return byte_array
+            binary.append(int(color[1:3], 16))
+            binary.append(int(color[3:5], 16))
+            binary.append(int(color[5:7], 16))
+        return binary

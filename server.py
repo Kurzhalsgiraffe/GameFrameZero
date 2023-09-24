@@ -59,13 +59,13 @@ def set_language():
 @app.route("/brightness/set", methods=["POST"])
 def set_brightness():
     brightness = request.args.get('brightness', type = int)
-    manager.set_brightness(brightness)
+    manager.set_brightness(int(brightness))
     return {}
 
 @app.route("/speed/set", methods=["POST"])
 def set_speed():
     speed = request.args.get('speed', type = float)
-    manager.set_animation_speed(speed)
+    manager.set_animation_speed(float(speed))
     return {}
 
 @app.route("/power/set", methods=["POST"])
@@ -121,7 +121,7 @@ def replace_image():
 @app.route("/image/delete", methods=["DELETE"])
 def delete_image():
     image_id = request.args.get('image_id', type = int)
-    manager.delete_image(image_id)
+    manager.delete_image(int(image_id))
     return {}
 
 @app.route("/image/rename", methods=["POST"])

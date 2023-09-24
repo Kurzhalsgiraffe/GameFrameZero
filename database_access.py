@@ -4,10 +4,8 @@ import sqlite3
 import traceback
 
 class Dao:
-    """
-    This Class provides all the needed Methods to interact with the SQLite Database
-    """
-    def __init__(self, dbfile):
+    """Provides all the needed Methods to interact with the SQLite Database"""
+    def __init__(self, dbfile:str) -> None:
         try:
             sqlite3.threadsafety = 1
             self.dbfile = dbfile
@@ -17,9 +15,7 @@ class Dao:
             error_handler(err,traceback.format_exc())
 
     def get_db_connection(self):
-        """
-        This Method opens a db connection
-        """
+        """Get a connection to the database"""
         try:
             conn = sqlite3.connect(self.dbfile, check_same_thread=False)
             cursor = conn.cursor()
@@ -28,10 +24,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def vacuum(self):
-        """
-        This Method performs a Vacuum on the Database
-        """
+    def vacuum(self) -> None:
+        """Run a vacuum on the Database"""
         try:
             conn, cursor = self.get_db_connection()
             sql = """VACUUM"""
@@ -41,10 +35,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def create_tables(self):
-        """
-        This Method will create the Database Tables if they dont already exist
-        """
+    def create_tables(self) -> None:
+        """Create the database tables if they dont already exist"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -78,10 +70,8 @@ class Dao:
 
     # -----  IMAGES TABLE  -----#
 
-    def load_single_binary_by_id(self, image_id):
-        """
-        This Method will load a single image from the Database by image_id
-        """
+    def load_single_binary_by_id(self, image_id:int) -> bytearray:
+        """Load a single image from the Database by image_id"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -94,10 +84,8 @@ class Dao:
             error_handler(err,traceback.format_exc())
             return None
 
-    def load_multiple_binaries_by_ids(self, image_ids):
-        """
-        This Method will load multiple images from the Database by image_ids
-        """
+    def load_multiple_binaries_by_ids(self, image_ids:list):
+        """Load multiple images from the database by image_ids"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -119,10 +107,8 @@ class Dao:
             error_handler(err,traceback.format_exc())
             return None
 
-    def save_image(self, binary, image_name):
-        """
-        This Method will save an image to the Database
-        """
+    def save_image(self, binary:bytearray, image_name:str) -> None:
+        """Save an image to the database"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -134,10 +120,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def replace_binary_by_id(self, image_id, image_name, binary):
-        """
-        This Method will replace an image in the Database
-        """
+    def replace_binary_by_id(self, image_id:int, image_name:str, binary:bytearray) -> None:
+        """Replace the image in the database with the given image_id"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -150,10 +134,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def delete_binary_by_id(self, image_id):
-        """
-        This Method will delete an image from the Database by image_id
-        """
+    def delete_binary_by_id(self, image_id:int) -> None:
+        """This Method will delete an image from the Database by image_id"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -165,10 +147,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def rename_image_by_id(self, image_id, image_name):
-        """
-        Rename the image
-        """
+    def rename_image_by_id(self, image_id:int, image_name:str) -> None:
+        """Rename the image"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -180,10 +160,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def rename_animation_by_id(self, animation_id, animation_name):
-        """
-        Rename the animation
-        """
+    def rename_animation_by_id(self, animation_id:int, animation_name:str) -> None:
+        """Rename the animation"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -195,10 +173,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def get_image_name_by_id(self, image_id):
-        """
-        This Method will return the name of the image with image_id
-        """
+    def get_image_name_by_id(self, image_id:int):
+        """Get the name of the image with image_id"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -212,9 +188,7 @@ class Dao:
             return None
 
     def get_first_image_id(self):
-        """
-        This Method will return the first image_id
-        """
+        """Get the first image_id"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -228,9 +202,7 @@ class Dao:
             return None
 
     def get_last_image_id(self):
-        """
-        This Method will return the last image_id
-        """
+        """Get the last image_id"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -243,10 +215,8 @@ class Dao:
             error_handler(err,traceback.format_exc())
             return None
 
-    def get_next_image_id(self, current):
-        """
-        This Method will return the next image_id
-        """
+    def get_next_image_id(self, current:int):
+        """Get the next image_id"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -262,10 +232,8 @@ class Dao:
             error_handler(err,traceback.format_exc())
             return None
 
-    def get_previous_image_id(self, current):
-        """
-        This Method will return the previous image_id
-        """
+    def get_previous_image_id(self, current:int):
+        """Get the previous image_id"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -281,10 +249,8 @@ class Dao:
             error_handler(err,traceback.format_exc())
             return None
 
-    def get_fbw_image_id(self, current, offset):
-        """
-        This Method will return the current - offset id (skip offset backwards)
-        """
+    def get_fbw_image_id(self, current:int, offset:int):
+        """Get the current - offset id (skip offset backwards)"""
         try:
             if offset < 0:
                 offset = 0
@@ -306,10 +272,8 @@ class Dao:
             error_handler(err,traceback.format_exc())
             return None
 
-    def get_ffw_image_id(self, current, offset):
-        """
-        This Method will return the current + offset id (skip offset forwards)
-        """
+    def get_ffw_image_id(self, current:int, offset:int):
+        """Get current + offset id (skip offset forwards)"""
         try:
             if offset < 0:
                 offset = 0
@@ -333,10 +297,8 @@ class Dao:
 
     # -----  ANIMATIONS TABLE  -----#
 
-    def create_animation(self, animation_name):
-        """
-        This Method will create a new animation
-        """
+    def create_animation(self, animation_name:str) -> None:
+        """Create a new animation"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -349,9 +311,7 @@ class Dao:
             error_handler(err,traceback.format_exc())
 
     def load_animation_info_all(self):
-        """
-        This Method will load all informations from the animations table
-        """
+        """Load all informations from the animations table"""
         try:
             conn, cursor = self.get_db_connection()
             sql = "SELECT * FROM animations"
@@ -363,10 +323,8 @@ class Dao:
             error_handler(err,traceback.format_exc())
             return None
 
-    def delete_animation(self, animation_id):
-        """
-        This Method will delete all rows with the animation_id
-        """
+    def delete_animation(self, animation_id:int) -> None:
+        """Delete all rows with the animation_id"""
         try:
             conn, cursor = self.get_db_connection()
             sql = "DELETE FROM animations WHERE animation_id=?"
@@ -379,10 +337,8 @@ class Dao:
 
     # -----  IMAGES_TO_ANIMATIONS TABLE  -----#
 
-    def add_image_to_animation(self, animation_id, image_id, position, time):
-        """
-        This Method will add a frame to the animation
-        """
+    def add_image_to_animation(self, animation_id:int, image_id:int, position:int, time:int) -> None:
+        """Add a frame to the animation"""
         try:
             conn, cursor = self.get_db_connection()
             sql = """INSERT INTO images_to_animations (
@@ -394,11 +350,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def remove_image_from_animation(self, animation_id, position):
-        """
-        This Method will first remove the row from the images_to_animations table,
-        and then update all positions to restore the continuity
-        """
+    def remove_image_from_animation(self, animation_id:int, position:int) -> None:
+        """Remove the row from the images_to_animations table and update all positions to restore the continuity"""
         try:
             conn, cursor = self.get_db_connection()
             sql = "DELETE FROM images_to_animations WHERE animation_id=? AND pos=?"
@@ -412,10 +365,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def get_all_animation_thumbnail_ids(self, animation_ids):
-        """
-        This Method will load the first Frame ID of every Animation
-        """
+    def get_all_animation_thumbnail_ids(self, animation_ids:list):
+        """Load the first image_id of every animation"""
         try:
             conn, cursor = self.get_db_connection()
             sql = "SELECT * FROM images_to_animations"
@@ -445,10 +396,8 @@ class Dao:
             error_handler(err,traceback.format_exc())
             return None
 
-    def remove_all_images_from_animation(self, animation_id):
-        """
-        This Methid will remove every row with this animation_id
-        """
+    def remove_all_images_from_animation(self, animation_id:int) -> None:
+        """Remove every row with this animation_id"""
         try:
             conn, cursor = self.get_db_connection()
             sql = "DELETE FROM images_to_animations WHERE animation_id=?"
@@ -459,13 +408,11 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def load_animation_info_single(self, animation_id):
-        """
-        This Method will load all informations of this animation
-        """
-        animationlist = {"imageIDs": [], "imageNames": [], "positions": [], "times": []}
-
+    def load_animation_info_single(self, animation_id:int):
+        """Load all informations of this animation"""
         try:
+            animationlist = {"imageIDs": [], "imageNames": [], "positions": [], "times": []}
+
             conn, cursor = self.get_db_connection()
             sql = "SELECT * FROM images_to_animations where animation_id = ? ORDER BY pos"
             data = cursor.execute(sql, (animation_id,)).fetchall()
@@ -483,10 +430,8 @@ class Dao:
             error_handler(err,traceback.format_exc())
             return None
 
-    def update_animation_time_of_single_frame(self, animation_id, position, time):
-        """
-        This Method will set the sleep_time of a single frame to time
-        """
+    def update_animation_time_of_single_frame(self, animation_id:int, position:int, time:int) -> None:
+        """Set the sleep_time of a single frame to time"""
         try:
             conn, cursor = self.get_db_connection()
             sql = "UPDATE images_to_animations SET sleep_time=? WHERE animation_id=? AND pos=?"
@@ -497,10 +442,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def update_animation_time_of_all_frames(self, animation_id, time):
-        """
-        This Method will set the sleep_time of all animation frames to time
-        """
+    def update_animation_time_of_all_frames(self, animation_id:int, time:int) -> None:
+        """Set the sleep_time of all animation frames to time"""
         try:
             conn, cursor = self.get_db_connection()
             sql = "UPDATE images_to_animations SET sleep_time=? WHERE animation_id=?"
@@ -511,11 +454,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def switch_animation_positions(self, animation_id, source_id, target_id):
-        """
-        This Method will swap the image_id and sleep_time values
-        of the animationframes with source_id and target_id
-        """
+    def switch_animation_positions(self, animation_id:int, source_id:int, target_id:int) -> None:
+        """Swap the image_id and sleep_time values of the animationframes with source_id and target_id"""
         try:
             conn, cursor = self.get_db_connection()
 
@@ -540,10 +480,8 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
 
-    def get_last_position_by_animation_id(self, animation_id):
-        """
-        This Method will return the highest position of all rows with this animation_id
-        """
+    def get_last_position_by_animation_id(self, animation_id:int):
+        """Return the highest position of all rows with this animation_id"""
         try:
             conn, cursor = self.get_db_connection()
             sql = "SELECT MAX(pos) FROM images_to_animations WHERE animation_id=?"
@@ -556,9 +494,7 @@ class Dao:
             return None
 
 def error_handler(err,trace):
-    """
-    Print Errors that can occurr in the DB Methods
-    """
+    """Print Errors that can occurr in the DB Methods"""
     print(f"SQLite error: {err.args}")
     print("Exception class is: ", err.__class__)
     print("SQLite traceback: ")
