@@ -22,9 +22,7 @@ git clone https://github.com/Kurzhalsgiraffe/GameFrameZero
 Make sure to install it with sudo, if you want to run the Server as root
 ````
 sudo apt install python3-pip
-sudo pip3 install flask
-sudo pip3 install rpi-ws281x
-sudo pip3 install waitress
+sudo pip3 install -r requirements.txt
 ````
 
 ## Setup the Autostart
@@ -98,4 +96,4 @@ The grid fits perfectly to my Shadow Box Frame. If yours does not fit, can adjus
 ### Disclaimer
 
 Please note that this is just a hobby project. Code or hardware may not reflect best practice.
-Feel free to send me some pull requests! :)
+Feel free to send me a pull request! :)

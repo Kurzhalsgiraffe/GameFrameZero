@@ -1,7 +1,7 @@
 {
     "brightness": 1,
     "database_file": "database.sqlite",
-    "language": "de",
+    "language": "en",
     "last_applied_image_id": 1,
     "power": "on",
     "skip_offset": 10,
