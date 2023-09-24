@@ -19,6 +19,8 @@ const sidebar_move_collapse = document.querySelector("#sidebar-move-collapse");
 const power_switch_on = document.querySelector("#power-switch-on");
 const power_switch_off = document.querySelector("#power-switch-off");
 
+const upload_image_btn = document.querySelector("#upload-image-btn");
+
 function setLanguage(lang) {
     if (lang == "en") {
         navlink_draw.textContent = "DRAW";
@@ -47,6 +49,9 @@ function setLanguage(lang) {
         power_switch_on.textContent = "ON";
         power_switch_off.textContent = "OFF";
 
+        upload_image_btn.textContent = "UPLOAD IMAGE";
+        upload_image_btn.title = "Upload image to view it as Pixel-Image";
+
     } else if (lang == "de") {       
         navlink_draw.textContent = "ZEICHNEN";
         navlink_images.textContent = "BILDER";
@@ -72,5 +77,8 @@ function setLanguage(lang) {
 
         power_switch_on.textContent = "AN";
         power_switch_off.textContent = "AUS";
+
+        upload_image_btn.textContent = "BILD HOCHLADEN";
+        upload_image_btn.title = "Lade ein Bild hoch, um es als Pixel-Bild zu bearbeiten";
     }
 }

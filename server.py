@@ -137,6 +137,15 @@ def get_image_name():
     image_name = manager.get_image_name_by_id(image_id)
     return image_name
 
+@app.route('/image/upload', methods=['POST'])
+def upload_file():
+    uploaded_file = request.files['file']
+    print(type(uploaded_file))
+    if uploaded_file:
+        color_array = manager.process_uploaded_image(uploaded_file)
+        return jsonify({"colorArray": color_array})
+    return {}, 400
+
 ## ----- ANIMATION ----- ##
 
 @app.route("/animation/info/load/single")

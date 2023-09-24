@@ -63,7 +63,7 @@ body::-webkit-scrollbar {
     align-items: center;
 }
 
-#language-switch-cradle  {
+#switch-cradle  {
     display: flex;
     width: 80px;
     text-align: center;
@@ -124,7 +124,6 @@ div {
     border-radius: 0.5em;
     color: #ffffff;
     cursor: pointer;
-    padding: 5px;
     text-align: center;
     font-weight: 350;
     transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
@@ -132,10 +131,18 @@ div {
   
 .opt-btn {
     width: 10em;
+    padding: 5px;
     border: 2px solid #32cd32;
 }
 
-.opt-btn:hover {
+.upload-btn {
+    width: 12.5em;
+    padding: 6.25px;
+    border: 0.2em solid #32cd32;
+}
+
+.opt-btn:hover,
+.upload-btn:hover {
     box-shadow: 0 0 40px 40px #32cd32 inset;
 }
 
@@ -187,7 +194,6 @@ canvas {
 }
   
 .slider {
-    -webkit-appearance: none;
     width: 100%;
     height: 25px;
     background: white;
@@ -280,4 +286,8 @@ input[type=checkbox] {
     min-width: 100px;
     display: inline-block;
     text-align: center;
+}
+  
+#upload-image-inpt {
+    display: none;
 }

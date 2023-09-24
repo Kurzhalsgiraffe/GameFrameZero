@@ -1,4 +1,7 @@
+import cv2 as cv
 import json
+import numpy as np
+import os
 import time
 
 from database_access import Dao
@@ -141,6 +144,30 @@ class FrameManager:
                 else:
                     data.append(None)
         return data
+    
+    def process_uploaded_image(self, uploaded_file):
+        """Transform uploaded image into 16x16 Pixel-Image"""
+        filename = "uploaded_file.png"
+        color_array = []
+
+        open(filename, "w").close()
+        uploaded_file.save(filename)
+
+        img = cv.imread(filename, cv.IMREAD_UNCHANGED)
+        img = cv.resize(img,(16,16))
+        img = np.array(img)
+
+        for y in range(16):
+            for x in range(16):
+                if y%2==0:
+                    x = 15-x
+                r = img[y][x][0]
+                g = img[y][x][1]
+                b = img[y][x][2]
+                color_array.append(f"#{(b*16**4+g*16**2+r):06x}")
+
+        os.remove("uploaded_file.png")
+        return color_array
 
     def set_brightness(self, brightness:int) -> None:
         """Apply the brightness value"""

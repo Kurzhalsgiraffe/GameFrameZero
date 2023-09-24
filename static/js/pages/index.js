@@ -7,10 +7,14 @@ const apply_btn = document.querySelector("#sidebar-options-apply-btn");
 const save_image_inpt = document.querySelector("#sidebar-options-save-image-name");
 const save_btn = document.querySelector("#sidebar-options-save-btn");
 const replace_btn = document.querySelector("#sidebar-options-replace-btn");
-const move_up = document.querySelector("#move-up");
-const move_left = document.querySelector("#move-left");
-const move_right = document.querySelector("#move-right");
-const move_down = document.querySelector("#move-down");
+const move_up_btn = document.querySelector("#move-up");
+const move_left_btn = document.querySelector("#move-left");
+const move_rightbtn = document.querySelector("#move-right");
+const move_down_btn = document.querySelector("#move-down");
+
+const upload_inpt = document.querySelector("#upload-image-inpt");
+upload_inpt.setAttribute("title", "Choose an image");
+
 const canvasObject = new CanvasObject(canvas, FRAME_SIZE=800, PIXEL_SIZE=50, colorArray=[]);
 let isMouseDownCanvas;
 let drawMode = true;
@@ -21,13 +25,15 @@ save_btn.addEventListener("click", async () => await canvasObject.sendColorArray
 replace_btn.addEventListener("click", async () => await canvasObject.replaceColorArrayOnServer(loadedIDToEdit));
 
 color_selector.addEventListener("change", () => setPickedColor(color_selector.value));
-move_up.addEventListener("click", moveUp);
-move_left.addEventListener("click", moveLeft);
-move_right.addEventListener("click", moveRight);
-move_down.addEventListener("click", moveDown);
+move_up_btn.addEventListener("click", moveUp);
+move_left_btn.addEventListener("click", moveLeft);
+move_rightbtn.addEventListener("click", moveRight);
+move_down_btn.addEventListener("click", moveDown);
+
+upload_inpt.addEventListener("change", uploadImage);
 
 color_cirlces.forEach((circle) => {
-    circle.addEventListener('click', standardColor);
+    circle.addEventListener('click', colorCircelSelected);
 });
 
 // toggle the drawmode (colorpicker / drawing)
@@ -94,9 +100,9 @@ function setDrawMode(d) {
 }
 
 // set color to one of the 8 standard colors
-function standardColor() {
+function colorCircelSelected() {
     setPickedColor(this.getAttribute("data-color"));
-    elem.classList.add("active");
+    this.classList.add("active");
 }
 
 // change fillstyle to color and update frontend components
@@ -199,6 +205,33 @@ function moveDown() {
     }
     canvasObject.drawColorArrayToCanvas();
     canvasObject.c.fillStyle = color_selector.value;
+}
+
+async function uploadImage() {
+    const selectedFile = upload_inpt.files[0];
+    if (selectedFile) {
+        const allowedExtensions = ["jpg", "jpeg", "png"];
+        const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
+
+        if (allowedExtensions.includes(fileExtension)) {
+            const formData = new FormData();
+            formData.append("file", selectedFile);
+
+            let response = await fetch("/image/upload", {
+                method: "POST",
+                body: formData,
+            })
+            if (response.status == 200) {
+                let res = await response.json();
+                canvasObject.colorArray = res.colorArray
+                canvasObject.drawColorArrayToCanvas()
+            } else {
+                console.log("failed to upload image");
+            }
+        } else {
+            console.log("invalid file extension");
+        }
+    }
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
