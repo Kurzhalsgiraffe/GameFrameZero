@@ -90,16 +90,16 @@ class Dao:
             conn, cursor = self.get_db_connection()
 
             arr = []
-            sql = f"SELECT * FROM images WHERE image_id IN ({','.join('?'*len(image_ids))})"
+            placeholders = ",".join(["?"] * len(image_ids))
+            sql = f"SELECT * FROM images WHERE image_id IN ({placeholders})"
             data = cursor.execute(sql, image_ids).fetchall()
 
+            data_dict = {d[0]: d for d in data}
+
             for image_id in image_ids:
-                for d in data:
-                    if d[0] == image_id:
-                        arr.append(d)
-                        break
-                else:
-                    arr.append(None)
+                image_data = data_dict.get(image_id)
+                arr.append(image_data if image_data is not None else None)
+
             conn.close()
             return arr
 
