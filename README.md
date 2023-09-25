@@ -26,14 +26,17 @@ network={
     psk="Passwort"
     key_mgmt=WPA-PSK
 }
-4. Open the config by running "sudo raspi-config".
-4.1. In the "System Options", change Password and Hostname.
-4.2. In the "Performance Options", set the GPU Memory to 32 MB.
-4.3. In the "Advanced Options", expand the filesystem.
-5. Run "sudo apt update".
-6. Run "sudo apt upgrade".
-7. Run "sudo rpi-update".
-8. Run "sudo reboot".
+
+4. Boot the Raspberry Pi with the SD-Card and log in via SSH.
+5. Open the config by running "sudo raspi-config".
+6. In the "System Options", change Password and Hostname.
+7. In the "Performance Options", set the GPU Memory to 32 MB.
+8. In the "Advanced Options", expand the filesystem.
+
+9. Run "sudo apt update".
+10. Run "sudo apt upgrade".
+11. Run "sudo rpi-update".
+12. Run "sudo reboot".
 ````
 
 ## Installation
