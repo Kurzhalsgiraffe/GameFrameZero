@@ -2,7 +2,6 @@
 import frame_manager
 
 from flask import Flask, request, jsonify, render_template
-from threading import Thread
 from waitress import serve
 
 app = Flask(__name__)
@@ -91,14 +90,12 @@ def image_load_multiple():
 @app.route("/image/apply/colorarray", methods=["POST"])
 def apply_color_array():
     color_array = request.json
-    manager.stop_animation()
     manager.apply_color_array(color_array)
     return {}
 
 @app.route("/image/apply/id", methods=["POST"])
 def apply_image_id():
     image_id = request.args.get('image_id', type = int)
-    manager.stop_animation()
     manager.apply_image_id(image_id)
     return {}
 
@@ -162,9 +159,7 @@ def load_animation_info_all():
 @app.route("/animation/start", methods=["POST"])
 def animation_start():
     animation_id = request.args.get('animation_id', type = int)
-    manager.stop_animation()
-    t = Thread(target=manager.start_animation, args=(animation_id,))
-    t.start()
+    manager.start_animation(animation_id)
     return {}
 
 @app.route("/animation/stop", methods=["POST"])
@@ -224,7 +219,7 @@ def animation_frame_remove():
 ## ----- MAIN ----- ##
 
 if __name__ == "__main__":
-    manager.apply_image_id(manager.config.get_config("last_applied_image_id"))
+    manager.restore_after_reboot()
     if __debug__:
         app.run(debug=True, host="0.0.0.0")
     else:

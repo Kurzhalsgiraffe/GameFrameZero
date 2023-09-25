@@ -6,6 +6,7 @@ import time
 
 from database_access import Dao
 from led_hardware import LEDMatrix
+from threading import Thread
 
 class Config:
     def __init__(self, config_file:str) -> None:
@@ -16,6 +17,7 @@ class Config:
             "default_animationtime": 200,
             "language": "de",
             "last_applied_image_id": 1,
+            "last_applied_animation_id": None,
             "power": "on",
             "skip_offset": 10,
             "speed": 1.0,
@@ -27,7 +29,7 @@ class Config:
         with open(self.config_file, 'r', encoding="utf-8") as file:
             config = json.load(file)
         return config
-    
+
     def write_config_file(self, config) -> None:
         """Write to the JSON config file"""
         with open(self.config_file, 'w+', encoding="utf-8") as file:
@@ -64,14 +66,21 @@ class FrameManager:
 
     def apply_color_array(self, color_array:list):
         """Apply the color_array to the LED-Matrix"""
+        if not self.animation_stopped:
+            self.stop_animation()
         binary = self.color_array_to_binary(color_array)
         self.led.update_frame(binary)
 
     def apply_image_id(self, image_id:int) -> None:
         """Apply the image with the given image_id to the LED-Matrix"""
+        if not self.animation_stopped:
+            self.stop_animation()
+
         binary = self.database.load_single_binary_by_id(image_id)
         self.led.update_frame(binary)
+
         self.config.update_config("last_applied_image_id", image_id)
+        self.config.update_config("last_applied_animation_id", None)
 
     def load_animation_info_all(self) -> dict[str, list]:
         """Load informations of all animations"""
@@ -109,7 +118,7 @@ class FrameManager:
             data["imageName"] = self.database.get_image_name_by_id(image_id)
             data["colorArray"] = self.binary_to_color_array(binary)
         return data
-    
+
     def get_image_name_by_id(self, image_id:int):
         """Get the image_name by image_id"""
         return self.database.get_image_name_by_id(image_id)
@@ -144,7 +153,7 @@ class FrameManager:
                 else:
                     data.append(None)
         return data
-    
+
     def process_uploaded_image(self, uploaded_file):
         """Transform uploaded image into 16x16 Pixel-Image"""
         filename = "uploaded_file.png"
@@ -185,9 +194,18 @@ class FrameManager:
         self.config.update_config("power", power)
 
     def vacuum_database(self) -> None:
-        """ perform a vacuum on the database if configured"""
+        """Perform a vacuum on the database if configured"""
         if self.config.get_config("vacuum_on_start"):
             self.database.vacuum()
+
+    def restore_after_reboot(self) -> None:
+        """Apply the last Animation or Image that was active before reboot"""
+        image_id = self.config.get_config("last_applied_image_id")
+        animation_id = self.config.get_config("last_applied_animation_id")
+        if image_id != None and animation_id == None:
+            self.apply_image_id(image_id)
+        elif image_id == None and animation_id != None:
+            self.start_animation(animation_id)
 
 # ---- ANIMATION ----
 
@@ -242,20 +260,30 @@ class FrameManager:
             for binary, sleep_time in zip(binaries, data["times"]):
                 animationlist.append([binary[2], sleep_time/1000])
         return animationlist
+    
+    def animation_loop(self, animationlist) -> None:
+        while self.animation_running:
+            for binary, sleep_time in animationlist:
+                if self.animation_running:
+                    self.led.update_frame(binary)
+                    time.sleep(sleep_time*(1/(self.animation_speed)))
+        self.animation_stopped = True
 
     def start_animation(self, animation_id:int) -> None:
         """Start animation by id"""
+        if not self.animation_stopped:
+            self.stop_animation()
+
         animationlist = self.load_animation(animation_id)
         if animationlist:
             self.animation_running = True
             self.animation_stopped = False
 
-            while self.animation_running:
-                for binary, sleep_time in animationlist:
-                    if self.animation_running:
-                        self.led.update_frame(binary)
-                        time.sleep(sleep_time*(1/(self.animation_speed)))
-            self.animation_stopped = True
+            self.config.update_config("last_applied_animation_id", animation_id)
+            self.config.update_config("last_applied_image_id", None)
+
+            t = Thread(target=self.animation_loop, args=(animationlist,))
+            t.start()
 
     def stop_animation(self) -> None:
         """Stop the animation"""

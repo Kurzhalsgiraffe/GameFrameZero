@@ -3,6 +3,7 @@
     "database_file": "database.sqlite",
     "language": "en",
     "last_applied_image_id": 1,
+    "last_applied_animation_id": null,
     "power": "on",
     "skip_offset": 10,
     "speed": 1.0,
