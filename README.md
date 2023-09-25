@@ -37,6 +37,7 @@ network={
 10. Run "sudo apt upgrade".
 11. Run "sudo rpi-update".
 12. Run "sudo reboot".
+13. Install git by running "sudo apt install git"
 ````
 
 ## Installation
@@ -64,11 +65,11 @@ importing the libraries and checking the versions:
 >>> cv2.__version__
 '4.5.1'
 >>> flask.__version__
-'2.2.2'
+'2.3.3'
 >>> numpy.__version__
 '1.19.5'
->>> rpi-ws281x.__version__
-'4.3.4'
+>>> rpi_ws281x.__version__
+'5.0.0'
 ````
 
 ## Setup the Autostart

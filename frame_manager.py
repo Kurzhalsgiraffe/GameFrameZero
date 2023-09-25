@@ -240,7 +240,7 @@ class FrameManager:
             binaries = self.database.load_multiple_binaries_by_ids(data["imageIDs"])
 
             for binary, sleep_time in zip(binaries, data["times"]):
-                animationlist.append([binary[1], sleep_time/1000])
+                animationlist.append([binary[2], sleep_time/1000])
         return animationlist
 
     def start_animation(self, animation_id:int) -> None:
