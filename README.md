@@ -2,15 +2,39 @@
 
 This project is a DIY LED frame that displays 16x16 pixel art.
 It's my attempt to make a comparable DIY device to all the other pixelframes that are available on the market.
-It is a Raspberry Pi Zero WH running a web server for creating, storing and animating the pixel art.
+The Project is built around a Raspberry Pi Zero WH, running a web server for creating, storing and animating the pixel images.
 
-Depending on whether you have small electronic components such as switches and DC sockets lying around, the project can be replicated for around 50 euros
-
+Depending on whether you have small electronic components such as switches and DC sockets lying around, the project can be replicated for around 50 euros.
 
 <img src="images/gameframe.png" width = 640>
 <img src="images/mainpage.png" width = 400>
 <img src="images/animationpage.png" width = 400>
 <img src="images/animationeditor.PNG" width = 400>
+
+## Preparation
+
+Prepare the Raspberry Pi Zero WH by following these steps:
+````
+1. Install "Raspberry Pi OS Lite (32-bit) on your SD-Card using the Raspberry Pi Imager.
+2. Activate SSH by creating a empty file with the name "ssh" in the boot partition on the SD-Card.
+3. Configure WLAN by creating a file with the name "wpa_supplicant.conf" with the following content:
+country=DE
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+network={
+    ssid="WLAN-Name"
+    psk="Passwort"
+    key_mgmt=WPA-PSK
+}
+4. Open the config by running "sudo raspi-config".
+4.1. In the "System Options", change Password and Hostname.
+4.2. In the "Performance Options", set the GPU Memory to 32 MB.
+4.3. In the "Advanced Options", expand the filesystem.
+5. Run "sudo apt update".
+6. Run "sudo apt upgrade".
+7. Run "sudo rpi-update".
+8. Run "sudo reboot".
+````
 
 ## Installation
 
@@ -18,8 +42,7 @@ Clone Repository
 ````
 git clone https://github.com/Kurzhalsgiraffe/GameFrameZero
 ````
-
-Make sure to install it with sudo, if you want to run the Server as root
+Make sure to install the needed libraries with sudo permissions, to run the Web-Server as root
 ````
 sudo apt install python3-pip
 sudo apt install python3-opencv
