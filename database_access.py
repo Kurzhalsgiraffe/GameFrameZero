@@ -186,6 +186,24 @@ class Dao:
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
             return None
+        
+    def get_multiple_image_names_by_ids(self, image_ids:list):
+        """Get the names for all images in the list"""
+        try:
+            conn, cursor = self.get_db_connection()
+
+            placeholders = ",".join(["?"] * len(image_ids))
+            sql = f"SELECT image_id, image_name FROM images WHERE image_id IN ({placeholders})"
+            data = cursor.execute(sql, image_ids).fetchall()
+            conn.close()
+
+            data_dict = dict(data)
+            image_names = [data_dict.get(image_id) for image_id in image_ids]
+            return image_names
+
+        except sqlite3.Error as err:
+            error_handler(err,traceback.format_exc())
+            return None
 
     def get_first_image_id(self):
         """Get the first image_id"""
@@ -369,7 +387,8 @@ class Dao:
         """Load the first image_id of every animation"""
         try:
             conn, cursor = self.get_db_connection()
-            sql = "SELECT animation_id, image_id FROM images_to_animations WHERE pos = 1 AND animation_id IN ({})".format(','.join(['?']*len(animation_ids)))
+            placeholders = ",".join(['?']*len(animation_ids))
+            sql = f"SELECT animation_id, image_id FROM images_to_animations WHERE pos = 1 AND animation_id IN ({placeholders})"
             data = cursor.execute(sql, animation_ids).fetchall()
             conn.close()
 
@@ -399,16 +418,23 @@ class Dao:
             animationlist = {"imageIDs": [], "imageNames": [], "positions": [], "times": []}
 
             conn, cursor = self.get_db_connection()
-            sql = "SELECT * FROM images_to_animations where animation_id = ? ORDER BY pos"
+            sql = "SELECT image_id, pos, sleep_time FROM images_to_animations WHERE animation_id = ? ORDER BY pos"
             data = cursor.execute(sql, (animation_id,)).fetchall()
             conn.close()
+
+            image_ids = [row[0] for row in data]
+            image_names = self.get_multiple_image_names_by_ids(image_ids)
             
-            if data:
-                for i in data:
-                    animationlist["imageIDs"].append(i[1])
-                    animationlist["imageNames"].append(self.get_image_name_by_id(i[1])) # Could be done faster!!!
-                    animationlist["positions"].append(i[2])
-                    animationlist["times"].append(i[3])
+            for row in data:
+                image_id, pos, time = row
+
+                index = image_ids.index(image_id)
+                image_name = image_names[index]
+
+                animationlist["imageIDs"].append(image_id)
+                animationlist["imageNames"].append(image_name)
+                animationlist["positions"].append(pos)
+                animationlist["times"].append(time)
             return animationlist
 
         except sqlite3.Error as err:
