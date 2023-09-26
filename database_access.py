@@ -369,28 +369,13 @@ class Dao:
         """Load the first image_id of every animation"""
         try:
             conn, cursor = self.get_db_connection()
-            sql = "SELECT * FROM images_to_animations"
-            data = cursor.execute(sql).fetchall()
+            sql = "SELECT animation_id, image_id FROM images_to_animations WHERE pos = 1 AND animation_id IN ({})".format(','.join(['?']*len(animation_ids)))
+            data = cursor.execute(sql, animation_ids).fetchall()
             conn.close()
 
-            data = sorted(data, key=lambda x: (x[0], x[2]))
-            animation = []
-            used = []
-            ret = []
-            for i in data:
-                animation_id = i[0]
-                if animation_id not in used:
-                    used.append(animation_id)
-                    animation.append(i)
-
-            for i in animation_ids:
-                for j in animation:
-                    if j[0] == i:
-                        ret.append(j[1])
-                        break
-                else:
-                    ret.append(None)
-            return ret
+            data_dict = dict(data)
+            result = [data_dict.get(animation_id, None) for animation_id in animation_ids]
+            return result
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
