@@ -123,9 +123,11 @@ class FrameManager:
         return self.database.get_image_name_by_id(image_id)
 
     def save_image(self, color_array:list, image_name:str) -> None:
-        """Save the color_array to the database"""
+        """Save the color_array to the database and create a png to show in frontend"""
         binary = self.color_array_to_binary(color_array)
-        self.database.save_image(binary, image_name)
+        image_id = self.database.save_image(binary, image_name)
+        if image_id:
+            self.create_png_from_color_array(color_array, image_id)
 
     def rename_image(self, image_id:int, image_name:str) -> None:
         """Rename the image"""
@@ -153,7 +155,7 @@ class FrameManager:
                     data.append(None)
         return data
 
-    def process_uploaded_image(self, uploaded_file):
+    def process_uploaded_image(self, uploaded_file) -> list:
         """Transform uploaded image into 16x16 Pixel-Image"""
         filename = "uploaded_file.png"
         color_array = []
@@ -175,6 +177,34 @@ class FrameManager:
 
         os.remove("uploaded_file.png")
         return color_array
+    
+    def create_png_from_color_array(self, color_array:list, image_id:int, size:int=800) -> None:
+        """Create a PNG file from the color_array with given size"""
+        line_size = size // 16
+        size = size if size % 16 == 0 else line_size*16 # size must be dividable by 16
+
+        img = Image.new("RGB", (size, size))
+        pixels = img.load()
+
+        for y in range(size):
+            for x in range(size):
+                if x % line_size == 0 or y % line_size == 0:
+                    pixels[x, y] = (255, 255, 255) # Set white color for the white lines
+                else:
+                    original_x = x // line_size
+                    original_y = y // line_size
+
+                    if original_y % 2 == 0:
+                        color = color_array[original_y * 16 + (15 - original_x)]
+                    else:
+                        color = color_array[original_y * 16 + original_x]
+
+                    r = int(color[1:3], 16)
+                    g = int(color[3:5], 16)
+                    b = int(color[5:7], 16)
+                    pixels[x, y] = (r, g, b)
+
+        img.save(f"saved_images/{image_id}.png")
 
     def set_brightness(self, brightness:int) -> None:
         """Apply the brightness value"""

@@ -73,7 +73,7 @@ async function deleteColorArrayFromServer(image_id) {
 }
 
 function editSavedColorArray() {
-    window.location.replace("/?id="+currentPos);
+    window.location.replace("/?edit_image_id="+currentPos);
 }
 
 document.addEventListener("DOMContentLoaded", async function() {

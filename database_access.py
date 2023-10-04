@@ -107,7 +107,7 @@ class Dao:
             error_handler(err,traceback.format_exc())
             return None
 
-    def save_image(self, binary:bytearray, image_name:str) -> None:
+    def save_image(self, binary:bytearray, image_name:str):
         """Save an image to the database"""
         try:
             conn, cursor = self.get_db_connection()
@@ -115,7 +115,10 @@ class Dao:
             sql = "INSERT INTO images VALUES (NULL,?,?)"
             cursor.execute(sql, (image_name, binary))
             conn.commit()
+            image_id = cursor.lastrowid
             conn.close()
+
+            return int(image_id)
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())

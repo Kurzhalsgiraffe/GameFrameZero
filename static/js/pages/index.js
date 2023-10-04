@@ -236,12 +236,13 @@ async function uploadImage() {
 
 document.addEventListener("DOMContentLoaded", async function() {
     canvasObject.initializeColorArray();
-    // if there is an id in the url, load it and draw it on the canvas, so it can be edited
+
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    if(urlParams.has('id')) {
+    if(urlParams.has('edit_image_id')) {
         replace_btn.setAttribute("style","display: block");
-        loadedIDToEdit = urlParams.get('id');
+        loadedIDToEdit = urlParams.get('edit_image_id');
+        console.log(loadedIDToEdit)
         await loadAndShow(loadedIDToEdit, null);
     }
     canvasObject.drawGrid()

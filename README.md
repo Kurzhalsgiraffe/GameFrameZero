@@ -6,10 +6,10 @@ The Project is built around a Raspberry Pi Zero WH, running a web server for cre
 
 Depending on whether you have small electronic components such as switches and DC sockets lying around, the project can be replicated for around 50 euros.
 
-<img src="images/gameframe.png" width = 640>
-<img src="images/mainpage.png" width = 400>
-<img src="images/animationpage.png" width = 400>
-<img src="images/animationeditor.PNG" width = 400>
+<img src="project_pictures/gameframe.png" width = 640>
+<img src="project_pictures/mainpage.png" width = 400>
+<img src="project_pictures/animationpage.png" width = 400>
+<img src="project_pictures/animationeditor.PNG" width = 400>
 
 ## Preparation
 
@@ -109,8 +109,8 @@ sudo systemctl enable gameframezero.service
 - PCB socket strips
 - 3D printed case and grid
 
-<img src="images/backside.png" width = 400>
-<img src="images/backside_open.png" width = 400>
+<img src="project_pictures/backside.png" width = 400>
+<img src="project_pictures/backside_open.png" width = 400>
 
 ## Assembly
 
@@ -121,7 +121,7 @@ I soldered some PCB socket strips to the PCB, to plug the Raspberry Pi directly 
 
 The grid fits perfectly to my Shadow Box Frame. If yours does not fit, can adjust the CAD files.
 
-<img src="images/schematic.png" width = 600>
+<img src="project_pictures/schematic.png" width = 600>
 
 ### Disclaimer
 
