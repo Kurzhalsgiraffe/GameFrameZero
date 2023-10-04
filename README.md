@@ -49,8 +49,8 @@ git clone https://github.com/Kurzhalsgiraffe/GameFrameZero
 Make sure to install the needed libraries with sudo permissions, to run the Web-Server as root
 ````
 sudo apt install python3-pip
-sudo pip3 install Pillow
 sudo pip3 install flask
+sudo pip3 install Pillow
 sudo pip3 install rpi-ws281x
 sudo pip3 install waitress
 ````
