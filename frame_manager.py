@@ -1,8 +1,7 @@
-import cv2 as cv
 import json
-import numpy as np
 import os
 import time
+from PIL import Image
 
 from database_access import Dao
 from led_hardware import LEDMatrix
@@ -162,18 +161,17 @@ class FrameManager:
         open(filename, "w").close()
         uploaded_file.save(filename)
 
-        img = cv.imread(filename, cv.IMREAD_UNCHANGED)
-        img = cv.resize(img,(16,16))
-        img = np.array(img)
+        img = Image.open(filename)
+        img = img.resize((16, 16), Image.NEAREST)
+        img = img.convert("RGB")
+        pixels = img.load()
 
         for y in range(16):
             for x in range(16):
-                if y%2==0:
-                    x = 15-x
-                r = img[y][x][0]
-                g = img[y][x][1]
-                b = img[y][x][2]
-                color_array.append(f"#{(b*16**4+g*16**2+r):06x}")
+                if y % 2 == 0:
+                    x = 15 - x
+                r, g, b = pixels[x, y]
+                color_array.append(f"#{(r * 256**2 + g * 256 + b):06x}")
 
         os.remove("uploaded_file.png")
         return color_array
