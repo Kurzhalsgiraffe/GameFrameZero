@@ -1,10 +1,10 @@
 import json
 import os
 import time
-from PIL import Image
 
 from database_access import Dao
 from led_hardware import LEDMatrix
+from PIL import Image
 from threading import Thread
 
 class Config:

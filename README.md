@@ -57,19 +57,16 @@ sudo pip3 install waitress
 After installing the libraries, check if they are installed correctly by running python on the raspberry pi,
 importing the libraries and checking the versions:
 ````
->>> import cv2
 >>> import flask
->>> import numpy
 >>> import rpi_ws281x
+>>> from PIL import Image
 
->>> cv2.__version__
-'4.5.1'
 >>> flask.__version__
 '2.3.3'
->>> numpy.__version__
-'1.19.5'
 >>> rpi_ws281x.__version__
 '5.0.0'
+>>> Image.__version__
+'8.1.2'
 ````
 
 ## Setup the Autostart
