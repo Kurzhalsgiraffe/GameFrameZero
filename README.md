@@ -52,6 +52,7 @@ sudo apt install python3-pip
 sudo pip3 install flask
 sudo pip3 install Pillow
 sudo pip3 install rpi-ws281x
+sudo pip3 install svgwrite
 sudo pip3 install waitress
 ````
 After installing the libraries, check if they are installed correctly by running python on the raspberry pi,
@@ -65,6 +66,8 @@ importing the libraries and checking the versions:
 '2.3.3'
 >>> rpi_ws281x.__version__
 '5.0.0'
+>>> svgwrite.__version__
+'1.4.3'
 >>> Image.__version__
 '8.1.2'
 ````
