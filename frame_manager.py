@@ -61,6 +61,7 @@ class FrameManager:
         self.animation_speed = self.config.get_config("speed")
         self.animation_running = False
         self.animation_stopped = True
+        self.saved_images_path = "saved_images"
         self.vacuum_database()
 
     def apply_color_array(self, color_array:list):
@@ -142,6 +143,13 @@ class FrameManager:
         binary = self.color_array_to_binary(color_array)
         image_name = self.get_image_name_by_id(image_id)
         self.database.replace_binary_by_id(image_id, image_name, binary)
+        if image_id:
+            self.create_png_from_color_array(color_array, image_id)
+
+    def delete_image(self, image_id:int) -> None:
+        """Delete image by image_id"""
+        self.database.delete_binary_by_id(image_id)
+        os.remove(f"{self.saved_images_path}/{image_id}.png")
 
     def load_multiple_binaries_by_ids(self, image_ids:list) -> list:
         """Load the binaries of the given image_ids"""
@@ -204,7 +212,7 @@ class FrameManager:
                     b = int(color[5:7], 16)
                     pixels[x, y] = (r, g, b)
 
-        img.save(f"saved_images/{image_id}.png")
+        img.save(f"{self.saved_images_path}/{image_id}.png")
 
     def set_brightness(self, brightness:int) -> None:
         """Apply the brightness value"""
@@ -259,10 +267,6 @@ class FrameManager:
     def switch_animation_positions(self, animation_id:int, source_id:int, target_id:int) -> None:
         """Switch positions of images in the animation"""
         self.database.switch_animation_positions(animation_id, source_id, target_id)
-
-    def delete_image(self, image_id:int) -> None:
-        """Delete image by image_id"""
-        self.database.delete_binary_by_id(image_id)
 
     def delete_animation(self, animation_id:int) -> None:
         """Delete animation by animation_id"""
