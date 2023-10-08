@@ -1,5 +1,6 @@
 import json
 import os
+import svgwrite
 import time
 
 from database_access import Dao
@@ -128,7 +129,7 @@ class FrameManager:
         binary = self.color_array_to_binary(color_array)
         image_id = self.database.save_image(binary, image_name)
         if image_id:
-            self.create_png_from_color_array(color_array, image_id)
+            self.color_array_to_svg_file(color_array, image_id)
 
     def rename_image(self, image_id:int, image_name:str) -> None:
         """Rename the image"""
@@ -144,7 +145,7 @@ class FrameManager:
         image_name = self.get_image_name_by_id(image_id)
         self.database.replace_binary_by_id(image_id, image_name, binary)
         if image_id:
-            self.create_png_from_color_array(color_array, image_id)
+            self.color_array_to_svg_file(color_array, image_id)
 
     def delete_image(self, image_id:int) -> None:
         """Delete image by image_id"""
@@ -185,34 +186,6 @@ class FrameManager:
 
         os.remove("uploaded_file.png")
         return color_array
-
-    def create_png_from_color_array(self, color_array:list, image_id:int, size:int=800) -> None:
-        """Create a PNG file from the color_array with given size"""
-        line_size = size // 16
-        size = size if size % 16 == 0 else line_size*16 # size must be dividable by 16
-
-        img = Image.new("RGB", (size, size))
-        pixels = img.load()
-
-        for y in range(size):
-            for x in range(size):
-                if x % line_size == 0 or y % line_size == 0:
-                    pixels[x, y] = (255, 255, 255) # Set white color for the white lines
-                else:
-                    original_x = x // line_size
-                    original_y = y // line_size
-
-                    if original_y % 2 == 0:
-                        color = color_array[original_y * 16 + (15 - original_x)]
-                    else:
-                        color = color_array[original_y * 16 + original_x]
-
-                    r = int(color[1:3], 16)
-                    g = int(color[3:5], 16)
-                    b = int(color[5:7], 16)
-                    pixels[x, y] = (r, g, b)
-
-        img.save(f"{self.saved_images_path}/{image_id}.png")
 
     def set_brightness(self, brightness:int) -> None:
         """Apply the brightness value"""
@@ -339,3 +312,24 @@ class FrameManager:
             binary.append(int(color[3:5], 16))
             binary.append(int(color[5:7], 16))
         return binary
+
+    def color_array_to_svg_file(self, color_array:list, image_id:int, pixel_size:int=35, spacing:int=1) -> None:
+        """Create a SVG file from the color_array with given size"""
+        width = 16
+        height = 16
+
+        total_width = (width * pixel_size) + ((width - 1) * spacing)
+        total_height = (height * pixel_size) + ((height - 1) * spacing)
+
+        dwg = svgwrite.Drawing(f"{self.saved_images_path}/{image_id}.svg", profile="tiny", size=(total_width, total_height))
+
+        for y in range(height):
+            for x in range(width):
+                if y % 2 == 0:
+                    color = color_array[y * width + (width - 1 - x)]
+                else:
+                    color = color_array[y * width + x]
+                rect_x = x * (pixel_size + spacing)
+                rect_y = y * (pixel_size + spacing)
+                dwg.add(dwg.rect((rect_x, rect_y), (pixel_size, pixel_size), fill=color))
+        dwg.save()
