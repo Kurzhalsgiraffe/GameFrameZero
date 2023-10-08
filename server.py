@@ -1,7 +1,7 @@
 """Flask Server: This is the main program"""
 import frame_manager
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_file
 from waitress import serve
 
 app = Flask(__name__)
@@ -81,6 +81,19 @@ def image_load_single():
     pos = request.args.get('pos', type = str)
     data = manager.load_single_image(current_image_id, pos)
     return jsonify(data)
+
+@app.route("/image/load/single/svg") # Replacing /image/load/single in the future
+def image_load_single_svg():
+    current_image_id = request.args.get('image_id', type = int)
+    pos = request.args.get('pos', type = str)
+    filepath, image_id, image_name = manager.load_single_image_svg(current_image_id, pos)
+    if all([filepath, image_id, image_name]):
+        return (
+            send_file(filepath, mimetype='image/svg+xml'),
+            200,
+            {'image_id': image_id, 'image_name': image_name}
+        )
+    return {}, 400
 
 @app.route("/image/load/multiple", methods=["POST"])
 def image_load_multiple():

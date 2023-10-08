@@ -94,6 +94,36 @@ class FrameManager:
                 data["animationNames"].append(i[1] if i[1] != "null" else "Animation " + str(i[0]))
             data["thumbnailIDs"] = self.database.get_all_animation_thumbnail_ids(data["animationIDs"])
         return data
+    
+    def load_single_image_svg(self, image_id:int, pos:str): # TODO: This will replace load_single_image
+        """If pos is given, the image_id of the image at the relative position from the current image_id will be returned"""
+        skip_offset = self.config.get_config("skip_offset")
+        if pos:
+            if pos == "first":
+                image_id = self.database.get_first_image_id()
+            elif pos == "fastbackwards":
+                image_id = self.database.get_ffw_image_id(image_id, skip_offset)
+            elif pos == "prev":
+                image_id = self.database.get_previous_image_id(image_id)
+            elif pos == "next":
+                image_id = self.database.get_next_image_id(image_id)
+            elif pos == "fastforwards":
+                image_id = self.database.get_fbw_image_id(image_id, skip_offset)
+            elif pos == "last":
+                image_id = self.database.get_last_image_id()
+
+        try:
+            filepath = f"saved_images/{image_id}.svg"
+            
+            if not os.path.exists(filepath):
+                binary = self.database.load_single_binary_by_id(image_id)
+                color_array = self.binary_to_color_array(binary)
+                self.color_array_to_svg_file(color_array, image_id)
+            
+            image_name = self.database.get_image_name_by_id(image_id)
+            return filepath, image_id, image_name
+        except:
+            return None, None, None
 
     def load_single_image(self, image_id:int, pos:str) -> dict:
         """Load a single image. If pos is given, the image at the relative position from the current image_id will be loaded."""

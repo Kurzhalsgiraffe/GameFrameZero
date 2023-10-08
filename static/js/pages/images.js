@@ -1,9 +1,9 @@
-const canvas = document.querySelector("canvas");
 const delete_btn = document.querySelector("#sidebar-options-delete-btn");
 const edit_btn = document.querySelector("#sidebar-options-edit-btn");
 const apply_btn = document.querySelector("#sidebar-options-apply-btn");
 const rename_image_inpt = document.querySelector("#sidebar-options-rename-image-name");
 const rename_image_btn = document.querySelector("#sidebar-options-rename-image-btn");
+const svg_img = document.querySelector("#svg-img");
 const first_frame_btn = document.querySelector("#first-frame-btn");
 const fast_backwards_btn = document.querySelector("#fast-backwards-btn");
 const prev_frame_btn = document.querySelector("#prev-frame-btn");
@@ -11,31 +11,41 @@ const next_frame_btn = document.querySelector("#next-frame-btn");
 const fast_forwards_btn = document.querySelector("#fast-forwards-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
 const frameName = document.getElementById("image-name");
-var canvasObject = new CanvasObject(canvas, FRAME_SIZE=800, PIXEL_SIZE=50, colorArray=[]);
 var currentPos = 1;
 
 delete_btn.addEventListener("click", async () => await deleteColorArrayFromServer(currentPos));
 edit_btn.addEventListener("click", editSavedColorArray);
 apply_btn.addEventListener("click", async () => await applyColorArrayByID(currentPos));
 rename_image_btn.addEventListener("click", async () => await renameSavedColorArray(currentPos));
-first_frame_btn.addEventListener("click", async () => await loadAndShow(null, "first"));
-fast_backwards_btn.addEventListener("click", async () => await loadAndShow(currentPos, "fastbackwards"));
-prev_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "prev"));
-next_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "next"));
-fast_forwards_btn.addEventListener("click", async () => await loadAndShow(currentPos, "fastforwards"));
-last_frame_btn.addEventListener("click", async () => await loadAndShow(null, "last"));
+first_frame_btn.addEventListener("click", async () => await loadSVG(null, "first"));
+fast_backwards_btn.addEventListener("click", async () => await loadSVG(currentPos, "fastbackwards"));
+prev_frame_btn.addEventListener("click", async () => await loadSVG(currentPos, "prev"));
+next_frame_btn.addEventListener("click", async () => await loadSVG(currentPos, "next"));
+fast_forwards_btn.addEventListener("click", async () => await loadSVG(currentPos, "fastforwards"));
+last_frame_btn.addEventListener("click", async () => await loadSVG(null, "last"));
 
-async function loadAndShow(id=null, pos=null) {
-    await canvasObject.loadColorArrayFromServer(id, pos);
-    currentPos = canvasObject.currentPos;
-    if (canvasObject.colorArray.length === 0) {
-        frameName.textContent = "-";
-        canvasObject.initializeColorArray();
-    } else {
-        frameName.textContent = canvasObject.imageName;
+async function loadSVG(id=null, pos=null) {
+    let response
+    if (id!=null && pos!=null) {
+        response = await fetch("/image/load/single/svg?image_id="+id+"&pos="+pos);
+    } else if(id!=null && pos==null) {
+        response = await fetch("/image/load/single/svg?image_id="+id);
+    } else if(id==null && pos!=null) {
+        response = await fetch("/image/load/single/svg?pos="+pos);
     }
-    canvasObject.drawColorArrayToCanvas();
-    canvasObject.drawGrid();
+
+    if (response.status == 200) {
+        const imageID = response.headers.get('image_id');
+        const imageName = response.headers.get('image_name');
+        const svg = await response.text();
+
+        currentPos = parseInt(imageID);
+
+        svg_img.src = `data:image/svg+xml;base64,${btoa(svg)}`;
+        frameName.textContent = imageName;
+    } else {
+        frameName.textContent = "-";
+    }    
 }
 
 async function applyColorArrayByID(image_id) {
@@ -66,7 +76,7 @@ async function deleteColorArrayFromServer(image_id) {
         method: "DELETE"
     });
     if (response.status == 200) {
-        await loadAndShow(currentPos,"next")
+        await loadSVG(currentPos,"next")
     } else {
         console.log("failed to delete colorArray from server");
     }
@@ -77,5 +87,5 @@ function editSavedColorArray() {
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    await loadAndShow(null, "first");
+    await loadSVG(null, "first");
 });

@@ -78,7 +78,10 @@ class Dao:
             sql = "SELECT * FROM images WHERE image_id=?"
             data = cursor.execute(sql,(image_id,)).fetchall()
             conn.close()
-            return bytearray(data[0][2])
+
+            if data:
+                return bytearray(data[0][2])
+            return None
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
@@ -184,7 +187,7 @@ class Dao:
             sql = "SELECT image_name FROM images WHERE image_id=?"
             data = cursor.execute(sql,(image_id,)).fetchone()
             conn.close()
-            return data[0]
+            return str(data[0])
 
         except sqlite3.Error as err:
             error_handler(err,traceback.format_exc())
