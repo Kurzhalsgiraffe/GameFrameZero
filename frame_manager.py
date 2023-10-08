@@ -185,7 +185,7 @@ class FrameManager:
 
         os.remove("uploaded_file.png")
         return color_array
-    
+
     def create_png_from_color_array(self, color_array:list, image_id:int, size:int=800) -> None:
         """Create a PNG file from the color_array with given size"""
         line_size = size // 16
