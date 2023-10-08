@@ -155,7 +155,7 @@ class FrameManager:
         return self.database.get_image_name_by_id(image_id)
 
     def save_image(self, color_array:list, image_name:str) -> None:
-        """Save the color_array to the database and create a png to show in frontend"""
+        """Save the color_array to the database and create a svg to show in frontend"""
         binary = self.color_array_to_binary(color_array)
         image_id = self.database.save_image(binary, image_name)
         if image_id:
@@ -180,7 +180,7 @@ class FrameManager:
     def delete_image(self, image_id:int) -> None:
         """Delete image by image_id"""
         self.database.delete_binary_by_id(image_id)
-        os.remove(f"{self.saved_images_path}/{image_id}.png")
+        os.remove(f"{self.saved_images_path}/{image_id}.svg")
 
     def load_multiple_binaries_by_ids(self, image_ids:list) -> list:
         """Load the binaries of the given image_ids"""
