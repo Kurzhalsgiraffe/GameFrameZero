@@ -20,11 +20,11 @@ async function loadMultipleArraysFromServer(ids) {
     }
 }
 
-async function createCanvasTiles(tile_ids, thumbnail_ids) {
+async function createCanvasTiles(tileIDs, thumbnail_ids) {
     let blobs = await loadMultipleArraysFromServer(thumbnail_ids);
     console.log(blobs)
 
-    for (let id of tile_ids) {
+    for (let id of tileIDs) {
         const wrap = document.createElement("div");
         const tile = document.createElement("div");
         const canvas = document.createElement("canvas");
@@ -50,7 +50,7 @@ async function createCanvasTiles(tile_ids, thumbnail_ids) {
         tile_body.appendChild(wrap);
     }
     if (Object.keys(blobs).length !== 0) {
-        await drawThumbnails(blobs,tile_ids);
+        await drawThumbnails(blobs,tileIDs);
     }
 }
 
