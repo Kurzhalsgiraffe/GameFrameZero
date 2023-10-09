@@ -1,4 +1,3 @@
-const canvas = document.querySelector("canvas");
 const color_cirlces = document.querySelectorAll(".color-circle");
 const color_selector = document.querySelector("#sidebar-colors-color-selector");
 const colorpicker_btn = document.querySelector("#sidebar-colors-colorpicker-btn");
@@ -12,119 +11,23 @@ const move_left_btn = document.querySelector("#move-left");
 const move_rightbtn = document.querySelector("#move-right");
 const move_down_btn = document.querySelector("#move-down");
 
+const canvas = document.querySelector("canvas");
+const canvas_context = canvas.getContext("2d");
+const canvas_frame_size = 800;
+const canvas_pixel_size = 50;
+const canvas_grid_color = "rgba(255, 255, 255, 1.0)";
+
 const upload_inpt = document.querySelector("#upload-image-inpt");
 upload_inpt.setAttribute("title", "Choose an image");
 
-class CanvasObject {
-    constructor(canvas, FRAME_SIZE, PIXEL_SIZE, colorArray=[], gridColor="rgba(255, 255, 255, 1.0)") {
-        this.FRAME_SIZE = FRAME_SIZE;
-        this.PIXEL_SIZE = PIXEL_SIZE;
-        this.gridColor = gridColor;
-        this.colorArray = colorArray;
-        this.colorArray = colorArray;
-        
-        if (canvas != null) {
-            this.canvas = canvas;
-            this.c = this.canvas.getContext("2d");
-            this.c.fillStyle = "#ffffff";
-        }       
-    }
-
-    drawColorArrayToCanvas() {
-        for (let i=0; i<256; i++) {
-            this.c.fillStyle = this.colorArray[i];
-            let y = Math.floor(i/16);
-            let x;
-    
-            if (y%2==0) {
-                x = 15-i%16;
-            } else {
-                x = i%16;
-            }
-            this.draw(this.PIXEL_SIZE*x, this.PIXEL_SIZE*y);
-        }
-        this.drawGrid();
-    }
-
-    draw(x_start, y_start) {
-        this.c.strokeStyle = this.c.fillStyle;
-        this.c.beginPath();
-        this.c.rect(x_start, y_start, this.PIXEL_SIZE, this.PIXEL_SIZE);
-        this.c.fill();
-        this.c.stroke();
-    }
-
-    initializeColorArray() {
-        for (let i=0; i<256;i++) {
-            this.colorArray[i] = "#000000";
-        }
-    }
-
-    drawGrid() {
-        for (let x=0; x<this.FRAME_SIZE; x+=this.PIXEL_SIZE) {
-            for (let y=0; y<this.FRAME_SIZE; y+=this.PIXEL_SIZE) {
-                this.updateGrid(x,y);
-            }
-        }
-    }
-
-    updateGrid(x,y) {
-        this.c.strokeStyle = this.gridColor;
-        this.c.beginPath();
-        this.c.rect(x, y, this.PIXEL_SIZE, this.PIXEL_SIZE);
-        this.c.stroke();
-    }
-
-    async loadColorArrayFromServer(id) {
-        let response = await fetch("/image/load/single?image_id="+id);
-        let res = await response.json();
-
-        if (response.status == 200) {
-            if (res) {
-                this.colorArray = res;
-            } else {
-                this.colorArray = []
-            }       
-        } else {
-            console.log("failed to load colorArray from server");
-        }
-    }
-
-    async sendColorArrayToServer(route) {
-        let response = await fetch(route, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(this.colorArray)
-        });
-        if (response.status != 200) {
-            console.log("failed to send colorArray to server");
-        }
-    }
-
-    async replaceColorArrayOnServer(image_id=null) {
-        let response = await fetch("/image/replace?image_id="+image_id, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(this.colorArray)
-        });
-        if (response.status != 200) {
-            console.log("failed to send colorArray to server");
-        }
-    }
-}
-
-const canvasObject = new CanvasObject(canvas, FRAME_SIZE=800, PIXEL_SIZE=50, colorArray=[]);
-let isMouseDownCanvas;
+let isMouseDown;
 let drawMode = true;
 let loadedIDToEdit = null;
+let colorArray = []
 
-apply_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/image/apply/colorarray"));
-save_btn.addEventListener("click", async () => await canvasObject.sendColorArrayToServer("/image/save?image_name="+((save_image_inpt.value) ? save_image_inpt.value : null)));
-replace_btn.addEventListener("click", async () => await canvasObject.replaceColorArrayOnServer(loadedIDToEdit));
+apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/image/apply/colorarray"));
+save_btn.addEventListener("click", async () => await sendColorArrayToServer("/image/save?image_name="+((save_image_inpt.value) ? save_image_inpt.value : null)));
+replace_btn.addEventListener("click", async () => await replaceColorArrayOnServer(loadedIDToEdit));
 
 color_selector.addEventListener("change", () => setPickedColor(color_selector.value));
 move_up_btn.addEventListener("click", moveUp);
@@ -143,29 +46,73 @@ colorpicker_btn.addEventListener("click", function() {
     setDrawMode(!drawMode);
 });
 
-// set every pixel to black, initialize clean colorArray and draw the grid
 delete_btn.addEventListener("click", function() {
-    canvasObject.c.clearRect(0,0,canvasObject.FRAME_SIZE,canvasObject.FRAME_SIZE);
-    canvasObject.initializeColorArray();
-    canvasObject.drawGrid();
+    canvas_context.clearRect(0, 0, canvas_frame_size, canvas_frame_size);
+    initializeColorArray();
+    drawGrid();
 });
 
-canvasObject.canvas.addEventListener("mousedown", (event)=>{
-    isMouseDownCanvas = true;
+canvas.addEventListener("mousedown", (event)=>{
+    isMouseDown = true;
     updateCell(event.offsetX, event.offsetY);
 });
 
-canvasObject.canvas.addEventListener("mouseup", ()=>{
-    isMouseDownCanvas = false;
+canvas.addEventListener("mouseup", ()=>{
+    isMouseDown = false;
 });
 
-canvasObject.canvas.addEventListener("mouseleave", ()=>{
-    isMouseDownCanvas = false;
+canvas.addEventListener("mouseleave", ()=>{
+    isMouseDown = false;
 });
 
-canvasObject.canvas.addEventListener("mousemove",(event)=>{
+canvas.addEventListener("mousemove",(event)=>{
     updateCell(event.offsetX, event.offsetY);
 });
+
+function initializeColorArray() {
+    for (let i=0; i<256;i++) {
+        colorArray[i] = "#000000";
+    }
+}
+
+function draw(x_start, y_start) {
+    canvas_context.strokeStyle = canvas_context.fillStyle;
+    canvas_context.beginPath();
+    canvas_context.rect(x_start, y_start, canvas_pixel_size, canvas_pixel_size);
+    canvas_context.fill();
+    canvas_context.stroke();
+}
+
+function drawColorArrayToCanvas() {
+    for (let i=0; i<256; i++) {
+        canvas_context.fillStyle = colorArray[i];
+        let y = Math.floor(i/16);
+        let x;
+
+        if (y%2==0) {
+            x = 15-i%16;
+        } else {
+            x = i%16;
+        }
+        draw(canvas_pixel_size * x, canvas_pixel_size * y);
+    }
+    drawGrid();
+}
+
+function drawGrid() {
+    for (let x = 0; x < canvas_frame_size; x += canvas_pixel_size) {
+        for (let y = 0; y < canvas_frame_size; y += canvas_pixel_size) {
+            updateGrid(x, y);
+        }
+    }
+}
+
+function updateGrid(x,y) {
+    canvas_context.strokeStyle = canvas_grid_color;
+    canvas_context.beginPath();
+    canvas_context.rect(x, y, canvas_pixel_size, canvas_pixel_size);
+    canvas_context.stroke();
+}
 
 function updateCell(x,y) {
     // compute coordinates of top left pixel for the 50x50 area
@@ -179,14 +126,14 @@ function updateCell(x,y) {
         tileNumber = 16*(y_start/50)+(15-(x_start/50));
     }
 
-    if (isMouseDownCanvas) {
+    if (isMouseDown) {
         if(drawMode) {
-            canvasObject.draw(x_start, y_start);
-            canvasObject.updateGrid(x_start,y_start);
-            canvasObject.colorArray[tileNumber] = canvasObject.c.fillStyle;
+            draw(x_start, y_start);
+            updateGrid(x_start,y_start);
+            colorArray[tileNumber] = canvas_context.fillStyle;
         }
         else {
-            setPickedColor(canvasObject.colorArray[tileNumber]);
+            setPickedColor(colorArray[tileNumber]);
         }
     }
 }
@@ -211,7 +158,7 @@ function colorCircelSelected() {
 function setPickedColor(color) {
     setDrawMode(true);
     removeActiveCircleColor();
-    canvasObject.c.fillStyle = color;
+    canvas_context.fillStyle = color;
     color_selector.setAttribute("value", color);
     color_selector.value = color;
 }
@@ -223,27 +170,27 @@ function removeActiveCircleColor() {
     });
 }
 
-// load the colorArray by id to the canvasObject and draw it to the canvas
+// load the colorArray by id and draw it to the canvas
 async function loadAndShow(id) {
-    await canvasObject.loadColorArrayFromServer(id);
-    if (canvasObject.colorArray.length === 0) {
-        canvasObject.initializeColorArray();
+    await loadColorArrayFromServer(id);
+    if (colorArray.length === 0) {
+        initializeColorArray();
     }
-    canvasObject.drawColorArrayToCanvas();
-    canvasObject.drawGrid();
+    drawColorArrayToCanvas();
+    drawGrid();
 }
 
 // move all pixels up by one row
 function moveUp() {
     for (let i=0; i<256; i++) {
         if (i<240) {
-            canvasObject.colorArray[i] = canvasObject.colorArray[i-(2*i)%32+31]
+            colorArray[i] = colorArray[i-(2*i)%32+31];
         } else {
-            canvasObject.colorArray[i] = "#000000"
+            colorArray[i] = "#000000";
         }
     }
-    canvasObject.drawColorArrayToCanvas();
-    canvasObject.c.fillStyle = color_selector.value;
+    drawColorArrayToCanvas();
+    canvas_context.fillStyle = color_selector.value;
 }
 
 // move all pixels to the left by one column
@@ -255,20 +202,20 @@ function moveLeft() {
             if ((15-i%16)==15) {
                 newArr[i] = "#000000";
             } else {
-                newArr[i] = canvasObject.colorArray[i-1];
+                newArr[i] = colorArray[i-1];
             }
 
         } else {
             if ((i%16)==15) {
                 newArr[i] = "#000000";
             } else {
-                newArr[i] = canvasObject.colorArray[i+1];
+                newArr[i] = colorArray[i+1];
             }
         }
     }
-    canvasObject.colorArray = newArr;
-    canvasObject.drawColorArrayToCanvas();
-    canvasObject.c.fillStyle = color_selector.value;
+    colorArray = newArr;
+    drawColorArrayToCanvas();
+    canvas_context.fillStyle = color_selector.value;
 }
 
 // move all pixels to the right by one column
@@ -280,33 +227,33 @@ function moveRight() {
             if ((15-i%16)==0) {
                 newArr[i] = "#000000";
             } else {
-                newArr[i] = canvasObject.colorArray[i+1];
+                newArr[i] = colorArray[i+1];
             }
 
         } else {
             if ((i%16)==0) {
                 newArr[i] = "#000000";
             } else {
-                newArr[i] = canvasObject.colorArray[i-1];
+                newArr[i] = colorArray[i-1];
             }
         }
     }
-    canvasObject.colorArray = newArr;
-    canvasObject.drawColorArrayToCanvas();
-    canvasObject.c.fillStyle = color_selector.value;
+    colorArray = newArr;
+    drawColorArrayToCanvas();
+    canvas_context.fillStyle = color_selector.value;
 }
 
 // move all pixels down by one row
 function moveDown() {
     for (let i=255; i>=0; i--) {
         if (i>15) {
-            canvasObject.colorArray[i] = canvasObject.colorArray[i-(2*i)%32-1]
+            colorArray[i] = colorArray[i-(2*i)%32-1]
         } else {
-            canvasObject.colorArray[i] = "#000000"
+            colorArray[i] = "#000000"
         }
     }
-    canvasObject.drawColorArrayToCanvas();
-    canvasObject.c.fillStyle = color_selector.value;
+    drawColorArrayToCanvas();
+    canvas_context.fillStyle = color_selector.value;
 }
 
 async function uploadImage() {
@@ -325,8 +272,8 @@ async function uploadImage() {
             })
             if (response.status == 200) {
                 let res = await response.json();
-                canvasObject.colorArray = res.colorArray
-                canvasObject.drawColorArrayToCanvas()
+                colorArray = res.colorArray
+                drawColorArrayToCanvas();
             } else {
                 console.log("failed to upload image");
             }
@@ -336,8 +283,49 @@ async function uploadImage() {
     }
 }
 
+async function loadColorArrayFromServer(id) {
+    let response = await fetch("/image/load/single?image_id="+id);
+    let res = await response.json();
+
+    if (response.status == 200) {
+        if (res) {
+            colorArray = res;
+        } else {
+            colorArray = []
+        }       
+    } else {
+        console.log("failed to load colorArray from server");
+    }
+}
+
+async function sendColorArrayToServer(route) {
+    let response = await fetch(route, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(colorArray)
+    });
+    if (response.status != 200) {
+        console.log("failed to send colorArray to server");
+    }
+}
+
+async function replaceColorArrayOnServer(image_id) {
+    let response = await fetch("/image/replace?image_id="+image_id, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(colorArray)
+    });
+    if (response.status != 200) {
+        console.log("failed to send colorArray to server");
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async function() {
-    canvasObject.initializeColorArray();
+    initializeColorArray();
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -346,5 +334,5 @@ document.addEventListener("DOMContentLoaded", async function() {
         loadedIDToEdit = urlParams.get('edit_image_id');
         await loadAndShow(loadedIDToEdit);
     }
-    canvasObject.drawGrid()
+    drawGrid()
 });
