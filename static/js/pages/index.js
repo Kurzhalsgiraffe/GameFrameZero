@@ -122,8 +122,8 @@ function removeActiveCircleColor() {
 }
 
 // load the colorArray by id to the canvasObject and draw it to the canvas
-async function loadAndShow(id=null,pos=null) {
-    await canvasObject.loadColorArrayFromServer(id,pos);
+async function loadAndShow(id) {
+    await canvasObject.loadColorArrayFromServer(id);
     if (canvasObject.colorArray.length === 0) {
         canvasObject.initializeColorArray();
     }
@@ -242,8 +242,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     if(urlParams.has('edit_image_id')) {
         replace_btn.setAttribute("style","display: block");
         loadedIDToEdit = urlParams.get('edit_image_id');
-        console.log(loadedIDToEdit)
-        await loadAndShow(loadedIDToEdit, null);
+        await loadAndShow(loadedIDToEdit);
     }
     canvasObject.drawGrid()
 });

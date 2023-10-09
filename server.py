@@ -77,12 +77,11 @@ def set_power():
 
 @app.route("/image/load/single")
 def image_load_single():
-    current_image_id = request.args.get('image_id', type = int)
-    pos = request.args.get('pos', type = str)
-    data = manager.load_single_image(current_image_id, pos)
+    image_id = request.args.get('image_id', type = int)
+    data = manager.load_single_image(image_id)
     return jsonify(data)
 
-@app.route("/image/load/single/svg") # Replacing /image/load/single in the future
+@app.route("/image/load/single/svg")
 def image_load_single_svg():
     current_image_id = request.args.get('image_id', type = int)
     pos = request.args.get('pos', type = str)

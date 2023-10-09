@@ -95,8 +95,15 @@ class FrameManager:
             data["thumbnailIDs"] = self.database.get_all_animation_thumbnail_ids(data["animationIDs"])
         return data
     
-    def load_single_image_svg(self, image_id:int, pos:str): # TODO: This will replace load_single_image
-        """If pos is given, the image_id of the image at the relative position from the current image_id will be returned"""
+    def load_single_image(self, image_id:int) -> dict:
+        """Load a single image"""
+        binary = self.database.load_single_binary_by_id(image_id)
+        if binary:
+            data = self.binary_to_color_array(binary)
+        return data
+    
+    def load_single_image_svg(self, image_id:int, pos:str):
+        """If pos is given, the svg of the image at the relative position from the current image_id will be returned"""
         skip_offset = self.config.get_config("skip_offset")
         if pos:
             if pos == "first":
@@ -124,31 +131,6 @@ class FrameManager:
             return filepath, image_id, image_name
         except:
             return None, None, None
-
-    def load_single_image(self, image_id:int, pos:str) -> dict:
-        """Load a single image. If pos is given, the image at the relative position from the current image_id will be loaded."""
-        data = {"imageID": 0, "imageName": "", "colorArray": []}
-        skip_offset = self.config.get_config("skip_offset")
-        if pos:
-            if pos == "first":
-                image_id = self.database.get_first_image_id()
-            elif pos == "fastbackwards":
-                image_id = self.database.get_ffw_image_id(image_id, skip_offset)
-            elif pos == "prev":
-                image_id = self.database.get_previous_image_id(image_id)
-            elif pos == "next":
-                image_id = self.database.get_next_image_id(image_id)
-            elif pos == "fastforwards":
-                image_id = self.database.get_fbw_image_id(image_id, skip_offset)
-            elif pos == "last":
-                image_id = self.database.get_last_image_id()
-
-        binary = self.database.load_single_binary_by_id(image_id)
-        if binary:
-            data["imageID"] = image_id
-            data["imageName"] = self.database.get_image_name_by_id(image_id)
-            data["colorArray"] = self.binary_to_color_array(binary)
-        return data
 
     def get_image_name_by_id(self, image_id:int):
         """Get the image_name by image_id"""

@@ -4,8 +4,6 @@ class CanvasObject {
         this.PIXEL_SIZE = PIXEL_SIZE;
         this.gridColor = gridColor;
         this.colorArray = colorArray;
-        this.currentPos = 1;
-        this.imageName = "";
         this.setColorArray(colorArray);
         
         if (canvas != null) {
@@ -68,26 +66,15 @@ class CanvasObject {
         this.c.stroke();
     }
 
-    async loadColorArrayFromServer(id=null,pos=null) {
-        let response
-        if (id!=null && pos!=null) {
-            response = await fetch("/image/load/single?image_id="+id+"&pos="+pos);
-        } else if(id!=null && pos==null) {
-            response = await fetch("/image/load/single?image_id="+id);
-        } else if(id==null && pos!=null) {
-            response = await fetch("/image/load/single?pos="+pos);
-        }
-        
+    async loadColorArrayFromServer(id) {
+        let response = await fetch("/image/load/single?image_id="+id);
         let res = await response.json();
+
         if (response.status == 200) {
-            if (res.colorArray) {
-                this.colorArray = res.colorArray;
-                this.currentPos = res.imageID;
-                this.imageName = res.imageName;
+            if (res) {
+                this.colorArray = res;
             } else {
                 this.colorArray = []
-                this.currentPos = 0
-                this.imageName = ""
             }       
         } else {
             console.log("failed to load colorArray from server");
