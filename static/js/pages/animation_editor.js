@@ -4,6 +4,7 @@ const update_time_on_frame_btn = document.querySelector("#sidebar-time-update-ti
 const first_frame_btn = document.querySelector("#first-frame-btn");
 const fast_backwards_btn = document.querySelector("#fast-backwards-btn");
 const prev_frame_btn = document.querySelector("#prev-frame-btn");
+const selector_svg_img = document.querySelector("#selector-svg-img");
 const next_frame_btn = document.querySelector("#next-frame-btn");
 const fast_forwards_btn = document.querySelector("#fast-forwards-btn");
 const last_frame_btn = document.querySelector("#last-frame-btn");
@@ -12,32 +13,42 @@ const animation_time_all_checkbox = document.querySelector("#sidebar-time-set-ti
 const animation_time = document.querySelector("#sidebar-time-input");
 const add_to_animation_btn = document.querySelector("#add-to-animation-btn");
 
-let selectorCanvasObject = new CanvasObject(canv, FRAME_SIZE=480, PIXEL_SIZE=30, colorArray=[], gridColor='rgba(0, 0, 0, 1.0)');
 let currentPos = 1;
 let animation_id;
 let dragStartPosition;
 
 remove_animation_frame_btn.addEventListener("click", async () => await RemoveFrameFromAnimation());
 update_time_on_frame_btn.addEventListener("click", async () => await UpdateTime());
-first_frame_btn.addEventListener("click", async () => await loadAndShow(null, "first"));
-fast_backwards_btn.addEventListener("click", async () => await loadAndShow(currentPos, "fastbackwards"));
-prev_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "prev"));
-next_frame_btn.addEventListener("click", async () => await loadAndShow(currentPos, "next"));
-fast_forwards_btn.addEventListener("click", async () => await loadAndShow(currentPos, "fastforwards"));
-last_frame_btn.addEventListener("click", async () => await loadAndShow(null, "last"));
+first_frame_btn.addEventListener("click", async () => await SelectorLoadSVG(null, "first"));
+fast_backwards_btn.addEventListener("click", async () => await SelectorLoadSVG(currentPos, "fastbackwards"));
+prev_frame_btn.addEventListener("click", async () => await SelectorLoadSVG(currentPos, "prev"));
+next_frame_btn.addEventListener("click", async () => await SelectorLoadSVG(currentPos, "next"));
+fast_forwards_btn.addEventListener("click", async () => await SelectorLoadSVG(currentPos, "fastforwards"));
+last_frame_btn.addEventListener("click", async () => await SelectorLoadSVG(null, "last"));
 add_to_animation_btn.addEventListener("click", async () => await addFrameToAnimation());
 
-async function loadAndShow(id=null,pos=null) {
-    await selectorCanvasObject.loadColorArrayFromServer(id,pos);
-    currentPos = selectorCanvasObject.currentPos;
-    if (selectorCanvasObject.colorArray.length === 0) {
-        frameName.textContent = "-";
-        selectorCanvasObject.initializeColorArray();
-    } else {
-        frameName.textContent = selectorCanvasObject.imageName;
+async function SelectorLoadSVG(id=null, pos=null) {
+    let response
+    if (id!=null && pos!=null) {
+        response = await fetch("/image/load/single/svg?image_id="+id+"&pos="+pos);
+    } else if(id!=null && pos==null) {
+        response = await fetch("/image/load/single/svg?image_id="+id);
+    } else if(id==null && pos!=null) {
+        response = await fetch("/image/load/single/svg?pos="+pos);
     }
-    selectorCanvasObject.drawColorArrayToCanvas();
-    selectorCanvasObject.drawGrid();
+
+    if (response.status == 200) {
+        const imageID = response.headers.get('image_id');
+        const imageName = response.headers.get('image_name');
+        const svg = await response.text();
+
+        currentPos = parseInt(imageID);
+
+        selector_svg_img.src = `data:image/svg+xml;base64,${btoa(svg)}`;
+        frameName.textContent = imageName;
+    } else {
+        frameName.textContent = "-";
+    }    
 }
 
 async function RemoveFrameFromAnimation() {
@@ -220,7 +231,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     if(urlParams.has('id')) {
         animation_id = urlParams.get('id');
         initializeAnimationTiles();
-        loadAndShow(null, "first");
+        SelectorLoadSVG(null, "first");
     } else {
         console.log("Didn't find the Animation ID");
     }
