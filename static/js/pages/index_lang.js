@@ -33,7 +33,7 @@ function setLanguage(lang) {
 
         sidebar_options_collapse.textContent = "OPTIONS";
         sidebar_options_delete_btn.textContent = "DELETE";
-        sidebar_options_delete_btn.title = "Clear the canvas";
+        sidebar_options_delete_btn.title = "Discard the drawing";
         sidebar_options_apply_btn.textContent = "APPLY";
         sidebar_options_apply_btn.title = "Apply the drawing on the LED-Matrix";
         sidebar_options_save_btn.textContent = "SAVE";

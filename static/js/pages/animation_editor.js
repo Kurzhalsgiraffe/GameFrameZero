@@ -1,4 +1,3 @@
-const canv = document.querySelector("canvas");
 const remove_animation_frame_btn = document.querySelector("#sidebar-options-remove-animation-frame-btn");
 const update_time_on_frame_btn = document.querySelector("#sidebar-time-update-time-on-frame-btn");
 const first_frame_btn = document.querySelector("#first-frame-btn");

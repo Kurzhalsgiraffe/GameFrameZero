@@ -178,10 +178,6 @@ canvas {
     border: 1px solid #000000;
 }
 
-.board {
-    margin: auto;
-}
-
 .animationlist-wrapper {
     height: 775px;
     overflow-y: scroll;
