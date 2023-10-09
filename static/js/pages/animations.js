@@ -40,7 +40,7 @@ async function createAnimation() {
         method: "POST"
     });
     if (response.status == 200) {
-        initializeAnimationThumbnails(); // TODO: Not Necessary to reload all animation thumbnails!!
+        initializeAnimationThumbnails();
     } else {
         console.log("failed to create Animation");
     }
