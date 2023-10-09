@@ -35,7 +35,7 @@ def load_brightness():
 def load_language():
     return str(manager.config.get_config("language"))
 
-@app.route("/speed/load")
+@app.route("/animationspeed/load")
 def load_speed():
     return str(manager.config.get_config("speed"))
 
@@ -61,8 +61,8 @@ def set_brightness():
     manager.set_brightness(int(brightness))
     return {}
 
-@app.route("/speed/set", methods=["POST"])
-def set_speed():
+@app.route("/animationspeed/set", methods=["POST"])
+def set_animation_speed():
     speed = request.args.get('speed', type = float)
     manager.set_animation_speed(float(speed))
     return {}
