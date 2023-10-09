@@ -210,7 +210,7 @@ async function initializeAnimationTiles() {
     let positions = animation_list[2];
     let times = animation_list[3];
 
-    await createCanvasTiles(positions, image_ids);
+    await createAnimationTiles(positions, image_ids);
     await addContentToTiles(image_names, positions, times);
     await attachHandlers(positions);
 }
@@ -220,7 +220,7 @@ async function initializeSingleAnimationTile(position, image_id, image_name, tim
     let image_ids = [image_id];
     let image_names = [image_name];
     let times = [time];
-    await createCanvasTiles(positions, image_ids);
+    await createAnimationTiles(positions, image_ids);
     await addContentToTiles(image_names, positions, times);
     await attachHandlers(positions);
 }

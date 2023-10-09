@@ -182,16 +182,16 @@ class FrameManager:
         self.database.delete_binary_by_id(image_id)
         os.remove(f"{self.saved_images_path}/{image_id}.svg")
 
-    def load_multiple_binaries_by_ids(self, image_ids:list) -> list:
-        """Load the binaries of the given image_ids"""
-        data = []
-        if image_ids:
-            binaries = self.database.load_multiple_binaries_by_ids(image_ids)
-            for i in binaries:
-                if i:
-                    data.append((i[0], self.binary_to_color_array(bytearray(i[2]))))
-                else:
-                    data.append(None)
+    def load_multiple_image_svgs_by_ids(self, image_ids:list) -> list:
+        """Load SVGs of the given image_ids (random order!)"""
+        data = {}
+        for image_id in image_ids:
+            if image_id:
+                with open(f"saved_images/{image_id}.svg", "r") as file:
+                    data[image_id] = file.read()
+            else:
+                with open(f"saved_images/empty.svg", "r") as file: # if there is no image_id, the empty image will be attached to key -1
+                    data[-1] = file.read()
         return data
 
     def process_uploaded_image(self, uploaded_file) -> list:

@@ -95,10 +95,11 @@ def image_load_single_svg():
         )
     return {}, 400
 
-@app.route("/image/load/multiple", methods=["POST"])
+@app.route("/image/load/multiple/svg", methods=["POST"])
 def image_load_multiple():
     image_ids = request.json
-    return jsonify(manager.load_multiple_binaries_by_ids(image_ids))
+    data = manager.load_multiple_image_svgs_by_ids(image_ids)
+    return jsonify(data)
 
 @app.route("/image/apply/colorarray", methods=["POST"])
 def apply_color_array():

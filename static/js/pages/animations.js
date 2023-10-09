@@ -40,7 +40,7 @@ async function createAnimation() {
         method: "POST"
     });
     if (response.status == 200) {
-        initializeAnimationThumbnails();
+        initializeAnimationThumbnails(); // TODO: Not Necessary to reload all animation thumbnails!!
     } else {
         console.log("failed to create Animation");
     }
@@ -127,7 +127,7 @@ async function initializeAnimationThumbnails() {
     let animation_names = animations[1];
     let thumbnail_ids = animations[2];
 
-    await createCanvasTiles(animation_ids,thumbnail_ids);
+    await createAnimationTiles(animation_ids,thumbnail_ids);
     await addContentToThumbnails(animation_ids, animation_names);
     await attachHandlers(animation_ids);
 }
