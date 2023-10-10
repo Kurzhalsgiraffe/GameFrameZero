@@ -19,7 +19,7 @@ async function setAnimationSpeed(speed) {
     }
 }
 
-async function loadSpeed() {
+async function loadAnimationSpeed() {
     let response = await fetch("/animationspeed/load");
     if (response.status == 200) {
         res = await response.text();
@@ -31,5 +31,5 @@ async function loadSpeed() {
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    await loadSpeed();
+    await loadAnimationSpeed();
 });
