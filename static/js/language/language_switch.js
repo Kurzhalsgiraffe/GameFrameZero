@@ -24,7 +24,7 @@ function moveLanguageSlider(lang) {
     }
 }
 
-async function loadLanguage() {
+async function loadServerLanguage() {
     let response = await fetch("/language/load");
     let lang = "";
     if (response.status == 200) {
@@ -45,7 +45,7 @@ async function setServerLanguage(language) {
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    lang = await loadLanguage();
+    lang = await loadServerLanguage();
     setLanguage(lang);
     moveLanguageSlider(lang)
 });
