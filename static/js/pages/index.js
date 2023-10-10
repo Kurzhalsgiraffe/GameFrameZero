@@ -25,8 +25,8 @@ let drawMode = true;
 let loadedIDToEdit = null;
 let colorArray = []
 
-apply_btn.addEventListener("click", async () => await sendColorArrayToServer("/image/apply/colorarray"));
-save_btn.addEventListener("click", async () => await sendColorArrayToServer("/image/save?image_name="+((save_image_inpt.value) ? save_image_inpt.value : null)));
+apply_btn.addEventListener("click", applyColorArrayOnServer);
+save_btn.addEventListener("click", async () => await saveColorArrayOnServer((save_image_inpt.value) ? save_image_inpt.value : null));
 replace_btn.addEventListener("click", async () => await replaceColorArrayOnServer(loadedIDToEdit));
 
 color_selector.addEventListener("change", () => setPickedColor(color_selector.value));
@@ -298,8 +298,8 @@ async function loadColorArrayFromServer(id) {
     }
 }
 
-async function sendColorArrayToServer(route) {
-    let response = await fetch(route, {
+async function applyColorArrayOnServer() {
+    let response = await fetch("/image/apply/colorarray", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -307,7 +307,21 @@ async function sendColorArrayToServer(route) {
         body: JSON.stringify(colorArray)
     });
     if (response.status != 200) {
-        console.log("failed to send colorArray to server");
+        console.log("failed to apply colorArray on server");
+    }
+}
+
+async function saveColorArrayOnServer(image_name) {
+    
+    let response = await fetch("/image/save?image_name="+image_name, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(colorArray)
+    });
+    if (response.status != 200) {
+        console.log("failed to save colorArray on server");
     }
 }
 
@@ -320,7 +334,7 @@ async function replaceColorArrayOnServer(image_id) {
         body: JSON.stringify(colorArray)
     });
     if (response.status != 200) {
-        console.log("failed to send colorArray to server");
+        console.log("failed to replace colorArray on server");
     }
 }
 
